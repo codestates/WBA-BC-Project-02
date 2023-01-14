@@ -7,7 +7,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
-	"github.com/Hooneats/WBA-BC-Project-02/common/enum"
+	"github.com/codestates/WBA-BC-Project-02/common/enum"
 	"github.com/joho/godotenv"
 	"io"
 	"log"
