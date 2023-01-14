@@ -1,9 +1,9 @@
-package router
+package gin
 
 import (
+	"github.com/codestates/WBA-BC-Project-02/was/controller"
 	"github.com/codestates/WBA-BC-Project-02/was/logger"
-	v1 "github.com/codestates/WBA-BC-Project-02/was/router/handler/v1"
-	"github.com/codestates/WBA-BC-Project-02/was/router/middleware"
+	"github.com/codestates/WBA-BC-Project-02/was/router/gin/middleware"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -14,37 +14,35 @@ type GinRoute struct {
 	engin *gin.Engine
 }
 
-func LoadRouter(mode string) {
-	Route = newGinRoute(mode)
-}
-
-func newGinRoute(mode string) *GinRoute {
+func NewGinRoute(mode string) *GinRoute {
 	if instance != nil {
 		return instance
 	}
-	setMode(mode)
+	setGinMode(mode)
 	instance = &GinRoute{
-		engin: newEngine(),
+		engin: gin.New(),
 	}
+	setMiddleware()
 	return instance
 }
 
 func (r *GinRoute) Handle() http.Handler {
 	gr := r.engin
 
-	v1.GinHandle(gr)
+	v1 := gr.Group("app/v1")
+	{
+		v1.GET("/info", controller.InfoControl.GetInformation)
+
+		//u := v1.Group("/users")
+		{
+			//Users(u)
+		}
+	}
 
 	return r.engin
 }
 
-// newEngine generate gin engin and global middleware setting
-func newEngine() *gin.Engine {
-	grt := gin.New()
-	setMiddleware(grt)
-	return grt
-}
-
-func setMode(mode string) {
+func setGinMode(mode string) {
 	switch mode {
 	case "dev":
 		logger.AppLog.Info("Start gin mod", gin.DebugMode)
@@ -61,8 +59,8 @@ func setMode(mode string) {
 	}
 }
 
-func setMiddleware(grt *gin.Engine) {
-	grt.Use(middleware.GinLogger())
-	grt.Use(middleware.GinRecovery(true))
-	grt.Use(middleware.CORS())
+func setMiddleware() {
+	instance.engin.Use(middleware.GinLogger())
+	instance.engin.Use(middleware.GinRecovery(true))
+	instance.engin.Use(middleware.CORS())
 }
