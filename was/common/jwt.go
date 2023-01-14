@@ -1,8 +1,10 @@
 package common
 
 import (
-	"github.com/gofrs/uuid"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
+	"github.com/gofrs/uuid"
 )
 
 type Token struct {

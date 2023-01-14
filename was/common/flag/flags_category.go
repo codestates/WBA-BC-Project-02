@@ -13,31 +13,31 @@ type FlagCategory struct {
 var (
 	ServerConfigFlag = &FlagCategory{
 		Name:    "server",
-		Default: "./config/server/config.toml",
+		Default: "./was/config/server/config.toml",
 		Usage:   "toml file to use for server configuration",
 	}
 
 	LogConfigFlag = &FlagCategory{
 		Name:    "log",
-		Default: "./config/log/config.toml",
+		Default: "./was/config/log/config.toml",
 		Usage:   "toml file to use for log configuration",
 	}
 
 	DatabaseFlag = &FlagCategory{
 		Name:    "db",
-		Default: "./config/" + DefaultModePath + "/db/config.toml",
+		Default: "./was/config/" + DefaultModePath + "/db/config.toml",
 		Usage:   "toml file to use for database configuration",
 	}
 
 	JWTFlag = &FlagCategory{
 		Name:    "jwt",
-		Default: "./config/" + DefaultModePath + "/jwt/config.toml",
+		Default: "./was/config/" + DefaultModePath + "/jwt/config.toml",
 		Usage:   "toml file to use for jwt configuration",
 	}
 
 	RedisFlag = &FlagCategory{
 		Name:    "redis",
-		Default: "./config/" + DefaultModePath + "/redis/config.toml",
+		Default: "./was/config/" + DefaultModePath + "/redis/config.toml",
 		Usage:   "toml file to use for redis configuration",
 	}
 )

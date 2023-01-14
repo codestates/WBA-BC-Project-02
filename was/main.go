@@ -1,18 +1,19 @@
 package main
 
 import (
+	"log"
+
 	"github.com/codestates/WBA-BC-Project-02/common/ciper"
 	"github.com/codestates/WBA-BC-Project-02/was/common/app"
 	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
 	"github.com/codestates/WBA-BC-Project-02/was/common/flag"
+	"github.com/codestates/WBA-BC-Project-02/was/common/redis"
 	"github.com/codestates/WBA-BC-Project-02/was/config"
 	"github.com/codestates/WBA-BC-Project-02/was/controller"
 	"github.com/codestates/WBA-BC-Project-02/was/logger"
 	"github.com/codestates/WBA-BC-Project-02/was/model"
 	"github.com/codestates/WBA-BC-Project-02/was/router"
 	"github.com/codestates/WBA-BC-Project-02/was/service"
-	"github.com/go-redis/redis"
-	"log"
 )
 
 var (
