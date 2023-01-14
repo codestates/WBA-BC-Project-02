@@ -23,12 +23,14 @@ contract DEX is Ownable {
     function setDraco(address tokenAddress) public onlyOwner {
         require(tokenAddress != address(0x0));
         draco = Draco(tokenAddress);
+        draco.mint(address(this), 3800);
     }
 
     // Credit 컨트랙트를 설정해주는 함수
     function setCredit(address creditAddress) public onlyOwner {
         require(creditAddress != address(0x0));
         credit = Credit(creditAddress);
+        credit.mintSelf(10000, "Draco");
     }
 
 

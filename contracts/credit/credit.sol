@@ -14,6 +14,10 @@ contract Credit is ERC20, Ownable {
 
     constructor () ERC20("Credit", "pWEMIX") {}
 
+    function decimal(uint256 num) private view returns (uint256) {
+        return num * (10 ** uint256(decimals()));
+    }
+
     // 유저가 판매한 credit을 Dex의 해당하는 pool에 넣어주는 함수
     function addDexAmount(string memory tokenName, uint256 creditAmount) external returns (uint256) {
         DexAmount[tokenName] += creditAmount;
@@ -37,5 +41,11 @@ contract Credit is ERC20, Ownable {
         _transfer(owner, to, amount);
         emit CustomTransfer(from, to, amount);
         return true;
+    }
+
+    // credit 토큰 초기 세팅 함수
+    function mintSelf(uint amount, string memory tokenName) external virtual {
+        _mint(msg.sender, decimal(amount));
+        DexAmount[tokenName] = decimal(amount);
     }
 }
