@@ -1,10 +1,10 @@
 package user
 
 import (
-	"github.com/Hooneats/Syeong_server/common"
-	"github.com/Hooneats/Syeong_server/common/enum"
-	"github.com/Hooneats/Syeong_server/model/entity"
-	"github.com/Hooneats/Syeong_server/model/query"
+	"github.com/Hooneats/WBA-BC-Project-02/common/enum"
+	"github.com/Hooneats/WBA-BC-Project-02/was/common"
+	"github.com/Hooneats/WBA-BC-Project-02/was/model/entity"
+	"github.com/Hooneats/WBA-BC-Project-02/was/model/query"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
