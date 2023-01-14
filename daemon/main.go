@@ -1,9 +1,11 @@
 package main
 
 import (
-	conf "lecture/WBA-BC-Project-02/daemon/config"
-	"lecture/WBA-BC-Project-02/daemon/model"
 	"log"
+
+	conf "github.com/codestates/WBA-BC-Project-02/daemon/config"
+
+	"github.com/codestates/WBA-BC-Project-02/daemon/model"
 
 	"github.com/ethereum/go-ethereum/ethclient"
 )
