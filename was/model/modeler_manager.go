@@ -1,8 +1,7 @@
 package model
 
 import (
-	"github.com/Hooneats/Syeong_server/common/enum"
-	"github.com/Hooneats/Syeong_server/model/user"
+	"github.com/codestates/WBA-BC-Project-02/was/model/user"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -20,9 +19,9 @@ func LoadMongoModel(URI, DBName string, colNames []string) error {
 }
 
 func InjectModelsMongoDependency(m map[string]*mongo.Collection) {
-	UserModel = user.NewUserModel(m[enum.UserCollectionName])
+
 }
 
 func CreateIndexesInModels() {
-	AppModel.CreateIndexes(enum.UserCollectionName, true, "nic_name")
+
 }

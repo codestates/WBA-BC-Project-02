@@ -2,8 +2,8 @@ package protocol
 
 import (
 	"fmt"
-	error2 "github.com/Hooneats/Syeong_server/common/error"
-	"github.com/Hooneats/Syeong_server/logger"
+	error2 "github.com/codestates/WBA-BC-Project-02/was/common/error"
+	"github.com/codestates/WBA-BC-Project-02/was/logger"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
