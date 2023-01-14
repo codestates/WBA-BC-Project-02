@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var AppModel Modeler
+var AppModel model.Modeler
 
 var UserModel user.UserModeler
 
