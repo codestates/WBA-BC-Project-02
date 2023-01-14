@@ -1,4 +1,4 @@
-package ciper
+package common
 
 import (
 	"github.com/gofrs/uuid"

@@ -2,7 +2,7 @@ package user
 
 import (
 	"github.com/codestates/WBA-BC-Project-02/common/enum"
-	ciper "github.com/codestates/WBA-BC-Project-02/was/common/cipher"
+	ciper "github.com/codestates/WBA-BC-Project-02/was/common"
 	"github.com/codestates/WBA-BC-Project-02/was/config"
 	"github.com/codestates/WBA-BC-Project-02/was/model/user"
 	"github.com/codestates/WBA-BC-Project-02/was/protocol/useer/request"
