@@ -10,9 +10,9 @@ func GinHandle(gr *gin.Engine) {
 			Info(i)
 		}
 
-		u := v1.Group("/users")
+		//u := v1.Group("/users")
 		{
-			Users(u)
+			//Users(u)
 		}
 	}
 }

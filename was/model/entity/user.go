@@ -2,55 +2,19 @@ package entity
 
 import (
 	"github.com/codestates/WBA-BC-Project-02/was/model/entity/dom"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"time"
 )
 
 type User struct {
-	ID          primitive.ObjectID `bson:"_id,omitempty"`
-	Name        string             `bson:"name,omitempty"`
-	NicName     string             `bson:"nic_name,omitempty"`
-	Password    string             `bson:"password,omitempty"`
-	PhoneNumber string             `bson:"phone_number,omitempty"`
-	Role        string             `bson:"role,omitempty"`
-	PrivateKey  string             `bson:"private_key,omitempty"`
-	Item        *dom.Item          `bson:"item,omitempty"`
-	BaseTime    *dom.BaseTime      `bson:"base_time,omitempty"`
-}
-
-func (u *User) NewSetDUser() bson.D {
-	return bson.D{
-		{"$set",
-			bson.D{
-				{"name", u.Name},
-				{"nic_name", u.NicName},
-				{"phone_number", u.PhoneNumber},
-				{"role", u.Role},
-				{"base_time.updated_at", time.Now()},
-			},
-		},
-	}
-}
-
-func (u *User) NewSetDUserPassword() bson.D {
-	return bson.D{
-		{"$set",
-			bson.D{
-				{"password", u.Password},
-				{"base_time.updated_at", time.Now()},
-			},
-		},
-	}
-}
-
-func (u *User) NewSetDUserBlackIron() bson.D {
-	return bson.D{
-		{"$set",
-			bson.D{
-				{"item.black_iron", u.Item.BlackIron},
-				{"base_time.updated_at", time.Now()},
-			},
-		},
-	}
+	ID           primitive.ObjectID `bson:"_id,omitempty"`
+	Password     string             `bson:"password,omitempty"`
+	WemixAmount  string             `bson:"wemix_amount,omitempty"`
+	DracoAmount  string             `bson:"draco_amount,omitempty"`
+	TigAmount    string             `bson:"tig_amount,omitempty"`
+	CreditAmount string             `bson:"credit_amount,omitempty"`
+	PrivateKey   string             `bson:"private_key,omitempty"`
+	PublicKey    string             `bson:"public_key,omitempty"`
+	Address      string             `bson:"address,omitempty"`
+	Transactions []*dom.Transaction `bson:"transactions,omitempty"`
+	BaseTime     *dom.BaseTime      `bson:"base_time,omitempty"`
 }

@@ -1,18 +1,17 @@
 package user
 
 import (
-	"github.com/codestates/WBA-BC-Project-02/was/protocol/useer/request"
 	"github.com/codestates/WBA-BC-Project-02/was/protocol/useer/response"
 )
 
 type UserServicer interface {
-	RegisterUser(user *request.PostUser) (string, error)
+	RegisterUser() (string, error)
 
-	ModifyUser(ID string, user *request.PutUser) (int, error)
+	ModifyUser(ID string) (int, error)
 
-	FindUser(ID string) (*response.ResponseUser, error)
+	FindUser(ID string) error
 
 	DeleteUser(ID string) (int, error)
 
-	Login(user *request.Login) (*response.Token, error)
+	Login() (*response.Token, error)
 }

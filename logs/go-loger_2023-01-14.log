@@ -4,3 +4,4 @@
 {"level":"ERROR","time":"2023-01-14T21:07:49.277+0900","caller":"logger/zpa_log.go:74","msg":"error","-":"Start Server fail, http: Server closed "}
 {"level":"INFO","time":"2023-01-14T21:07:52.278+0900","caller":"logger/zpa_log.go:60","msg":"info","-":"timeout of 3s seconds. "}
 {"level":"INFO","time":"2023-01-14T21:07:52.278+0900","caller":"logger/zpa_log.go:60","msg":"info","-":"Server exiting "}
+{"level":"INFO","time":"2023-01-14T23:59:39.180+0900","caller":"logger/zpa_log.go:60","msg":"info","-":"Start gin mod debug "}
