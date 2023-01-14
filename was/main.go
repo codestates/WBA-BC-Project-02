@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/codestates/WBA-BC-Project-02/common/ciper"
+	commonModel "github.com/codestates/WBA-BC-Project-02/common/model"
 	"github.com/codestates/WBA-BC-Project-02/was/common/app"
 	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
 	"github.com/codestates/WBA-BC-Project-02/was/common/flag"
@@ -55,7 +56,7 @@ func init() {
 		log.Fatal(err)
 	}
 	model.CreateIndexesInModels()
-	model.InjectModelsMongoDependency(model.MongoCollections)
+	model.InjectModelsMongoDependency(commonModel.MongoCollections)
 
 	// service
 	service.InjectServicesDependency()

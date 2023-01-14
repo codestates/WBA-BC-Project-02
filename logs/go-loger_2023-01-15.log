@@ -1,3 +1,9 @@
 {"level":"INFO","time":"2023-01-15T00:00:45.340+0900","caller":"logger/zpa_log.go:60","msg":"info","-":"Start gin mod debug "}
 {"level":"INFO","time":"2023-01-15T00:01:17.048+0900","caller":"logger/zpa_log.go:60","msg":"info","-":"Start gin mod debug "}
 {"level":"INFO","time":"2023-01-15T00:01:17.049+0900","caller":"logger/zpa_log.go:60","msg":"info","-":"Start Server ... mode is dev and port is :8080 "}
+{"level":"INFO","time":"2023-01-15T00:11:40.282+0900","caller":"logger/zpa_log.go:60","msg":"info","-":"Start gin mod debug "}
+{"level":"INFO","time":"2023-01-15T00:11:40.283+0900","caller":"logger/zpa_log.go:60","msg":"info","-":"Start Server ... mode is dev and port is :8080 "}
+{"level":"WARN","time":"2023-01-15T00:11:42.878+0900","caller":"logger/zpa_log.go:67","msg":"warn","-":"Shutdown Server ... "}
+{"level":"ERROR","time":"2023-01-15T00:11:42.878+0900","caller":"logger/zpa_log.go:74","msg":"error","-":"Start Server fail, http: Server closed "}
+{"level":"INFO","time":"2023-01-15T00:11:45.879+0900","caller":"logger/zpa_log.go:60","msg":"info","-":"timeout of 3s seconds. "}
+{"level":"INFO","time":"2023-01-15T00:11:45.879+0900","caller":"logger/zpa_log.go:60","msg":"info","-":"Server exiting "}
