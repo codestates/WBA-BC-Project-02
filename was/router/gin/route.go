@@ -3,6 +3,7 @@ package gin
 import (
 	"github.com/codestates/WBA-BC-Project-02/was/controller"
 	"github.com/codestates/WBA-BC-Project-02/was/logger"
+	v1 "github.com/codestates/WBA-BC-Project-02/was/router/gin/handler/v1"
 	"github.com/codestates/WBA-BC-Project-02/was/router/gin/middleware"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -29,13 +30,13 @@ func NewGinRoute(mode string) *GinRoute {
 func (r *GinRoute) Handle() http.Handler {
 	gr := r.engin
 
-	v1 := gr.Group("app/v1")
+	version1 := gr.Group("app/v1")
 	{
-		v1.GET("/info", controller.InfoControl.GetInformation)
+		version1.GET("/info", controller.InfoControl.GetInformation)
 
-		//u := v1.Group("/users")
+		u := version1.Group("/users")
 		{
-			//Users(u)
+			v1.Users(u)
 		}
 	}
 

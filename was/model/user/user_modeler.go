@@ -1,13 +1,7 @@
 package user
 
+import "github.com/codestates/WBA-BC-Project-02/common/model/entity"
+
 type UserModeler interface {
-	PostUser() (string, error)
-
-	UpdateUser() (int64, error)
-
-	SelectUser(id string) error
-
-	SelectUserByNicName(nicName string) error
-
-	DeleteUser(id string) (int64, error)
+	InsertUser(user *entity.User) error
 }

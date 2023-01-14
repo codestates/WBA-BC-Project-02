@@ -1,6 +1,8 @@
 package user
 
 import (
+	"github.com/codestates/WBA-BC-Project-02/common/model/entity"
+	wasCommon "github.com/codestates/WBA-BC-Project-02/was/common"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -18,4 +20,14 @@ func NewUserModel(col *mongo.Collection) *userModel {
 		collection: col,
 	}
 	return instance
+}
+
+func (u *userModel) InsertUser(user *entity.User) error {
+	ctx, cancel := wasCommon.NewContext(wasCommon.ModelContextTimeOut)
+	defer cancel()
+
+	if _, err := u.collection.InsertOne(ctx, user); err != nil {
+		return err
+	}
+	return nil
 }

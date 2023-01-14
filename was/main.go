@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
+	"github.com/joho/godotenv"
 	"log"
 
 	"github.com/codestates/WBA-BC-Project-02/common/enum"
@@ -8,7 +10,6 @@ import (
 	"github.com/codestates/WBA-BC-Project-02/common/ciper"
 	"github.com/codestates/WBA-BC-Project-02/was/common/app"
 	"github.com/codestates/WBA-BC-Project-02/was/common/flag"
-	"github.com/codestates/WBA-BC-Project-02/was/common/redis"
 	"github.com/codestates/WBA-BC-Project-02/was/config"
 	"github.com/codestates/WBA-BC-Project-02/was/controller"
 	"github.com/codestates/WBA-BC-Project-02/was/logger"
@@ -39,12 +40,13 @@ func init() {
 	config.LoadConfigs(flag.Flags)
 
 	//Decrypt
+	checkDevModAndLoadEnv()
 	ciper.LoadCipherKey(config.ServerConfig.Mode)
 	ciper.LoadCipherBlock()
 	config.DecryptConfigs()
 
 	//Redis
-	if err := redis.LoadRedisClient(config.RedisConfig.DNS); err != nil {
+	if err := cache.LoadRedisClient(config.RedisConfig.DNS); err != nil {
 		log.Fatal(err)
 	}
 
@@ -71,4 +73,13 @@ func init() {
 
 func main() {
 	App.Run()
+}
+
+func checkDevModAndLoadEnv() {
+	if config.ServerConfig.Mode != enum.DevMode {
+		return
+	}
+	if err := godotenv.Load(enum.DevModeENVFilePath); err != nil {
+		log.Fatal("Error loading .env file ::", err.Error())
+	}
 }

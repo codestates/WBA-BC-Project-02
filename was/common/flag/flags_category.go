@@ -2,8 +2,6 @@ package flag
 
 import "flag"
 
-const DefaultModePath = "dev"
-
 type FlagCategory struct {
 	Name    string
 	Default string
@@ -25,19 +23,19 @@ var (
 
 	DatabaseFlag = &FlagCategory{
 		Name:    "db",
-		Default: "./was/config/" + DefaultModePath + "/db/config.toml",
+		Default: "./was/config/dev/db/config.toml",
 		Usage:   "toml file to use for database configuration",
 	}
 
 	JWTFlag = &FlagCategory{
 		Name:    "jwt",
-		Default: "./was/config/" + DefaultModePath + "/jwt/config.toml",
+		Default: "./was/config/dev/jwt/config.toml",
 		Usage:   "toml file to use for jwt configuration",
 	}
 
 	RedisFlag = &FlagCategory{
 		Name:    "redis",
-		Default: "./was/config/" + DefaultModePath + "/redis/config.toml",
+		Default: "./was/config/dev/redis/config.toml",
 		Usage:   "toml file to use for redis configuration",
 	}
 )

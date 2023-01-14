@@ -7,9 +7,5 @@ import (
 
 // Users ("app/v1/users")
 func Users(usersUrl *gin.RouterGroup) {
-	usersUrl.POST("/login", controller.UserControl.Login)
-	usersUrl.POST("/user", controller.UserControl.PostUser)
-	usersUrl.GET("/user", controller.UserControl.GetUser)
-	usersUrl.PUT("/user", controller.UserControl.PutUser)
-	usersUrl.DELETE("/user", controller.UserControl.DeleteUser)
+	usersUrl.POST("/wallet", controller.UserControl.CreateWallet)
 }
