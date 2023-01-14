@@ -1,6 +1,6 @@
 package entity
 
-import "github.com/codestates/WBA-BC-Project-02/was/model/entity/dom"
+import "github.com/codestates/WBA-BC-Project-02/common/model/entity/dom"
 
 type Contract struct {
 	ID              string             `bson:"_id,omitempty"`

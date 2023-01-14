@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"github.com/codestates/WBA-BC-Project-02/was/model/entity/dom"
+	"github.com/codestates/WBA-BC-Project-02/common/model/entity/dom"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
