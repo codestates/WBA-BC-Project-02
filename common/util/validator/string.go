@@ -2,7 +2,7 @@ package validator
 
 import (
 	"errors"
-	"github.com/Hooneats/WBA-BC-Project-02/common/enum"
+	"github.com/codestates/WBA-BC-Project-02/common/enum"
 	"strings"
 )
 
