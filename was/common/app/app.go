@@ -3,9 +3,9 @@ package app
 import (
 	"context"
 	"fmt"
-	"github.com/Hooneats/Syeong_server/config"
-	"github.com/Hooneats/Syeong_server/logger"
-	"github.com/Hooneats/Syeong_server/router"
+	"github.com/codestates/WBA-BC-Project-02/was/config"
+	"github.com/codestates/WBA-BC-Project-02/was/logger"
+	"github.com/codestates/WBA-BC-Project-02/was/router"
 	"golang.org/x/sync/errgroup"
 	"net/http"
 	"os"

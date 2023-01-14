@@ -1,8 +1,8 @@
 package info
 
 import (
-	"github.com/Hooneats/Syeong_server/config"
-	"github.com/Hooneats/Syeong_server/protocol"
+	"github.com/codestates/WBA-BC-Project-02/was/config"
+	"github.com/codestates/WBA-BC-Project-02/was/protocol"
 	"github.com/gin-gonic/gin"
 )
 

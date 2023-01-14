@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"github.com/Hooneats/Syeong_server/common/ciper"
+	"github.com/codestates/WBA-BC-Project-02/common/ciper"
 	"os"
 	"time"
 )

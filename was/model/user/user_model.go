@@ -1,10 +1,10 @@
 package user
 
 import (
-	"github.com/Hooneats/WBA-BC-Project-02/common/enum"
-	"github.com/Hooneats/WBA-BC-Project-02/was/common"
-	"github.com/Hooneats/WBA-BC-Project-02/was/model/entity"
-	"github.com/Hooneats/WBA-BC-Project-02/was/model/query"
+	"github.com/codestates/WBA-BC-Project-02/common/enum"
+	"github.com/codestates/WBA-BC-Project-02/was/common"
+	"github.com/codestates/WBA-BC-Project-02/was/model/entity"
+	"github.com/codestates/WBA-BC-Project-02/was/model/query"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"

@@ -1,12 +1,12 @@
 package user
 
 import (
-	"github.com/Hooneats/Syeong_server/common/ciper"
-	"github.com/Hooneats/Syeong_server/common/enum"
-	"github.com/Hooneats/Syeong_server/config"
-	"github.com/Hooneats/Syeong_server/model/user"
-	"github.com/Hooneats/Syeong_server/protocol/useer/request"
-	"github.com/Hooneats/Syeong_server/protocol/useer/response"
+	"github.com/codestates/WBA-BC-Project-02/common/enum"
+	ciper "github.com/codestates/WBA-BC-Project-02/was/common/cipher"
+	"github.com/codestates/WBA-BC-Project-02/was/config"
+	"github.com/codestates/WBA-BC-Project-02/was/model/user"
+	"github.com/codestates/WBA-BC-Project-02/was/protocol/useer/request"
+	"github.com/codestates/WBA-BC-Project-02/was/protocol/useer/response"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 )

@@ -1,8 +1,8 @@
 package request
 
 import (
-	"github.com/Hooneats/Syeong_server/model/entity"
-	"github.com/Hooneats/Syeong_server/model/entity/dom"
+	"github.com/codestates/WBA-BC-Project-02/was/model/entity"
+	"github.com/codestates/WBA-BC-Project-02/was/model/entity/dom"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )

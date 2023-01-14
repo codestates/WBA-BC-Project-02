@@ -1,8 +1,8 @@
 package user
 
 import (
-	"github.com/Hooneats/Syeong_server/protocol/useer/request"
-	"github.com/Hooneats/Syeong_server/protocol/useer/response"
+	"github.com/codestates/WBA-BC-Project-02/was/protocol/useer/request"
+	"github.com/codestates/WBA-BC-Project-02/was/protocol/useer/response"
 )
 
 type UserServicer interface {

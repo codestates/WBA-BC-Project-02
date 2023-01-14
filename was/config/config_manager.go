@@ -1,12 +1,12 @@
 package config
 
 import (
-	"github.com/Hooneats/Syeong_server/common/flag"
-	configDB "github.com/Hooneats/Syeong_server/config/dev/db"
-	configJWT "github.com/Hooneats/Syeong_server/config/dev/jwt"
-	"github.com/Hooneats/Syeong_server/config/dev/redis"
-	configLog "github.com/Hooneats/Syeong_server/config/log"
-	configServer "github.com/Hooneats/Syeong_server/config/server"
+	"github.com/codestates/WBA-BC-Project-02/was/common/flag"
+	configDB "github.com/codestates/WBA-BC-Project-02/was/config/dev/db"
+	configJWT "github.com/codestates/WBA-BC-Project-02/was/config/dev/jwt"
+	"github.com/codestates/WBA-BC-Project-02/was/config/dev/redis"
+	configLog "github.com/codestates/WBA-BC-Project-02/was/config/log"
+	configServer "github.com/codestates/WBA-BC-Project-02/was/config/server"
 	"github.com/naoina/toml"
 	"log"
 	"os"

@@ -1,6 +1,6 @@
 package redis
 
-import "github.com/Hooneats/Syeong_server/common/ciper"
+import "github.com/codestates/WBA-BC-Project-02/common/ciper"
 
 type Redis struct {
 	DNS string

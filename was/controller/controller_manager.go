@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"github.com/Hooneats/Syeong_server/controller/info"
-	"github.com/Hooneats/Syeong_server/controller/user"
-	"github.com/Hooneats/Syeong_server/service"
+	"github.com/codestates/WBA-BC-Project-02/was/controller/info"
+	"github.com/codestates/WBA-BC-Project-02/was/controller/user"
+	"github.com/codestates/WBA-BC-Project-02/was/service"
 )
 
 var InfoControl info.InfoController

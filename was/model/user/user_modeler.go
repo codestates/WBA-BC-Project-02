@@ -1,6 +1,6 @@
 package user
 
-import "github.com/Hooneats/Syeong_server/model/entity"
+import "github.com/codestates/WBA-BC-Project-02/was/model/entity"
 
 type UserModeler interface {
 	PostUser(user *entity.User) (string, error)

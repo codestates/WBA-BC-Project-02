@@ -1,8 +1,8 @@
 package model
 
 import (
-	"github.com/Hooneats/Syeong_server/common"
-	"github.com/Hooneats/Syeong_server/logger"
+	"github.com/codestates/WBA-BC-Project-02/was/common"
+	"github.com/codestates/WBA-BC-Project-02/was/logger"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

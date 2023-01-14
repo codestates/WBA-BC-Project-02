@@ -1,7 +1,7 @@
 package response
 
 import (
-	"github.com/Hooneats/Syeong_server/model/entity"
+	"github.com/codestates/WBA-BC-Project-02/was/model/entity"
 )
 
 type ResponseUser struct {

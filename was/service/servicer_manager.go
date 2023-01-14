@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/Hooneats/Syeong_server/model"
-	"github.com/Hooneats/Syeong_server/service/user"
+	"github.com/codestates/WBA-BC-Project-02/was/model"
+	"github.com/codestates/WBA-BC-Project-02/was/service/user"
 )
 
 var UserService user.UserServicer
