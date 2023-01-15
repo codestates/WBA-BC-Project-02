@@ -8,8 +8,8 @@ import (
 )
 
 type Model struct {
-	client   *mongo.Client
-	colBlock *mongo.Collection
+	client         *mongo.Client
+	colTransaction *mongo.Collection
 }
 
 func NewModel(mgUrl string) (*Model, error) {
@@ -21,8 +21,8 @@ func NewModel(mgUrl string) (*Model, error) {
 	} else if err := r.client.Ping(context.Background(), nil); err != nil {
 		return nil, err
 	} else {
-		db := r.client.Database("daemon")
-		r.colBlock = db.Collection("transaction")
+		db := r.client.Database("wemixon-mongo")
+		r.colTransaction = db.Collection("transaction")
 	}
 
 	return r, nil
