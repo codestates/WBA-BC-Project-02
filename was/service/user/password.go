@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-func HashPassword(password string) string {
+func BcryptHashPassword(password string) string {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {
 		log.Panic(err)
@@ -13,7 +13,7 @@ func HashPassword(password string) string {
 	return string(bytes)
 }
 
-func VerifyPassword(hashedPassword, userPassword string) error {
+func BcryptVerifyPassword(hashedPassword, userPassword string) error {
 	if err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(userPassword)); err != nil {
 		return err
 	}

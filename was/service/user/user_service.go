@@ -1,12 +1,11 @@
 package user
 
 import (
-	"github.com/codestates/WBA-BC-Project-02/was/common"
+	"github.com/codestates/WBA-BC-Project-02/common/model/entity"
 	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
 	"github.com/codestates/WBA-BC-Project-02/was/config"
-	"github.com/codestates/WBA-BC-Project-02/was/model/factory"
+	"github.com/codestates/WBA-BC-Project-02/was/logger"
 	"github.com/codestates/WBA-BC-Project-02/was/model/user"
-	"github.com/codestates/WBA-BC-Project-02/was/protocol/user/response"
 )
 
 type userService struct {
@@ -25,42 +24,27 @@ func NewUserService(modeler user.UserModeler) *userService {
 	return instance
 }
 
-func (u *userService) CreateWallet(PWD, device string) (*response.Mnemonic, error) {
-	mnemonic, err := NewMnemonic()
-	if err != nil {
-		return nil, err
-	}
-
-	wallet, err := NewWallet(mnemonic)
-	if err != nil {
-		return nil, err
-	}
-
-	hashPassword := HashPassword(PWD)
-
-	newUser := factory.NewCreateUser(hashPassword, wallet.Address, wallet.PrivateKey, wallet.PublicKey)
-
-	if err := u.userModel.InsertUser(newUser); err != nil {
-		return nil, err
-	}
-
+func (u *userService) getToken(newUser *entity.User) (*cache.Token, error) {
 	accessKey := config.JWTConfig.AccessKey
 	refreshKey := config.JWTConfig.RefreshKey
-	token, err := common.CreateToken(newUser.ID.Hex(), accessKey, refreshKey)
+	token, err := cache.CreateToken(newUser.ID.Hex(), accessKey, refreshKey)
 	if err != nil {
 		return nil, err
 	}
 
-	loginInfo := cache.NewLoginInfo(device, newUser)
-	if err := cache.CacheLoginInfo(loginInfo, token); err != nil {
-		return nil, err
-	}
+	return token, nil
+}
 
-	return &response.Mnemonic{
-		Mnemonic: mnemonic,
-		Token: response.Token{
-			AccessToken:  token.AccessToken.Token,
-			RefreshToken: token.RefreshToken.Token,
-		},
-	}, nil
+func (u *userService) saveCache(user *entity.User, userAgent string, token *cache.Token) error {
+	loginInfo := cache.NewLoginInfo(userAgent, user)
+	if err := cache.CacheLoginInfo(loginInfo, token); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (u *userService) deleteCachedToken(token *cache.Token) {
+	if err := cache.Delete(token.AccessToken.ID, token.RefreshToken.ID); err != nil {
+		logger.AppLog.Error(err)
+	}
 }

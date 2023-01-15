@@ -3,6 +3,7 @@ package user
 import (
 	"github.com/codestates/WBA-BC-Project-02/common/model/entity"
 	wasCommon "github.com/codestates/WBA-BC-Project-02/was/common"
+	"github.com/codestates/WBA-BC-Project-02/was/model/query"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -30,4 +31,26 @@ func (u *userModel) InsertUser(user *entity.User) error {
 		return err
 	}
 	return nil
+}
+
+func (u *userModel) FindUser(address string) (*entity.User, error) {
+	//filter := bson.M{"address": address}
+	//opt := options.FindOne().SetProjection(bson.M{"transactions": 0})
+	//u.collection.FindOne(ctx, filter, opt)
+	filter := query.GetAddressFilter(address)
+	user := &entity.User{}
+	if err := query.NewFindAction(user, u.collection).InjectFilter(filter).FindOne(nil); err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (u *userModel) FindUserAndPWDUpdate(address, password string) (*entity.User, error) {
+	f := query.GetAddressFilter(address)
+	upf := query.GetUpdatePWDFilter(password)
+	user := &entity.User{}
+	if err := query.NewFindAction(user, u.collection).InjectFilter(f).InjectUpdate(upf).FindOneAndUpdate(nil); err != nil {
+		return nil, err
+	}
+	return user, nil
 }

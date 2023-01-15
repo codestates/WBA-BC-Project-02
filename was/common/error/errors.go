@@ -45,6 +45,8 @@ var (
 	BadRequestError     = NewAppErrorCustom(BadRequestCode, "부적절한 요청입니다.", BadRequest)
 	DataNotFoundError   = NewAppErrorCustom(DataNotFoundCode, "데이터를 찾을 수 없습니다.", DataNotFound)
 	DuplicatedDataError = NewAppErrorCustom(DuplicatedDataCode, "이미 존재하는 데이터 입니다.", DuplicatedData)
+	BadUserAgentError   = NewAppErrorCustom(BadRequestCode, "식별할 수 없는 요청입니다.", BadRequest)
+	UserNotFoundError   = NewAppErrorCustom(UserNotFoundCode, "찾을 수 없는 사용자 입니다.", UserNotFound)
 )
 
 /* 501 ~ 599 서버 에러 */
