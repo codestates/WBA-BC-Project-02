@@ -1,6 +1,7 @@
 package user
 
 import (
+	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
 	"github.com/codestates/WBA-BC-Project-02/was/protocol/user/request"
 	"github.com/codestates/WBA-BC-Project-02/was/protocol/user/response"
 )
@@ -13,4 +14,6 @@ type UserServicer interface {
 	ReissueToken(refreshToken string, ua string) (*response.Token, error)
 
 	GetUser(address string) (*response.User, error)
+
+	IncreaseBlackIron(user *cache.LoginInformation) (*response.SimpleUser, error)
 }

@@ -1,4 +1,4 @@
-package util
+package user
 
 import (
 	commonEnum "github.com/codestates/WBA-BC-Project-02/common/enum"

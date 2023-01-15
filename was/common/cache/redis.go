@@ -50,6 +50,16 @@ func CacheLoginInfos(loginInfo *LoginInformation, token *Tokens) error {
 	return nil
 }
 
+func UpdateLoginInfo(key string, loginInfo *LoginInformation, du time.Duration) error {
+	ctx, cancel := wasCommon.NewContext(wasCommon.ServiceContextTimeOut)
+	defer cancel()
+
+	if err := client.Set(ctx, key, loginInfo, du).Err(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func Delete(keys ...string) error {
 	ctx, cancel := wasCommon.NewContext(wasCommon.ServiceContextTimeOut)
 	defer cancel()

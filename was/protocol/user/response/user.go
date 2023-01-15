@@ -7,6 +7,7 @@ import (
 
 type User struct {
 	ID           string             `json:"user_id"`
+	BlackIron    int                `json:"black_iron"`
 	WemixAmount  string             `json:"wemix_amount"`
 	DracoAmount  string             `json:"draco_amount"`
 	TigAmount    string             `json:"tig_amount"`
@@ -18,6 +19,7 @@ type User struct {
 func FromEntity(usr *entity.User) *User {
 	return &User{
 		ID:           usr.ID.Hex(),
+		BlackIron:    usr.BlackIron,
 		WemixAmount:  usr.WemixAmount,
 		DracoAmount:  usr.DracoAmount,
 		TigAmount:    usr.TigAmount,

@@ -37,11 +37,14 @@ func (r *GinRoute) Handle() http.Handler {
 		u := version1.Group("/users")
 		{
 			v1.Users(u)
+		}
+		au := version1.Group("/auth", middleware.JWTToken())
+		{
+			auU := au.Group("/users")
+			v1.AuthUsers(auU)
 
-			au := u.Group("/auth", middleware.JWTToken())
-			{
-				v1.AuthUsers(au)
-			}
+			auC := au.Group("/contracts")
+			v1.AuthContracts(auC)
 		}
 	}
 

@@ -16,3 +16,7 @@ func GetAddressFilter(address string) bson.M {
 func GetUpdatePWDFilter(encryptPassword string) bson.M {
 	return bson.M{"$set": bson.M{"password": encryptPassword}}
 }
+
+func GetBlackIronIncreaseFilter() bson.M {
+	return bson.M{"$inc": bson.M{"black_iron": 1}}
+}

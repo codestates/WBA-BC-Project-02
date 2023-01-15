@@ -14,8 +14,9 @@ func Users(usersUrl *gin.RouterGroup) {
 	usersUrl.POST("/tokens", controller.UserControl.ReissueToken)
 }
 
-// AuthUsers ("app/v1/users/auth")
+// AuthUsers ("app/v1/auth/users")
 func AuthUsers(authUrl *gin.RouterGroup) {
-	authUrl.GET("/user", controller.UserControl.GetUserSimpleInformation)
-	authUrl.GET("/user/transactions", controller.UserControl.GetUserInformation)
+	authUrl.GET("", controller.UserControl.GetUserSimpleInformation)
+	authUrl.GET("/transactions", controller.UserControl.GetUserInformation)
+	authUrl.PUT("/black-iron", controller.UserControl.IncreaseBlackIron)
 }

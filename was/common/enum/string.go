@@ -7,11 +7,13 @@ const (
 	LoginInformation    = "loginInformation"
 
 	// JWT TOKEN
-	AccessToken    = "ACCESSTOEKN"
-	RefreshToken   = "REFRESHTOEKN"
 	JWTAuthorized  = "authorized"
 	JWTAccessUUID  = "access_uuid"
 	JWTRefreshUUID = "refresh_uuid"
 	JWTTokenID     = "token_id"
 	JWTEXP         = "exp"
+
+	// cache
+	AccessCache  = "ACCESSTOEKN"
+	RefreshCache = "REFRESHTOEKN"
 )

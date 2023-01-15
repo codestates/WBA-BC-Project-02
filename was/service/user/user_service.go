@@ -1,12 +1,12 @@
 package user
 
 import (
+	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
 	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
 	error2 "github.com/codestates/WBA-BC-Project-02/was/common/error"
 	"github.com/codestates/WBA-BC-Project-02/was/config"
 	"github.com/codestates/WBA-BC-Project-02/was/model/user"
 	"github.com/codestates/WBA-BC-Project-02/was/protocol/user/response"
-	"github.com/codestates/WBA-BC-Project-02/was/service/user/util"
 )
 
 type userService struct {
@@ -26,20 +26,20 @@ func NewUserService(modeler user.UserModeler) *userService {
 }
 
 func (u *userService) ReissueToken(refreshToken string, ua string) (*response.Token, error) {
-	info, err := util.ValidateTokenAndUserAgent(refreshToken, ua, enum.JWTRefreshUUID, config.JWTConfig.RefreshKey)
+	info, err := ValidateTokenAndUserAgent(refreshToken, ua, enum.JWTRefreshUUID, config.JWTConfig.RefreshKey)
 	if err != nil {
 		return nil, err
 	}
 
-	tokens, err := util.GetToken(info.UserID)
+	tokens, err := getToken(info.UserID)
 	if err != nil {
 		return nil, err
 	}
 
-	util.DeleteCachedLoginInfos(tokens)
+	deleteCachedLoginInfos(tokens)
 
 	info.Device = ua
-	if err := util.SaveCacheLoginInfos(info, tokens); err != nil {
+	if err := saveCacheLoginInfos(info, tokens); err != nil {
 		return nil, err
 	}
 
@@ -56,4 +56,18 @@ func (u *userService) GetUser(address string) (*response.User, error) {
 	}
 	resU := response.FromEntity(foundUser)
 	return resU, err
+}
+
+func (u *userService) IncreaseBlackIron(info *cache.LoginInformation) (*response.SimpleUser, error) {
+	updatedUser, err := u.userModel.FindUserAndIncreaseIron(info.Address)
+	if err != nil {
+		return nil, err
+	}
+
+	info.BlackIron = updatedUser.BlackIron
+	if err := updateAccessCacheInfo(info); err != nil {
+		return nil, err
+	}
+
+	return response.FromCache(info), nil
 }

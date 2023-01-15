@@ -54,3 +54,14 @@ func (u *userModel) FindUserAndPWDUpdate(address, password string) (*entity.User
 	}
 	return user, nil
 }
+
+func (u *userModel) FindUserAndIncreaseIron(address string) (*entity.User, error) {
+	f := query.GetAddressFilter(address)
+	upf := query.GetBlackIronIncreaseFilter()
+	prj := options.FindOneAndUpdate().SetReturnDocument(options.After)
+	user := &entity.User{}
+	if err := query.NewFindAction(user, u.collection).InjectFilter(f).InjectUpdate(upf).FindOneAndUpdate(prj); err != nil {
+		return nil, err
+	}
+	return user, nil
+}

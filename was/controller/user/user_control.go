@@ -102,6 +102,7 @@ func (u *userControl) GetUserInformation(c *gin.Context) {
 	userInfo := response.FromCache(loginInfo)
 	resU, err := u.userService.GetUser(userInfo.Address)
 	if err != nil {
+		protocol.Fail(wasError.NewAppError(err)).Response(c)
 		return
 	}
 
@@ -109,12 +110,17 @@ func (u *userControl) GetUserInformation(c *gin.Context) {
 }
 
 func (u *userControl) IncreaseBlackIron(c *gin.Context) {
-	//loginInfo, exists := c.Keys[enum.LoginInformation].(*cache.LoginInformation)
-	//if !exists {
-	//	protocol.Fail(wasError.InternalServerError).Response(c)
-	//	return
-	//}
-	//
-	//userInfo := response.FromCache(loginInfo)
-	//u.userService.IncreaseBlackIron(userInfo)
+	loginInfo, exists := c.Keys[enum.LoginInformation].(*cache.LoginInformation)
+	if !exists {
+		protocol.Fail(wasError.InternalServerError).Response(c)
+		return
+	}
+
+	simpleUser, err := u.userService.IncreaseBlackIron(loginInfo)
+	if err != nil {
+		protocol.Fail(wasError.NewAppError(err)).Response(c)
+		return
+	}
+
+	protocol.SuccessData(simpleUser).Response(c)
 }
