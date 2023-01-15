@@ -1,7 +1,9 @@
 package user
 
 import (
+	"github.com/codestates/WBA-BC-Project-02/common/ciper"
 	"github.com/codestates/WBA-BC-Project-02/common/enum"
+	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
 	"github.com/codestates/WBA-BC-Project-02/was/model/factory"
 	"github.com/codestates/WBA-BC-Project-02/was/protocol/user/response"
 	"strings"
@@ -20,19 +22,25 @@ func (u *userService) CreateWallet(PWD, userAgent string) (*response.Mnemonic, e
 
 	hashPassword := BcryptHashPassword(PWD)
 
-	newUser := factory.NewCreateUser(hashPassword, wallet.Address, wallet.PrivateKey, wallet.PublicKey)
-
-	token, err := u.getToken(newUser)
+	encryptPK, err := ciper.AESEncrypt(ciper.GetCipherBlock(), []byte(wallet.PrivateKey))
 	if err != nil {
 		return nil, err
 	}
 
-	if err := u.saveCache(newUser, userAgent, token); err != nil {
+	newUser := factory.NewCreateUser(hashPassword, wallet.Address, encryptPK, wallet.PublicKey)
+
+	tokens, err := u.getToken(newUser.ID.Hex())
+	if err != nil {
+		return nil, err
+	}
+
+	loginInfo := cache.NewLoginInfo(userAgent, newUser)
+	if err := u.saveCacheLoginInfos(loginInfo, userAgent, tokens); err != nil {
 		return nil, err
 	}
 
 	if err := u.userModel.InsertUser(newUser); err != nil {
-		u.deleteCachedToken(token)
+		u.deleteCachedLoginInfos(tokens)
 		return nil, err
 	}
 
@@ -40,8 +48,8 @@ func (u *userService) CreateWallet(PWD, userAgent string) (*response.Mnemonic, e
 	return &response.Mnemonic{
 		Mnemonic: slicedMnemonic,
 		Token: response.Token{
-			AccessToken:  token.AccessToken.Token,
-			RefreshToken: token.RefreshToken.Token,
+			AccessToken:  tokens.AccessToken.Token,
+			RefreshToken: tokens.RefreshToken.Token,
 		},
 	}, nil
 }

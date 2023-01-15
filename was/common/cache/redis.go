@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"encoding/json"
 	"errors"
 	wasCommon "github.com/codestates/WBA-BC-Project-02/was/common"
 	error2 "github.com/codestates/WBA-BC-Project-02/was/common/error"
@@ -27,18 +28,22 @@ func LoadRedisClient(DNS string) error {
 	return nil
 }
 
-func CacheLoginInfo(loginInfo *LoginInformation, token *Token) error {
+func CacheLoginInfos(loginInfo *LoginInformation, token *Tokens) error {
 	ctx, cancel := wasCommon.NewContext(wasCommon.ServiceContextTimeOut)
 	defer cancel()
+	loginInfo.TokenID = token.AccessToken.TokenID
 
 	at := time.Unix(token.AccessToken.Duration, 0)
 	rt := time.Unix(token.RefreshToken.Duration, 0)
 	now := time.Now()
 
-	if err := client.Set(ctx, token.AccessToken.ID, loginInfo, at.Sub(now)).Err(); err != nil {
+	loginInfo.TokenID = token.AccessToken.TokenID
+	if err := client.Set(ctx, token.AccessToken.CacheID, loginInfo, at.Sub(now)).Err(); err != nil {
 		return err
 	}
-	if err := client.Set(ctx, token.RefreshToken.ID, loginInfo, rt.Sub(now)).Err(); err != nil {
+
+	loginInfo.TokenID = token.RefreshToken.TokenID
+	if err := client.Set(ctx, token.RefreshToken.CacheID, loginInfo, rt.Sub(now)).Err(); err != nil {
 		return err
 	}
 
@@ -53,4 +58,20 @@ func Delete(keys ...string) error {
 		return errors.New(error2.RedisDelZeroCount + err.Error())
 	}
 	return nil
+}
+
+func GetLoginInfo(key string) (*LoginInformation, error) {
+	ctx, cancel := wasCommon.NewContext(wasCommon.ServiceContextTimeOut)
+	defer cancel()
+
+	loginInfoSTR, err := client.Get(ctx, key).Result()
+	if err != nil {
+		return nil, errors.New(error2.RedisGetError + err.Error())
+	}
+
+	info := &LoginInformation{}
+	if err := json.Unmarshal([]byte(loginInfoSTR), info); err != nil {
+		return nil, err
+	}
+	return info, nil
 }

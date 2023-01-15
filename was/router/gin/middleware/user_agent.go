@@ -1,9 +1,10 @@
 package middleware
 
 import (
-	enum2 "github.com/codestates/WBA-BC-Project-02/common/enum"
+	"fmt"
+	commonEnum "github.com/codestates/WBA-BC-Project-02/common/enum"
 	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
-	error2 "github.com/codestates/WBA-BC-Project-02/was/common/error"
+	wasError "github.com/codestates/WBA-BC-Project-02/was/common/error"
 	"github.com/codestates/WBA-BC-Project-02/was/config"
 	"github.com/codestates/WBA-BC-Project-02/was/protocol"
 	"github.com/gin-gonic/gin"
@@ -24,9 +25,11 @@ var (
 
 func UserAgent() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		fmt.Println("User Agent :: middleware")
 		device := c.GetHeader(enum.HeaderUserAgent)
 		if err := check(device); err != nil {
-			protocol.Fail(error2.BadUserAgentError).Response(c)
+			fmt.Println(err)
+			protocol.Fail(wasError.BadUserAgentError).Response(c)
 			c.AbortWithStatus(204)
 			return
 		}
@@ -35,7 +38,7 @@ func UserAgent() gin.HandlerFunc {
 }
 
 func check(ua string) error {
-	if config.ServerConfig.Mode == enum2.DevMode {
+	if config.ServerConfig.Mode == commonEnum.DevMode {
 		exploreList = append(exploreList, "Postman")
 	}
 	for _, exp := range exploreList {
@@ -43,5 +46,5 @@ func check(ua string) error {
 			return nil
 		}
 	}
-	return error2.BadUserAgentError
+	return wasError.BadUserAgentError
 }

@@ -1,11 +1,17 @@
 package enum
 
 const (
-	HeaderUserAgent = "User-Agent"
+	// WEB
+	HeaderUserAgent     = "User-Agent"
+	HeaderAuthorization = "Authorization"
+	LoginInformation    = "loginInformation"
 
-	AccessToken  = "ACCESSTOEKN"
-	RefreshToken = "REFRESHTOEKN"
-
-	JWTDevAccessKeyName  = "WEMIXON_DEV_JWT_ACCESS_KEY"
-	JWTDevRefreshKeyName = "WEMIXON_DEV_JWT_REFRESH_KEY"
+	// JWT TOKEN
+	AccessToken    = "ACCESSTOEKN"
+	RefreshToken   = "REFRESHTOEKN"
+	JWTAuthorized  = "authorized"
+	JWTAccessUUID  = "access_uuid"
+	JWTRefreshUUID = "refresh_uuid"
+	JWTTokenID     = "token_id"
+	JWTEXP         = "exp"
 )

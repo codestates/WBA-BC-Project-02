@@ -1,24 +1,28 @@
 package cache
 
 import (
+	"fmt"
 	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
+	wasError "github.com/codestates/WBA-BC-Project-02/was/common/error"
+	"github.com/gofrs/uuid"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
-type Token struct {
+type Tokens struct {
 	AccessToken  TokenDetail
 	RefreshToken TokenDetail
 }
 
 type TokenDetail struct {
-	ID       string
+	CacheID  string
+	TokenID  string
 	Token    string
 	Duration int64
 }
 
-func CreateToken(userID, accessKey, refreshKey string) (*Token, error) {
+func CreateToken(userID, accessKey, refreshKey string) (*Tokens, error) {
 	//Creating Access Token
 	acToken, err := createAccessToken(userID, accessKey)
 	if err != nil {
@@ -31,22 +35,61 @@ func CreateToken(userID, accessKey, refreshKey string) (*Token, error) {
 		return nil, err
 	}
 
-	return &Token{
+	return &Tokens{
 		AccessToken:  *acToken,
 		RefreshToken: *rfToken,
 	}, nil
 }
 
+func DecryptToken(signedToken, secretKey string) (*jwt.Token, error) {
+	token, err := jwt.Parse(
+		signedToken,
+		func(JWTtoekn *jwt.Token) (interface{}, error) {
+			if _, ok := JWTtoekn.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, wasError.UnauthorizedError
+			}
+			return []byte(secretKey), nil
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	return token, nil
+}
+
+func ExtractTokenUUID(token *jwt.Token, filed string) (string, string, error) {
+	claims, ok := token.Claims.(jwt.MapClaims)
+	fmt.Println("##### ok 와 claims :: ", ok, claims)
+	cacheID := ""
+	tokenID := ""
+	if ok && token.Valid {
+		cacheID, ok = claims[filed].(string)
+		if !ok {
+			return "", "", wasError.UnauthorizedError
+		}
+		tokenID, ok = claims[enum.JWTTokenID].(string)
+		if !ok {
+			return "", "", wasError.UnauthorizedError
+		}
+	}
+	return cacheID, tokenID, nil
+}
+
 func createAccessToken(userID, accessKey string) (*TokenDetail, error) {
 	td := &TokenDetail{}
 	td.Duration = time.Now().Add(time.Minute * 15).Unix()
-	td.ID = enum.AccessToken + userID
+	td.CacheID = enum.AccessToken + userID
+	UUID, err := uuid.NewV7()
+	if err != nil {
+		return nil, err
+	}
+	td.TokenID = UUID.String()
 
 	atClaims := jwt.MapClaims{}
-	atClaims["authorized"] = true
-	atClaims["access_uuid"] = td.ID
-	atClaims["user_id"] = userID
-	atClaims["exp"] = td.Duration
+	atClaims[enum.JWTAuthorized] = true
+	atClaims[enum.JWTAccessUUID] = td.CacheID
+	atClaims[enum.JWTTokenID] = td.TokenID
+	atClaims[enum.JWTEXP] = td.Duration
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	signedToken, err := at.SignedString([]byte(accessKey))
 	if err != nil {
@@ -59,12 +102,17 @@ func createAccessToken(userID, accessKey string) (*TokenDetail, error) {
 func createRefreshToken(userID, refreshKey string) (*TokenDetail, error) {
 	td := &TokenDetail{}
 	td.Duration = time.Now().Add(time.Hour * 24 * 7).Unix()
-	td.ID = enum.RefreshToken + userID
+	td.CacheID = enum.RefreshToken + userID
+	UUID, err := uuid.NewV7()
+	if err != nil {
+		return nil, err
+	}
+	td.TokenID = UUID.String()
 
 	rtClaims := jwt.MapClaims{}
-	rtClaims["refresh_uuid"] = td.ID
-	rtClaims["user_id"] = userID
-	rtClaims["exp"] = td.Duration
+	rtClaims[enum.JWTRefreshUUID] = td.CacheID
+	rtClaims[enum.JWTTokenID] = td.TokenID
+	rtClaims[enum.JWTEXP] = td.Duration
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)
 	signedToken, err := rt.SignedString([]byte(refreshKey))
 	if err != nil {
