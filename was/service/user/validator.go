@@ -5,11 +5,10 @@ import (
 	commonEnum "github.com/codestates/WBA-BC-Project-02/common/enum"
 	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
 	wasError "github.com/codestates/WBA-BC-Project-02/was/common/error"
-	"github.com/codestates/WBA-BC-Project-02/was/config"
 )
 
-func ValidateTokenAndUserAgent(token, userAgent, uuidKey string) (*cache.LoginInformation, error) {
-	jwtToken, err := cache.DecryptToken(token, config.JWTConfig.AccessKey)
+func ValidateTokenAndUserAgent(token, userAgent, uuidKey, JWTKey string) (*cache.LoginInformation, error) {
+	jwtToken, err := cache.DecryptToken(token, JWTKey)
 	if err != nil {
 		return nil, err
 	}
