@@ -40,13 +40,14 @@ func NewAppErrorCustom(code int, MSG string, name string) AppError {
 
 /* 401 ~ 499 error status */
 var (
-	UnauthorizedError   = NewAppErrorCustom(UnauthorizedCode, "허가되지 않은 사용자 입니다.", Unauthorized)
-	RestAccessFailError = NewAppErrorCustom(RestAccessFailCode, "로그인이 필요합니다.", RestAccessFail)
-	BadRequestError     = NewAppErrorCustom(BadRequestCode, "부적절한 요청입니다.", BadRequest)
-	DataNotFoundError   = NewAppErrorCustom(DataNotFoundCode, "데이터를 찾을 수 없습니다.", DataNotFound)
-	DuplicatedDataError = NewAppErrorCustom(DuplicatedDataCode, "이미 존재하는 데이터 입니다.", DuplicatedData)
-	BadUserAgentError   = NewAppErrorCustom(BadRequestCode, "식별할 수 없는 요청입니다.", BadRequest)
-	UserNotFoundError   = NewAppErrorCustom(UserNotFoundCode, "찾을 수 없는 사용자 입니다.", UserNotFound)
+	UnauthorizedError    = NewAppErrorCustom(UnauthorizedCode, "허가되지 않은 사용자 입니다.", Unauthorized)
+	RestAccessFailError  = NewAppErrorCustom(RestAccessFailCode, "로그인이 필요합니다.", RestAccessFail)
+	BadRequestError      = NewAppErrorCustom(BadRequestCode, "부적절한 요청입니다.", BadRequest)
+	DataNotFoundError    = NewAppErrorCustom(DataNotFoundCode, "데이터를 찾을 수 없습니다.", DataNotFound)
+	DuplicatedDataError  = NewAppErrorCustom(DuplicatedDataCode, "이미 존재하는 데이터 입니다.", DuplicatedData)
+	BadUserAgentError    = NewAppErrorCustom(BadRequestCode, "식별할 수 없는 요청입니다.", BadRequest)
+	UserNotFoundError    = NewAppErrorCustom(UserNotFoundCode, "찾을 수 없는 사용자 입니다.", UserNotFound)
+	DifferentDeviceError = NewAppErrorCustom(DifferentDeviceCode, "이전에 사용된 환경과 다릅니다. 계정 복구로 계정을 가져와주세요.", DifferentDevice)
 )
 
 /* 501 ~ 599 서버 에러 */

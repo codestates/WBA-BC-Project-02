@@ -1,7 +1,9 @@
 package cache
 
 import (
+	"fmt"
 	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
+	wasError "github.com/codestates/WBA-BC-Project-02/was/common/error"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -37,16 +39,45 @@ func CreateToken(userID, accessKey, refreshKey string) (*Token, error) {
 	}, nil
 }
 
+func DecryptToken(signedToken, secretKey string) (*jwt.Token, error) {
+	token, err := jwt.Parse(
+		signedToken,
+		func(JWTtoekn *jwt.Token) (interface{}, error) {
+			if _, ok := JWTtoekn.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, wasError.UnauthorizedError
+			}
+			return []byte(secretKey), nil
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	return token, nil
+}
+
+func ExtractAccessTokenUUID(token *jwt.Token) (string, error) {
+	claims, ok := token.Claims.(jwt.MapClaims)
+	fmt.Println("##### ok 와 claims :: ", ok, claims)
+	accessUUID := ""
+	if ok && token.Valid {
+		accessUUID, ok = claims[enum.JWTAccessUUID].(string)
+		if !ok {
+			return "", wasError.UnauthorizedError
+		}
+	}
+	return accessUUID, nil
+}
+
 func createAccessToken(userID, accessKey string) (*TokenDetail, error) {
 	td := &TokenDetail{}
 	td.Duration = time.Now().Add(time.Minute * 15).Unix()
 	td.ID = enum.AccessToken + userID
 
 	atClaims := jwt.MapClaims{}
-	atClaims["authorized"] = true
-	atClaims["access_uuid"] = td.ID
-	atClaims["user_id"] = userID
-	atClaims["exp"] = td.Duration
+	atClaims[enum.JWTAuthorized] = true
+	atClaims[enum.JWTAccessUUID] = td.ID
+	atClaims[enum.JWTUserID] = userID
+	atClaims[enum.JWTEXP] = td.Duration
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	signedToken, err := at.SignedString([]byte(accessKey))
 	if err != nil {
@@ -62,9 +93,9 @@ func createRefreshToken(userID, refreshKey string) (*TokenDetail, error) {
 	td.ID = enum.RefreshToken + userID
 
 	rtClaims := jwt.MapClaims{}
-	rtClaims["refresh_uuid"] = td.ID
-	rtClaims["user_id"] = userID
-	rtClaims["exp"] = td.Duration
+	rtClaims[enum.JWTRefreshUUID] = td.ID
+	rtClaims[enum.JWTUserID] = userID
+	rtClaims[enum.JWTEXP] = td.Duration
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)
 	signedToken, err := rt.SignedString([]byte(refreshKey))
 	if err != nil {

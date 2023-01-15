@@ -40,7 +40,7 @@ func LoadCipherBlock() {
 		log.Fatal("please call LoadCipherKey() function")
 	}
 
-	block, err := aes.NewCipher([]byte(cipherKey)) // AES 대칭키 암호화 블록 생성
+	block, err := aes.NewCipher([]byte(cipherKey))
 	if err != nil {
 		log.Fatal(err.Error())
 	}

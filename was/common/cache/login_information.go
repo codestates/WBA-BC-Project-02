@@ -6,15 +6,15 @@ import (
 )
 
 type LoginInformation struct {
-	UserID       string
-	Device       string
-	Address      string
-	WemixAmount  string
-	DracoAmount  string
-	TigAmount    string
-	CreditAmount string
-	PublicKey    string
-	PrivateKey   string
+	UserID       string `json:"user_id"`
+	Device       string `json:"device"`
+	Address      string `json:"address"`
+	WemixAmount  string `json:"wemix_amount"`
+	DracoAmount  string `json:"draco_amount"`
+	TigAmount    string `json:"tig_amount"`
+	CreditAmount string `json:"credit_amount"`
+	PublicKey    string `json:"public_key"`
+	PrivateKey   string `json:"private_key"`
 }
 
 func NewLoginInfo(device string, user *entity.User) *LoginInformation {
