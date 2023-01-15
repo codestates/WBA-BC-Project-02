@@ -9,6 +9,7 @@ type LoginInformation struct {
 	UserID       string `json:"user_id"`
 	Device       string `json:"device"`
 	Address      string `json:"address"`
+	BlackIron    int    `json:"black_iron"`
 	WemixAmount  string `json:"wemix_amount"`
 	DracoAmount  string `json:"draco_amount"`
 	TigAmount    string `json:"tig_amount"`
@@ -21,6 +22,7 @@ func NewLoginInfo(device string, user *entity.User) *LoginInformation {
 		UserID:       user.ID.Hex(),
 		Device:       device,
 		Address:      user.Address,
+		BlackIron:    user.BlackIron,
 		WemixAmount:  user.WemixAmount,
 		DracoAmount:  user.DracoAmount,
 		TigAmount:    user.TigAmount,
