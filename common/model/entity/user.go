@@ -8,7 +8,7 @@ import (
 type User struct {
 	ID           primitive.ObjectID `bson:"_id,omitempty"`
 	Password     string             `bson:"password,omitempty"`
-	BlackIron    string             `bson:"black_iron,omitempty"`
+	BlackIron    int                `bson:"black_iron,omitempty"`
 	WemixAmount  string             `bson:"wemix_amount,omitempty"`
 	DracoAmount  string             `bson:"draco_amount,omitempty"`
 	TigAmount    string             `bson:"tig_amount,omitempty"`
