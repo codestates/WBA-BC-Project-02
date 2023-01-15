@@ -31,5 +31,19 @@ func (co *contractControl) GetContractByName(c *gin.Context) {
 		return
 	}
 
-	co.contractService.GetContractByName(name)
+	resC, err := co.contractService.GetContractByName(name)
+	if err != nil {
+		protocol.Fail(wasError.NewAppError(err)).Response(c)
+		return
+	}
+
+	protocol.SuccessData(resC).Response(c)
+}
+
+func (co *contractControl) GetContracts(c *gin.Context) {
+	simpleContracts, err := co.contractService.GetContracts()
+	if err != nil {
+		return
+	}
+	protocol.SuccessData(simpleContracts).Response(c)
 }

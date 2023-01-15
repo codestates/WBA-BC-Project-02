@@ -48,3 +48,19 @@ func (q *QueryAction[T]) FindOneAndUpdate(opt *options.FindOneAndUpdateOptions) 
 	}
 	return nil
 }
+
+func (q *QueryAction[T]) Find(opt *options.FindOptions) error {
+	ctx, cancel := wasCommon.NewContext(wasCommon.ModelContextTimeOut)
+	defer cancel()
+
+	cursor, err := q.collection.Find(ctx, q.Filter, opt)
+	if err != nil {
+		return err
+	}
+
+	if err = cursor.All(ctx, &q.Result); err != nil {
+		return err
+	}
+
+	return nil
+}

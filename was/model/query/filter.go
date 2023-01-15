@@ -20,3 +20,7 @@ func GetUpdatePWDFilter(encryptPassword string) bson.M {
 func GetBlackIronIncreaseFilter() bson.M {
 	return bson.M{"$inc": bson.M{"black_iron": 1}}
 }
+
+func GetNameFilter(name string) bson.M {
+	return bson.M{"name": name}
+}

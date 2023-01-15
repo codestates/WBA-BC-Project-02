@@ -54,7 +54,7 @@ func (u *userService) GetUser(address string) (*response.User, error) {
 	if err != nil {
 		return nil, error2.UserNotFoundError
 	}
-	resU := response.FromEntity(foundUser)
+	resU := response.FromUserEntity(foundUser)
 	return resU, err
 }
 
