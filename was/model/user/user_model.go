@@ -34,9 +34,6 @@ func (u *userModel) InsertUser(user *entity.User) error {
 }
 
 func (u *userModel) FindUser(address string) (*entity.User, error) {
-	//filter := bson.M{"address": address}
-	//opt := options.FindOne().SetProjection(bson.M{"transactions": 0})
-	//u.collection.FindOne(ctx, filter, opt)
 	filter := query.GetAddressFilter(address)
 	user := &entity.User{}
 	if err := query.NewFindAction(user, u.collection).InjectFilter(filter).FindOne(nil); err != nil {
