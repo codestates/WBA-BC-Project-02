@@ -10,7 +10,7 @@ import (
 // Users ("app/v1/users")
 func Users(usersUrl *gin.RouterGroup) {
 	usersUrl.POST("/wallet", controller.UserControl.CreateWallet)
-	usersUrl.POST("/wallet/recovery", controller.UserControl.RecoverWallet)
+	usersUrl.PUT("/wallet", controller.UserControl.RecoverWallet)
 	usersUrl.POST("/tokens", controller.UserControl.ReissueToken)
 }
 

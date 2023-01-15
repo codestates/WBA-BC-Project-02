@@ -107,3 +107,14 @@ func (u *userControl) GetUserInformation(c *gin.Context) {
 
 	protocol.SuccessData(resU).Response(c)
 }
+
+func (u *userControl) IncreaseBlackIron(c *gin.Context) {
+	//loginInfo, exists := c.Keys[enum.LoginInformation].(*cache.LoginInformation)
+	//if !exists {
+	//	protocol.Fail(wasError.InternalServerError).Response(c)
+	//	return
+	//}
+	//
+	//userInfo := response.FromCache(loginInfo)
+	//u.userService.IncreaseBlackIron(userInfo)
+}

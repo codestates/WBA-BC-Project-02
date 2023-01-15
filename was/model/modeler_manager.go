@@ -24,6 +24,5 @@ func InjectModelsMongoDependency(m map[string]*mongo.Collection) {
 }
 
 func CreateIndexesInModels() {
-	AppModel.CreateIndexes(enum.UserCollectionName, false, "password")
 	AppModel.CreateIndexes(enum.UserCollectionName, true, "private_key", "address")
 }
