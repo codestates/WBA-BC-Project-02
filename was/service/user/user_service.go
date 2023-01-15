@@ -1,12 +1,12 @@
 package user
 
 import (
-	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
 	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
+	error2 "github.com/codestates/WBA-BC-Project-02/was/common/error"
 	"github.com/codestates/WBA-BC-Project-02/was/config"
-	"github.com/codestates/WBA-BC-Project-02/was/logger"
 	"github.com/codestates/WBA-BC-Project-02/was/model/user"
 	"github.com/codestates/WBA-BC-Project-02/was/protocol/user/response"
+	"github.com/codestates/WBA-BC-Project-02/was/service/user/util"
 )
 
 type userService struct {
@@ -26,19 +26,20 @@ func NewUserService(modeler user.UserModeler) *userService {
 }
 
 func (u *userService) ReissueToken(refreshToken string, ua string) (*response.Token, error) {
-	info, err := ValidateTokenAndUserAgent(refreshToken, ua, enum.JWTRefreshUUID, config.JWTConfig.RefreshKey)
+	info, err := util.ValidateTokenAndUserAgent(refreshToken, ua, enum.JWTRefreshUUID, config.JWTConfig.RefreshKey)
 	if err != nil {
 		return nil, err
 	}
 
-	tokens, err := u.getToken(info.UserID)
+	tokens, err := util.GetToken(info.UserID)
 	if err != nil {
 		return nil, err
 	}
 
-	u.deleteCachedLoginInfos(tokens)
+	util.DeleteCachedLoginInfos(tokens)
 
-	if err := u.saveCacheLoginInfos(info, ua, tokens); err != nil {
+	info.Device = ua
+	if err := util.SaveCacheLoginInfos(info, tokens); err != nil {
 		return nil, err
 	}
 
@@ -48,26 +49,11 @@ func (u *userService) ReissueToken(refreshToken string, ua string) (*response.To
 	}, nil
 }
 
-func (u *userService) getToken(userID string) (*cache.Tokens, error) {
-	accessKey := config.JWTConfig.AccessKey
-	refreshKey := config.JWTConfig.RefreshKey
-	token, err := cache.CreateToken(userID, accessKey, refreshKey)
+func (u *userService) GetUser(address string) (*response.User, error) {
+	foundUser, err := u.userModel.FindUser(address)
 	if err != nil {
-		return nil, err
+		return nil, error2.UserNotFoundError
 	}
-
-	return token, nil
-}
-
-func (u *userService) saveCacheLoginInfos(loginInfo *cache.LoginInformation, userAgent string, token *cache.Tokens) error {
-	if err := cache.CacheLoginInfos(loginInfo, token); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (u *userService) deleteCachedLoginInfos(token *cache.Tokens) {
-	if err := cache.Delete(token.AccessToken.CacheID, token.RefreshToken.CacheID); err != nil {
-		logger.AppLog.Error(err)
-	}
+	resU := response.FromEntity(foundUser)
+	return resU, err
 }

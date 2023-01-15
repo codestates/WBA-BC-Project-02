@@ -7,6 +7,10 @@ import (
 
 type UserServicer interface {
 	CreateWallet(PWD, userAgent string) (*response.Mnemonic, error)
+
 	RecoverWallet(recovery *request.Recovery, userAgent string) (*response.Token, error)
+
 	ReissueToken(refreshToken string, ua string) (*response.Token, error)
+
+	GetUser(address string) (*response.User, error)
 }

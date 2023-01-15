@@ -1,7 +1,6 @@
 package cache
 
 import (
-	"fmt"
 	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
 	wasError "github.com/codestates/WBA-BC-Project-02/was/common/error"
 	"github.com/gofrs/uuid"
@@ -59,7 +58,6 @@ func DecryptToken(signedToken, secretKey string) (*jwt.Token, error) {
 
 func ExtractTokenUUID(token *jwt.Token, filed string) (string, string, error) {
 	claims, ok := token.Claims.(jwt.MapClaims)
-	fmt.Println("##### ok 와 claims :: ", ok, claims)
 	cacheID := ""
 	tokenID := ""
 	if ok && token.Valid {

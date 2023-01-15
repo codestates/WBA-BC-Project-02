@@ -6,21 +6,22 @@ import (
 	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
 	"github.com/codestates/WBA-BC-Project-02/was/model/factory"
 	"github.com/codestates/WBA-BC-Project-02/was/protocol/user/response"
+	"github.com/codestates/WBA-BC-Project-02/was/service/user/util"
 	"strings"
 )
 
 func (u *userService) CreateWallet(PWD, userAgent string) (*response.Mnemonic, error) {
-	mnemonic, err := NewMnemonic()
+	mnemonic, err := util.NewMnemonic()
 	if err != nil {
 		return nil, err
 	}
 
-	wallet, err := NewWallet(mnemonic)
+	wallet, err := util.NewWallet(mnemonic)
 	if err != nil {
 		return nil, err
 	}
 
-	hashPassword := BcryptHashPassword(PWD)
+	hashPassword := util.BcryptHashPassword(PWD)
 
 	encryptPK, err := ciper.AESEncrypt(ciper.GetCipherBlock(), []byte(wallet.PrivateKey))
 	if err != nil {
@@ -29,18 +30,18 @@ func (u *userService) CreateWallet(PWD, userAgent string) (*response.Mnemonic, e
 
 	newUser := factory.NewCreateUser(hashPassword, wallet.Address, encryptPK, wallet.PublicKey)
 
-	tokens, err := u.getToken(newUser.ID.Hex())
+	tokens, err := util.GetToken(newUser.ID.Hex())
 	if err != nil {
 		return nil, err
 	}
 
 	loginInfo := cache.NewLoginInfo(userAgent, newUser)
-	if err := u.saveCacheLoginInfos(loginInfo, userAgent, tokens); err != nil {
+	if err := util.SaveCacheLoginInfos(loginInfo, tokens); err != nil {
 		return nil, err
 	}
 
 	if err := u.userModel.InsertUser(newUser); err != nil {
-		u.deleteCachedLoginInfos(tokens)
+		util.DeleteCachedLoginInfos(tokens)
 		return nil, err
 	}
 

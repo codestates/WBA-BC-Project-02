@@ -1,7 +1,6 @@
-package user
+package util
 
 import (
-	"fmt"
 	commonEnum "github.com/codestates/WBA-BC-Project-02/common/enum"
 	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
 	wasError "github.com/codestates/WBA-BC-Project-02/was/common/error"
@@ -23,8 +22,6 @@ func ValidateTokenAndUserAgent(token, userAgent, uuidKey, JWTKey string) (*cache
 		return nil, wasError.BadUserAgentError
 	}
 
-	fmt.Println("before device :: ", info.Device)
-	fmt.Println("user Agent :: ", userAgent)
 	if info.Device != userAgent {
 		return nil, wasError.DifferentDeviceError
 	}
