@@ -20,7 +20,7 @@ func TestGenerateEncrypteAndDecrypt(t *testing.T) {
 	AESDEVKey := os.Getenv(keyName)
 	log.Println("AES Encrypt key is ::", AESDEVKey)
 
-	block, err := aes.NewCipher([]byte(AESDEVKey)) // AES 대칭키 암호화 블록 생성
+	block, err := aes.NewCipher([]byte(AESDEVKey))
 	if err != nil {
 		log.Fatal(err.Error())
 	}
