@@ -93,5 +93,10 @@ func (u *userControl) GetUserSimpleInformation(c *gin.Context) {
 }
 
 func (u *userControl) GetUserInformation(c *gin.Context) {
+	_, exists := c.Keys[enum.LoginInformation].(*cache.LoginInformation)
+	if !exists {
+		protocol.Fail(wasError.InternalServerError).Response(c)
+		return
+	}
 
 }

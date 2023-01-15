@@ -4,7 +4,9 @@ import (
 	"github.com/codestates/WBA-BC-Project-02/common/model/entity"
 	wasCommon "github.com/codestates/WBA-BC-Project-02/was/common"
 	"github.com/codestates/WBA-BC-Project-02/was/model/query"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var instance *userModel
@@ -45,8 +47,9 @@ func (u *userModel) FindUser(address string) (*entity.User, error) {
 func (u *userModel) FindUserAndPWDUpdate(address, password string) (*entity.User, error) {
 	f := query.GetAddressFilter(address)
 	upf := query.GetUpdatePWDFilter(password)
+	prj := options.FindOneAndUpdate().SetProjection(bson.M{"transactions": 0})
 	user := &entity.User{}
-	if err := query.NewFindAction(user, u.collection).InjectFilter(f).InjectUpdate(upf).FindOneAndUpdate(nil); err != nil {
+	if err := query.NewFindAction(user, u.collection).InjectFilter(f).InjectUpdate(upf).FindOneAndUpdate(prj); err != nil {
 		return nil, err
 	}
 	return user, nil
