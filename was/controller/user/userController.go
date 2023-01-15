@@ -7,6 +7,8 @@ type UserController interface {
 
 	RecoverWallet(c *gin.Context)
 
+	ReissueToken(c *gin.Context)
+
 	GetUserSimpleInformation(c *gin.Context)
 
 	GetUserInformation(c *gin.Context)

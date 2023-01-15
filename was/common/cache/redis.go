@@ -28,18 +28,22 @@ func LoadRedisClient(DNS string) error {
 	return nil
 }
 
-func CacheLoginInfo(loginInfo *LoginInformation, token *Token) error {
+func CacheLoginInfos(loginInfo *LoginInformation, token *Tokens) error {
 	ctx, cancel := wasCommon.NewContext(wasCommon.ServiceContextTimeOut)
 	defer cancel()
+	loginInfo.TokenID = token.AccessToken.TokenID
 
 	at := time.Unix(token.AccessToken.Duration, 0)
 	rt := time.Unix(token.RefreshToken.Duration, 0)
 	now := time.Now()
 
-	if err := client.Set(ctx, token.AccessToken.ID, loginInfo, at.Sub(now)).Err(); err != nil {
+	loginInfo.TokenID = token.AccessToken.TokenID
+	if err := client.Set(ctx, token.AccessToken.CacheID, loginInfo, at.Sub(now)).Err(); err != nil {
 		return err
 	}
-	if err := client.Set(ctx, token.RefreshToken.ID, loginInfo, rt.Sub(now)).Err(); err != nil {
+
+	loginInfo.TokenID = token.RefreshToken.TokenID
+	if err := client.Set(ctx, token.RefreshToken.CacheID, loginInfo, rt.Sub(now)).Err(); err != nil {
 		return err
 	}
 

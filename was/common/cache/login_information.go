@@ -15,6 +15,7 @@ type LoginInformation struct {
 	CreditAmount string `json:"credit_amount"`
 	PublicKey    string `json:"public_key"`
 	PrivateKey   string `json:"private_key"`
+	TokenID      string `json:"token_id"`
 }
 
 func NewLoginInfo(device string, user *entity.User) *LoginInformation {

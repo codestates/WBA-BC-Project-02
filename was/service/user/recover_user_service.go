@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/codestates/WBA-BC-Project-02/common/enum"
+	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
 	"github.com/codestates/WBA-BC-Project-02/was/protocol/user/request"
 	"github.com/codestates/WBA-BC-Project-02/was/protocol/user/response"
 	"strings"
@@ -21,19 +22,20 @@ func (u *userService) RecoverWallet(recovery *request.Recovery, userAgent string
 		return nil, err
 	}
 
-	token, err := u.getToken(user)
+	tokens, err := u.getToken(user.ID.Hex())
 	if err != nil {
 		return nil, err
 	}
 
-	u.deleteCachedToken(token)
+	u.deleteCachedLoginInfos(tokens)
 
-	if err := u.saveCache(user, userAgent, token); err != nil {
+	loginInfo := cache.NewLoginInfo(userAgent, user)
+	if err := u.saveCacheLoginInfos(loginInfo, userAgent, tokens); err != nil {
 		return nil, err
 	}
 
 	return &response.Token{
-		AccessToken:  token.AccessToken.Token,
-		RefreshToken: token.RefreshToken.Token,
+		AccessToken:  tokens.AccessToken.Token,
+		RefreshToken: tokens.RefreshToken.Token,
 	}, nil
 }

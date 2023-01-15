@@ -11,4 +11,11 @@ import (
 func Users(usersUrl *gin.RouterGroup) {
 	usersUrl.POST("/wallet", controller.UserControl.CreateWallet)
 	usersUrl.POST("/wallet/recovery", controller.UserControl.RecoverWallet)
+	usersUrl.POST("/tokens", controller.UserControl.ReissueToken)
+}
+
+// AuthUsers ("app/v1/users/auth")
+func AuthUsers(authUrl *gin.RouterGroup) {
+	authUrl.GET("/user", controller.UserControl.GetUserSimpleInformation)
+	authUrl.GET("/user/transactions", controller.UserControl.GetUserInformation)
 }
