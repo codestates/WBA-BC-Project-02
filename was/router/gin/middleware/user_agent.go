@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	commonEnum "github.com/codestates/WBA-BC-Project-02/common/enum"
 	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
 	wasError "github.com/codestates/WBA-BC-Project-02/was/common/error"
@@ -25,10 +24,8 @@ var (
 
 func UserAgent() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		fmt.Println("User Agent :: middleware")
 		device := c.GetHeader(enum.HeaderUserAgent)
 		if err := check(device); err != nil {
-			fmt.Println(err)
 			protocol.Fail(wasError.BadUserAgentError).Response(c)
 			c.AbortWithStatus(204)
 			return

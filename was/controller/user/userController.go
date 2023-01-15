@@ -12,4 +12,6 @@ type UserController interface {
 	GetUserSimpleInformation(c *gin.Context)
 
 	GetUserInformation(c *gin.Context)
+
+	IncreaseBlackIron(c *gin.Context)
 }

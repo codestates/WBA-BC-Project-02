@@ -1,4 +1,4 @@
-package user
+package util
 
 import (
 	"crypto/elliptic"

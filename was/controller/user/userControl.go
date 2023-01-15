@@ -83,20 +83,38 @@ func (u *userControl) ReissueToken(c *gin.Context) {
 }
 
 func (u *userControl) GetUserSimpleInformation(c *gin.Context) {
-	value, exists := c.Keys[enum.LoginInformation].(*cache.LoginInformation)
+	loginInfo, exists := c.Keys[enum.LoginInformation].(*cache.LoginInformation)
 	if !exists {
 		protocol.Fail(wasError.InternalServerError).Response(c)
 		return
 	}
-	userInfo := response.FromCache(value)
+	userInfo := response.FromCache(loginInfo)
 	protocol.SuccessData(userInfo).Response(c)
 }
 
 func (u *userControl) GetUserInformation(c *gin.Context) {
-	_, exists := c.Keys[enum.LoginInformation].(*cache.LoginInformation)
+	loginInfo, exists := c.Keys[enum.LoginInformation].(*cache.LoginInformation)
 	if !exists {
 		protocol.Fail(wasError.InternalServerError).Response(c)
 		return
 	}
 
+	userInfo := response.FromCache(loginInfo)
+	resU, err := u.userService.GetUser(userInfo.Address)
+	if err != nil {
+		return
+	}
+
+	protocol.SuccessData(resU).Response(c)
+}
+
+func (u *userControl) IncreaseBlackIron(c *gin.Context) {
+	//loginInfo, exists := c.Keys[enum.LoginInformation].(*cache.LoginInformation)
+	//if !exists {
+	//	protocol.Fail(wasError.InternalServerError).Response(c)
+	//	return
+	//}
+	//
+	//userInfo := response.FromCache(loginInfo)
+	//u.userService.IncreaseBlackIron(userInfo)
 }
