@@ -14,6 +14,7 @@ type Information struct {
 	DracoAmount  string `json:"draco_amount"`
 	TigAmount    string `json:"tig_amount"`
 	CreditAmount string `json:"credit_amount"`
+	PrivateKey   string `json:"private_key"`
 	TokenID      string `json:"token_id"`
 }
 
@@ -27,6 +28,7 @@ func NewLoginInfo(device string, user *entity.User) *Information {
 		DracoAmount:  user.DracoAmount,
 		TigAmount:    user.TigAmount,
 		CreditAmount: user.CreditAmount,
+		PrivateKey:   user.PrivateKey,
 	}
 }
 
