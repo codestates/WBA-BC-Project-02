@@ -31,15 +31,16 @@ type TransferAction struct {
 	tokenAddress common.Address // 토큰 컨트랙트 주소
 	fromAddress  common.Address // 트랜잭션을 일으키는 자신의 주소
 	toAddress    common.Address // 보낼 주소
-	value        *big.Int
+	value        *big.Int       // 토큰 전송은 ETH 를 전송할 필요가 없으므로 값을 0으로
+	amount       *big.Int       // 전송할 토큰양
 	gasLimit     uint64
 	gasPrice     *big.Int
 	privateKey   *ecdsa.PrivateKey
-	padData      []byte // transferFnSignature 를 통해 생성한 데이터, 예) []byte("transfer(address,uint256)") -> toAddress 를 넣어 생성해야함
+	padData      []byte // transferFnSignature 를 통해 생성한 데이터, 예) []byte("transfer(address,uint256)") -> toAddress, amount  를 넣어 생성해야함
 	transaction  *types.Transaction
 }
 
-func NewContractMetadata() *TransferAction {
+func NewTransferAction() *TransferAction {
 	return &TransferAction{}
 }
 
@@ -65,6 +66,11 @@ func (e *TransferAction) SetToAddress(address string) *TransferAction {
 
 func (e *TransferAction) SetValue(value int64) *TransferAction {
 	e.value = big.NewInt(value)
+	return e
+}
+
+func (e *TransferAction) SetAmount(amount int64) *TransferAction {
+	e.amount = big.NewInt(amount)
 	return e
 }
 
