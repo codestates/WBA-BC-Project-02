@@ -22,3 +22,4 @@ https://ko.wikipedia.org/wiki/%EB%B6%80%EC%B1%84%EB%84%90_%EA%B3%B5%EA%B2%A9
 
 https://www.alexedwards.net/blog/how-to-hash-and-verify-passwords-with-argon2-in-go
 
+https://velog.io/@0307kwon/JWT%EB%8A%94-%EC%96%B4%EB%94%94%EC%97%90-%EC%A0%80%EC%9E%A5%ED%95%B4%EC%95%BC%ED%95%A0%EA%B9%8C-localStorage-vs-cookie
