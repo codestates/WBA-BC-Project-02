@@ -27,3 +27,5 @@ https://velog.io/@0307kwon/JWT%EB%8A%94-%EC%96%B4%EB%94%94%EC%97%90-%EC%A0%80%EC
 
 https://pomo0703.tistory.com/208
 
+https://velog.io/@pest95/97%EC%9D%BC%EC%B0%A8-Cookie-Options
+
