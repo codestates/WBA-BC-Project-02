@@ -2,6 +2,7 @@ package contract
 
 import (
 	"github.com/codestates/WBA-BC-Project-02/common/util/validator"
+	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
 	wasError "github.com/codestates/WBA-BC-Project-02/was/common/error"
 	"github.com/codestates/WBA-BC-Project-02/was/protocol"
 	"github.com/codestates/WBA-BC-Project-02/was/service/contract"
@@ -25,7 +26,7 @@ func NewContractControl(contractService contract.ContractServicer) *contractCont
 }
 
 func (co *contractControl) GetContractByName(c *gin.Context) {
-	name := c.Query("name")
+	name := c.Query(enum.Name)
 	if err := validator.CheckBlank(name); err != nil {
 		protocol.Fail(wasError.BadRequestError).Response(c)
 		return

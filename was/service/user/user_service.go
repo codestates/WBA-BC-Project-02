@@ -26,7 +26,9 @@ func NewUserService(modeler user.UserModeler) *userService {
 }
 
 func (u *userService) ReissueToken(refreshToken string, ua string) (*response.Token, error) {
-	info, err := ValidateTokenAndUserAgent(refreshToken, ua, enum.JWTRefreshID, config.JWTConfig.RefreshKey)
+	info, err := ValidateTokenAndUserAgent(
+		refreshToken, ua, enum.JWTRefreshID, config.JWTConfig.RefreshKey,
+	)
 	if err != nil {
 		return nil, err
 	}
