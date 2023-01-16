@@ -3,7 +3,7 @@ package user
 import (
 	"github.com/codestates/WBA-BC-Project-02/common/ciper"
 	"github.com/codestates/WBA-BC-Project-02/common/enum"
-	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
+	"github.com/codestates/WBA-BC-Project-02/was/common/cache/login"
 	"github.com/codestates/WBA-BC-Project-02/was/model/factory"
 	"github.com/codestates/WBA-BC-Project-02/was/protocol/user/response"
 	"strings"
@@ -34,7 +34,7 @@ func (u *userService) CreateWallet(PWD, userAgent string) (*response.Mnemonic, e
 		return nil, err
 	}
 
-	loginInfo := cache.NewLoginInfo(userAgent, newUser)
+	loginInfo := login.NewLoginInfo(userAgent, newUser)
 	if err := saveCacheLoginInfos(loginInfo, tokens); err != nil {
 		return nil, err
 	}

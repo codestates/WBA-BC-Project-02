@@ -2,7 +2,7 @@ package user
 
 import (
 	"github.com/codestates/WBA-BC-Project-02/common/util/validator"
-	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
+	"github.com/codestates/WBA-BC-Project-02/was/common/cache/login"
 	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
 	wasError "github.com/codestates/WBA-BC-Project-02/was/common/error"
 	"github.com/codestates/WBA-BC-Project-02/was/protocol"
@@ -90,7 +90,7 @@ func (u *userControl) ReissueToken(c *gin.Context) {
 }
 
 func (u *userControl) GetUserSimpleInformation(c *gin.Context) {
-	loginInfo, exists := c.Keys[enum.LoginInformation].(*cache.LoginInformation)
+	loginInfo, exists := c.Keys[enum.LoginInformation].(*login.Information)
 	if !exists {
 		protocol.Fail(wasError.InternalServerError).Response(c)
 		return
@@ -100,7 +100,7 @@ func (u *userControl) GetUserSimpleInformation(c *gin.Context) {
 }
 
 func (u *userControl) GetUserInformation(c *gin.Context) {
-	loginInfo, exists := c.Keys[enum.LoginInformation].(*cache.LoginInformation)
+	loginInfo, exists := c.Keys[enum.LoginInformation].(*login.Information)
 	if !exists {
 		protocol.Fail(wasError.InternalServerError).Response(c)
 		return
@@ -117,7 +117,7 @@ func (u *userControl) GetUserInformation(c *gin.Context) {
 }
 
 func (u *userControl) IncreaseBlackIron(c *gin.Context) {
-	loginInfo, exists := c.Keys[enum.LoginInformation].(*cache.LoginInformation)
+	loginInfo, exists := c.Keys[enum.LoginInformation].(*login.Information)
 	if !exists {
 		protocol.Fail(wasError.InternalServerError).Response(c)
 		return

@@ -1,11 +1,11 @@
-package cache
+package login
 
 import (
 	"encoding/json"
 	"github.com/codestates/WBA-BC-Project-02/common/model/entity"
 )
 
-type LoginInformation struct {
+type Information struct {
 	UserID       string `json:"user_id"`
 	Device       string `json:"device"`
 	Address      string `json:"address"`
@@ -17,8 +17,8 @@ type LoginInformation struct {
 	TokenID      string `json:"token_id"`
 }
 
-func NewLoginInfo(device string, user *entity.User) *LoginInformation {
-	return &LoginInformation{
+func NewLoginInfo(device string, user *entity.User) *Information {
+	return &Information{
 		UserID:       user.ID.Hex(),
 		Device:       device,
 		Address:      user.Address,
@@ -30,6 +30,6 @@ func NewLoginInfo(device string, user *entity.User) *LoginInformation {
 	}
 }
 
-func (l *LoginInformation) MarshalBinary() (data []byte, err error) {
+func (l *Information) MarshalBinary() (data []byte, err error) {
 	return json.Marshal(l)
 }

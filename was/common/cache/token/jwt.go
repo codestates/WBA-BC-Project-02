@@ -1,4 +1,4 @@
-package cache
+package token
 
 import (
 	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
@@ -54,7 +54,7 @@ func DecryptToken(signedToken, secretKey string) (*jwt.Token, error) {
 	return token, nil
 }
 
-func ExtractTokenFiled(token *jwt.Token, filed string) (string, string, error) {
+func ExtractCacheIdAndFiled(token *jwt.Token, filed string) (string, string, error) {
 	claims, ok := token.Claims.(jwt.MapClaims)
 	cacheID := ""
 	tokenID := ""

@@ -1,7 +1,7 @@
 package user
 
 import (
-	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
+	"github.com/codestates/WBA-BC-Project-02/was/common/cache/login"
 	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
 	error2 "github.com/codestates/WBA-BC-Project-02/was/common/error"
 	"github.com/codestates/WBA-BC-Project-02/was/config"
@@ -58,7 +58,7 @@ func (u *userService) GetUser(address string) (*response.User, error) {
 	return resU, err
 }
 
-func (u *userService) IncreaseBlackIron(info *cache.LoginInformation) (*response.SimpleUser, error) {
+func (u *userService) IncreaseBlackIron(info *login.Information) (*response.SimpleUser, error) {
 	updatedUser, err := u.userModel.FindUserAndIncreaseIron(info.Address)
 	if err != nil {
 		return nil, err

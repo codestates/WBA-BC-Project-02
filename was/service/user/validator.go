@@ -3,19 +3,21 @@ package user
 import (
 	commonEnum "github.com/codestates/WBA-BC-Project-02/common/enum"
 	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
+	"github.com/codestates/WBA-BC-Project-02/was/common/cache/login"
+	"github.com/codestates/WBA-BC-Project-02/was/common/cache/token"
 	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
 	wasError "github.com/codestates/WBA-BC-Project-02/was/common/error"
 	"github.com/codestates/WBA-BC-Project-02/was/logger"
 	"strings"
 )
 
-func ValidateTokenAndUserAgent(token, userAgent, JWTFiled, JWTCipherKey string) (*cache.LoginInformation, error) {
-	jwtToken, err := cache.DecryptToken(token, JWTCipherKey)
+func ValidateTokenAndUserAgent(JWTToken, userAgent, JWTFiled, JWTCipherKey string) (*login.Information, error) {
+	jwtToken, err := token.DecryptToken(JWTToken, JWTCipherKey)
 	if err != nil {
 		return nil, err
 	}
 
-	Key, tokenID, err := cache.ExtractTokenFiled(jwtToken, JWTFiled)
+	Key, tokenID, err := token.ExtractCacheIdAndFiled(jwtToken, JWTFiled)
 	if err != nil {
 		return nil, err
 	}

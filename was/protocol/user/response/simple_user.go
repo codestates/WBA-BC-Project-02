@@ -2,7 +2,7 @@ package response
 
 import (
 	"github.com/codestates/WBA-BC-Project-02/common/util/convertor"
-	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
+	"github.com/codestates/WBA-BC-Project-02/was/common/cache/login"
 )
 
 type SimpleUser struct {
@@ -14,7 +14,7 @@ type SimpleUser struct {
 	CreditAmount string `json:"credit_amount"`
 }
 
-func FromCache(info *cache.LoginInformation) *SimpleUser {
+func FromCache(info *login.Information) *SimpleUser {
 	return &SimpleUser{
 		Address:      info.Address,
 		BlackIron:    info.BlackIron,
