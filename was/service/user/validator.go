@@ -15,7 +15,7 @@ func ValidateTokenAndUserAgent(token, userAgent, JWTFiled, JWTCipherKey string) 
 		return nil, err
 	}
 
-	Key, tokenID, err := cache.ExtractTokenUUID(jwtToken, JWTFiled)
+	Key, tokenID, err := cache.ExtractTokenFiled(jwtToken, JWTFiled)
 	if err != nil {
 		return nil, err
 	}

@@ -2,6 +2,7 @@ package response
 
 import (
 	"github.com/codestates/WBA-BC-Project-02/common/model/entity"
+	"github.com/codestates/WBA-BC-Project-02/common/util/convertor"
 	"github.com/codestates/WBA-BC-Project-02/was/protocol"
 )
 
@@ -20,10 +21,10 @@ func FromUserEntity(usr *entity.User) *User {
 	return &User{
 		ID:           usr.ID.Hex(),
 		BlackIron:    usr.BlackIron,
-		WemixAmount:  usr.WemixAmount,
-		DracoAmount:  usr.DracoAmount,
-		TigAmount:    usr.TigAmount,
-		CreditAmount: usr.CreditAmount,
+		WemixAmount:  convertor.DefaultAmount(usr.WemixAmount),
+		DracoAmount:  convertor.DefaultAmount(usr.DracoAmount),
+		TigAmount:    convertor.DefaultAmount(usr.TigAmount),
+		CreditAmount: convertor.DefaultAmount(usr.CreditAmount),
 		Address:      usr.Address,
 		Transactions: protocol.FromTransactionDoms(usr.Transactions),
 	}
