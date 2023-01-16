@@ -42,6 +42,7 @@ func (r *RedisCache) Cache(key string, data any, du time.Duration) error {
 	return nil
 }
 
+// Update duration 값이 -1 이면 기존의 TTL(Time To Live) 유지, 0 은 지속 유지
 func (r *RedisCache) Update(key string, data any, du time.Duration) error {
 	ctx, cancel := wasCommon.NewContext(wasCommon.ServiceContextTimeOut)
 	defer cancel()
