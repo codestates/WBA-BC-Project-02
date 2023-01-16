@@ -14,6 +14,8 @@ import (
 	"github.com/codestates/WBA-BC-Project-02/daemon/model"
 	"go.mongodb.org/mongo-driver/bson"
 
+	conf "github.com/codestates/WBA-BC-Project-02/daemon/config"
+
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
@@ -21,15 +23,22 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
+var cf = conf.GetConfig("./config/config.toml")
+
+var (
+	DracoAddr = cf.Addr.DracoAddr
+	TigAddr   = cf.Addr.TigAddr
+)
+
 func ERC20Listener(address string, client *ethclient.Client, ch chan<- bool) {
 	erc20AddressMap := map[string]string{
-		"0x3E46f05A6E8eFb386dE21249af792735AEBec19e": draco.ContractsABI,
-		"tigAddr": "",
+		DracoAddr: draco.ContractsABI,
+		TigAddr:   "",
 	}
 
 	erc20AmountMap := map[string]string{
-		"0x3E46f05A6E8eFb386dE21249af792735AEBec19e": "draco_amount",
-		"": "tig_amount",
+		DracoAddr: "draco_amount",
+		TigAddr:   "tig_amount",
 	}
 
 	contractAddr := common.HexToAddress(address)

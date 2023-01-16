@@ -3,3 +3,9 @@ url = "wss://ws.test.wemix.com"
 
 [db]
 host = "mongodb://localhost:27017"
+
+[address]
+dracoAddr = "0x3E46f05A6E8eFb386dE21249af792735AEBec19e"
+creditAddr = ""
+tigAddr = ""
+dexAddr = ""

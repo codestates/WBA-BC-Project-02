@@ -9,16 +9,17 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
+var cf = conf.GetConfig("./config/config.toml")
 var (
-	creditAddr = ""
-	dracoAddr  = "0x3E46f05A6E8eFb386dE21249af792735AEBec19e"
-	tigAddr    = ""
+	URL        = cf.Network.URL
+	DracoAddr  = cf.Addr.DracoAddr
+	TigAddr    = cf.Addr.TigAddr
+	CreditAddr = cf.Addr.CreditAddr
+	DexAddr    = cf.Addr.DexAddr
 )
 
 func main() {
-	cf := conf.GetConfig("./config/config.toml")
-
-	client, err := ethclient.Dial(cf.Network.URL)
+	client, err := ethclient.Dial(URL)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -26,15 +27,15 @@ func main() {
 	creditCh := make(chan bool, 1)
 	dracoCh := make(chan bool, 1)
 
-	subscribe.CreditListener(creditAddr, client, creditCh)
-	subscribe.ERC20Listener(dracoAddr, client, dracoCh)
+	subscribe.CreditListener(CreditAddr, client, creditCh)
+	subscribe.ERC20Listener(DracoAddr, client, dracoCh)
 
 	for {
 		select {
 		case <-creditCh:
-			go subscribe.CreditListener(creditAddr, client, creditCh)
+			go subscribe.CreditListener(CreditAddr, client, creditCh)
 		case <-dracoCh:
-			go subscribe.ERC20Listener(dracoAddr, client, dracoCh)
+			go subscribe.ERC20Listener(DracoAddr, client, dracoCh)
 		}
 	}
 }
