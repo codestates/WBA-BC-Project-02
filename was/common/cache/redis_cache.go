@@ -15,6 +15,10 @@ type RedisCache struct {
 	client *redis.Client
 }
 
+type RedisData interface {
+	MarshalBinary() (data []byte, err error)
+}
+
 func NewRedisCache(DNS string) (*RedisCache, error) {
 	ctx, cancel := wasCommon.NewContext(wasCommon.ServiceContextTimeOut)
 	defer cancel()
