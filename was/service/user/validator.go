@@ -20,7 +20,7 @@ func ValidateTokenAndUserAgent(token, userAgent, JWTFiled, JWTCipherKey string) 
 		return nil, err
 	}
 
-	info, err := cache.GetLoginInfo(Key)
+	info, err := getLoginInfo(Key)
 	if err != nil || info.UserID == commonEnum.BlankSTR {
 		return nil, wasError.UnauthorizedError
 	}
@@ -40,7 +40,7 @@ func ValidateTokenAndUserAgent(token, userAgent, JWTFiled, JWTCipherKey string) 
 
 func checkAccessCacheThenDelete(Key string) {
 	if strings.Contains(Key, enum.AccessCache) {
-		if err := cache.Delete(Key); err != nil {
+		if err := cache.AppCacher.Delete(Key); err != nil {
 			logger.AppLog.Error(err)
 		}
 	}

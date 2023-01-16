@@ -46,9 +46,11 @@ func init() {
 	config.DecryptConfigs()
 
 	//Redis
-	if err := cache.LoadRedisClient(config.RedisConfig.DNS); err != nil {
+	redis, err := cache.NewRedisCache(config.RedisConfig.DNS)
+	if err != nil {
 		log.Fatal(err)
 	}
+	cache.SetAppCacher(redis)
 
 	//logger
 	logger.LoadLogger(config.LogConfig)

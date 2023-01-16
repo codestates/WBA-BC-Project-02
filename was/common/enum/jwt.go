@@ -5,8 +5,8 @@ import "time"
 const (
 	// JWT TOKEN
 	JWTAuthorized = "authorized"
-	JWTAccessID   = "access_uuid"
-	JWTRefreshID  = "refresh_uuid"
+	JWTAccessID   = "access_id"
+	JWTRefreshID  = "refresh_id"
 	JWTTokenID    = "token_id"
 	JWTEXP        = "exp"
 

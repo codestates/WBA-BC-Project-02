@@ -21,15 +21,13 @@ type TokenDetail struct {
 	Duration int64
 }
 
-func CreateToken(userID, accessKey, refreshKey string) (*Tokens, error) {
-	//Creating Access Token
-	acToken, err := createAccessToken(userID, accessKey)
+func CreateTokens(userID, accessKey, refreshKey string) (*Tokens, error) {
+	acToken, err := CreateAccessToken(userID, accessKey)
 	if err != nil {
 		return nil, err
 	}
 
-	//Creating Refresh Token
-	rfToken, err := createRefreshToken(userID, refreshKey)
+	rfToken, err := CreateRefreshToken(userID, refreshKey)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +71,7 @@ func ExtractTokenFiled(token *jwt.Token, filed string) (string, string, error) {
 	return cacheID, tokenID, nil
 }
 
-func createAccessToken(userID, accessKey string) (*TokenDetail, error) {
+func CreateAccessToken(userID, accessKey string) (*TokenDetail, error) {
 	td := &TokenDetail{}
 	td.Duration = time.Now().Add(enum.JWTAccessDuration).Unix()
 	td.CacheID = enum.AccessCache + userID
@@ -97,7 +95,7 @@ func createAccessToken(userID, accessKey string) (*TokenDetail, error) {
 	return td, nil
 }
 
-func createRefreshToken(userID, refreshKey string) (*TokenDetail, error) {
+func CreateRefreshToken(userID, refreshKey string) (*TokenDetail, error) {
 	td := &TokenDetail{}
 	td.Duration = time.Now().Add(enum.JWTRefreshDuration).Unix()
 	td.CacheID = enum.RefreshCache + userID
