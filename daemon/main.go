@@ -10,8 +10,8 @@ import (
 )
 
 var (
-	CreditAddr = ""
-	DracoAddr  = "0x3E46f05A6E8eFb386dE21249af792735AEBec19e"
+	CreditAddr = "0x279dF2e55fA16334033881525c443Ef4A3f341B9"
+	DracoAddr  = "0xF0Cd034Ce5e613a80b9f7930CD076b2De8A47241"
 )
 
 func main() {
