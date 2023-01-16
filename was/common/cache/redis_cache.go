@@ -32,7 +32,7 @@ func NewRedisCache(DNS string) (*RedisCache, error) {
 	return instance, nil
 }
 
-func (r *RedisCache) Cache(key string, data RedisData, du time.Duration) error {
+func (r *RedisCache) Cache(key string, data any, du time.Duration) error {
 	ctx, cancel := wasCommon.NewContext(wasCommon.ServiceContextTimeOut)
 	defer cancel()
 
@@ -43,7 +43,7 @@ func (r *RedisCache) Cache(key string, data RedisData, du time.Duration) error {
 }
 
 // Update duration 값이 -1 이면 기존의 TTL(Time To Live) 유지, 0 은 지속 유지
-func (r *RedisCache) Update(key string, data RedisData, du time.Duration) error {
+func (r *RedisCache) Update(key string, data any, du time.Duration) error {
 	ctx, cancel := wasCommon.NewContext(wasCommon.ServiceContextTimeOut)
 	defer cancel()
 
@@ -64,7 +64,7 @@ func (r *RedisCache) Delete(keys ...string) error {
 
 }
 
-func (r *RedisCache) Get(key string, t RedisData) (any, error) {
+func (r *RedisCache) Get(key string, t any) (any, error) {
 	ctx, cancel := wasCommon.NewContext(wasCommon.ServiceContextTimeOut)
 	defer cancel()
 
