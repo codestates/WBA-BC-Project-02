@@ -23,8 +23,13 @@ import (
 
 func ERC20Listener(address string, client *ethclient.Client, ch chan<- bool) {
 	erc20AddressMap := map[string]string{
-		"dracoAddr": "0x3E46f05A6E8eFb386dE21249af792735AEBec19e",
-		"tigAddr":   "",
+		"0x3E46f05A6E8eFb386dE21249af792735AEBec19e": draco.ContractsABI,
+		"tigAddr": "",
+	}
+
+	erc20AmountMap := map[string]string{
+		"0x3E46f05A6E8eFb386dE21249af792735AEBec19e": "draco_amount",
+		"": "tig_amount",
 	}
 
 	contractAddr := common.HexToAddress(address)
@@ -38,12 +43,7 @@ func ERC20Listener(address string, client *ethclient.Client, ch chan<- bool) {
 		log.Fatal(err)
 	}
 
-	var contractsABI string
-	if address == erc20AddressMap["dracoAddr"] {
-		contractsABI = draco.ContractsABI
-	}
-
-	contractABI, err := abi.JSON(strings.NewReader(contractsABI))
+	contractABI, err := abi.JSON(strings.NewReader(erc20AddressMap[address]))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -101,7 +101,7 @@ func ERC20Listener(address string, client *ethclient.Client, ch chan<- bool) {
 				fmt.Println(biUserAmount, biAmount, updateAmount)
 
 				userUpdate := bson.M{
-					"$set":  bson.M{"draco_amount": updateAmount.String()},
+					"$set":  bson.M{erc20AmountMap[address]: updateAmount.String()},
 					"$push": bson.M{"transactions": transaction},
 				}
 
