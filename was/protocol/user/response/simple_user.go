@@ -1,6 +1,9 @@
 package response
 
-import "github.com/codestates/WBA-BC-Project-02/was/common/cache"
+import (
+	"github.com/codestates/WBA-BC-Project-02/common/util/convertor"
+	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
+)
 
 type SimpleUser struct {
 	Address      string `json:"address"`
@@ -15,9 +18,9 @@ func FromCache(info *cache.LoginInformation) *SimpleUser {
 	return &SimpleUser{
 		Address:      info.Address,
 		BlackIron:    info.BlackIron,
-		WemixAmount:  info.WemixAmount,
-		DracoAmount:  info.DracoAmount,
-		TigAmount:    info.TigAmount,
-		CreditAmount: info.CreditAmount,
+		WemixAmount:  convertor.DefaultAmount(info.WemixAmount),
+		DracoAmount:  convertor.DefaultAmount(info.DracoAmount),
+		TigAmount:    convertor.DefaultAmount(info.TigAmount),
+		CreditAmount: convertor.DefaultAmount(info.CreditAmount),
 	}
 }
