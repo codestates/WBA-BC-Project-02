@@ -56,7 +56,7 @@ func DecryptToken(signedToken, secretKey string) (*jwt.Token, error) {
 	return token, nil
 }
 
-func ExtractTokenUUID(token *jwt.Token, filed string) (string, string, error) {
+func ExtractTokenFiled(token *jwt.Token, filed string) (string, string, error) {
 	claims, ok := token.Claims.(jwt.MapClaims)
 	cacheID := ""
 	tokenID := ""
