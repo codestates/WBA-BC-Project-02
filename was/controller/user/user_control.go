@@ -1,6 +1,7 @@
 package user
 
 import (
+	"github.com/codestates/WBA-BC-Project-02/common/util/validator"
 	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
 	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
 	wasError "github.com/codestates/WBA-BC-Project-02/was/common/error"
@@ -42,7 +43,7 @@ func (u *userControl) CreateWallet(c *gin.Context) {
 		protocol.Fail(wasError.NewAppError(err)).Response(c)
 		return
 	}
-
+	setCookieWithRefreshToken(resMnemonic.Token.RefreshToken, c)
 	protocol.SuccessCodeAndData(http.StatusCreated, resMnemonic).Response(c)
 }
 
@@ -61,24 +62,30 @@ func (u *userControl) RecoverWallet(c *gin.Context) {
 		return
 	}
 
+	setCookieWithRefreshToken(token.RefreshToken, c)
 	protocol.SuccessData(token).Response(c)
 }
 
 func (u *userControl) ReissueToken(c *gin.Context) {
-	reqR := &request.ReissueToken{}
-	if err := c.ShouldBindJSON(reqR); err != nil {
+	refreshToken, err := c.Cookie(enum.CookieRefreshToken)
+	if err != nil {
+		protocol.Fail(wasError.BadRequestError).Response(c)
+		return
+	}
+	if err := validator.CheckBlank(refreshToken); err != nil {
 		protocol.Fail(wasError.BadRequestError).Response(c)
 		return
 	}
 
 	ua := c.GetHeader(enum.HeaderUserAgent)
 
-	token, err := u.userService.ReissueToken(reqR.RefreshToken, ua)
+	token, err := u.userService.ReissueToken(refreshToken, ua)
 	if err != nil {
 		protocol.Fail(wasError.NewAppError(err)).Response(c)
 		return
 	}
 
+	setCookieWithRefreshToken(token.RefreshToken, c)
 	protocol.SuccessData(token).Response(c)
 }
 
@@ -123,4 +130,16 @@ func (u *userControl) IncreaseBlackIron(c *gin.Context) {
 	}
 
 	protocol.SuccessData(simpleUser).Response(c)
+}
+
+func setCookieWithRefreshToken(refreshToken string, c *gin.Context) {
+	c.SetCookie(
+		enum.CookieRefreshToken,
+		refreshToken,
+		enum.CookieRefreshTokenDuration,
+		enum.CookiePath,
+		enum.CookieDomain,
+		enum.CookieSecure,
+		enum.CookieHttpOnly,
+	)
 }

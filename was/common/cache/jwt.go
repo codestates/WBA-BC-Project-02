@@ -75,7 +75,7 @@ func ExtractTokenUUID(token *jwt.Token, filed string) (string, string, error) {
 
 func createAccessToken(userID, accessKey string) (*TokenDetail, error) {
 	td := &TokenDetail{}
-	td.Duration = time.Now().Add(time.Minute * 15).Unix()
+	td.Duration = time.Now().Add(enum.JWTAccessDuration).Unix()
 	td.CacheID = enum.AccessCache + userID
 	UUID, err := uuid.NewV7()
 	if err != nil {
@@ -99,7 +99,7 @@ func createAccessToken(userID, accessKey string) (*TokenDetail, error) {
 
 func createRefreshToken(userID, refreshKey string) (*TokenDetail, error) {
 	td := &TokenDetail{}
-	td.Duration = time.Now().Add(time.Hour * 24 * 7).Unix()
+	td.Duration = time.Now().Add(enum.JWTRefreshDuration).Unix()
 	td.CacheID = enum.RefreshCache + userID
 	UUID, err := uuid.NewV7()
 	if err != nil {

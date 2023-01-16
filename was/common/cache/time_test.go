@@ -2,6 +2,7 @@ package cache
 
 import (
 	"fmt"
+	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
 	"testing"
 	"time"
 )
@@ -14,6 +15,12 @@ func TestTimePrint(t *testing.T) {
 	now := time.Now()
 	unow := time.Now().Unix()
 	ut := time.Unix(unow, 0)
+
+	fmt.Println("duration :: ", enum.JWTAccessDuration)
+	fmt.Println("time :: ", time.Minute*15)
+
+	fmt.Println("duration :: ", enum.JWTRefreshDuration)
+	fmt.Println("time :: ", time.Hour*24*7)
 
 	fmt.Println("a", a)
 	fmt.Println("p", p)

@@ -11,7 +11,7 @@ import (
 func Users(usersUrl *gin.RouterGroup) {
 	usersUrl.POST("/wallet", controller.UserControl.CreateWallet)
 	usersUrl.PUT("/wallet", controller.UserControl.RecoverWallet)
-	usersUrl.POST("/tokens", controller.UserControl.ReissueToken)
+	usersUrl.GET("/tokens", controller.UserControl.ReissueToken)
 }
 
 // AuthUsers ("app/v1/auth/users")
