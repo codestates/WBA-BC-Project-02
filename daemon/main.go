@@ -3,26 +3,19 @@ package main
 import (
 	"log"
 
-	conf "github.com/codestates/WBA-BC-Project-02/daemon/config"
 	"github.com/codestates/WBA-BC-Project-02/daemon/subscribe"
 
-	"github.com/codestates/WBA-BC-Project-02/daemon/model"
-
+	conf "github.com/codestates/WBA-BC-Project-02/daemon/config"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
 var (
-	creditAddr = "1234"
-	dracoAddr  = "0xEF04548b03453C0b6070afe55392132bDDeb93Dc"
+	CreditAddr = "0x279dF2e55fA16334033881525c443Ef4A3f341B9"
+	DracoAddr  = "0xF0Cd034Ce5e613a80b9f7930CD076b2De8A47241"
 )
 
 func main() {
-	cf := conf.GetConfig("./config/config.toml")
-
-	_, err := model.NewModel(cf.DB.Host)
-	if err != nil {
-		log.Fatal(err)
-	}
+	var cf = conf.GetConfig("./config/config.toml")
 
 	client, err := ethclient.Dial(cf.Network.URL)
 	if err != nil {
@@ -32,15 +25,15 @@ func main() {
 	creditCh := make(chan bool, 1)
 	dracoCh := make(chan bool, 1)
 
-	subscribe.CreditListener(creditAddr, client, creditCh)
-	subscribe.DracoListener(dracoAddr, client, dracoCh)
+	subscribe.CreditListener(CreditAddr, client, creditCh)
+	subscribe.DracoListener(DracoAddr, client, dracoCh)
 
 	for {
 		select {
 		case <-creditCh:
-			go subscribe.CreditListener(creditAddr, client, creditCh)
+			go subscribe.CreditListener(CreditAddr, client, creditCh)
 		case <-dracoCh:
-			go subscribe.DracoListener(dracoAddr, client, dracoCh)
+			go subscribe.DracoListener(DracoAddr, client, dracoCh)
 		}
 	}
 }
