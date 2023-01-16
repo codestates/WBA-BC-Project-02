@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Credit is ERC20, Ownable {
 
-    mapping (string => uint256) DexAmount;
+    mapping (string => uint256) public DexAmount;
 
     event Mint(address, uint);
     event CustomTransfer(address, address, uint);

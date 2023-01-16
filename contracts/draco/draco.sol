@@ -8,11 +8,12 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract Draco is ERC20, Ownable {
 
     event Mint(address, uint);
+    event CustomTransfer(address, address, uint);
 
     constructor () ERC20("Draco", "DRA") {}
 
     // 유저가 오프체인 화폐를 온체인 토큰으로 변경요청하면 mint해주는 함수
-    function mint(address to, uint amount) public onlyOwner {
+    function mint(address to, uint amount) public {
         _mint(to, amount * (10 ** uint256(decimals())));
         emit Mint(to, amount * (10 ** uint256(decimals())));
     }
@@ -21,7 +22,7 @@ contract Draco is ERC20, Ownable {
     function transfer(address from, address to, uint amount) external virtual returns (bool) {
         address owner = from;
         _transfer(owner, to, amount);
-        emit Transfer(from, to, amount);
+        emit CustomTransfer(from, to, amount);
         return true;
     }
 }
