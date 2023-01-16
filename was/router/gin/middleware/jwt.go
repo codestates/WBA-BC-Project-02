@@ -17,7 +17,7 @@ func JWTToken() gin.HandlerFunc {
 		token := extractToken(headerAuth)
 
 		userAgent := c.GetHeader(enum.HeaderUserAgent)
-		loginInfo, err := user.ValidateTokenAndUserAgent(token, userAgent, enum.JWTAccessUUID, config.JWTConfig.AccessKey)
+		loginInfo, err := user.ValidateTokenAndUserAgent(token, userAgent, enum.JWTAccessID, config.JWTConfig.AccessKey)
 		if err != nil {
 			protocol.Fail(error2.NewAppError(err)).Response(c)
 			c.AbortWithStatus(204)

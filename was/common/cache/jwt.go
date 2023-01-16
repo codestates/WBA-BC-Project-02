@@ -85,7 +85,7 @@ func createAccessToken(userID, accessKey string) (*TokenDetail, error) {
 
 	atClaims := jwt.MapClaims{}
 	atClaims[enum.JWTAuthorized] = true
-	atClaims[enum.JWTAccessUUID] = td.CacheID
+	atClaims[enum.JWTAccessID] = td.CacheID
 	atClaims[enum.JWTTokenID] = td.TokenID
 	atClaims[enum.JWTEXP] = td.Duration
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
@@ -108,7 +108,7 @@ func createRefreshToken(userID, refreshKey string) (*TokenDetail, error) {
 	td.TokenID = UUID.String()
 
 	rtClaims := jwt.MapClaims{}
-	rtClaims[enum.JWTRefreshUUID] = td.CacheID
+	rtClaims[enum.JWTRefreshID] = td.CacheID
 	rtClaims[enum.JWTTokenID] = td.TokenID
 	rtClaims[enum.JWTEXP] = td.Duration
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)
