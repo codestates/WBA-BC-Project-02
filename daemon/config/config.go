@@ -15,13 +15,6 @@ type Config struct {
 	DB struct {
 		Host string
 	}
-
-	Addr struct {
-		DracoAddr  string
-		TigAddr    string
-		DexAddr    string
-		CreditAddr string
-	}
 }
 
 func GetConfig(fpath string) *Config {

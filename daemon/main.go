@@ -3,23 +3,21 @@ package main
 import (
 	"log"
 
-	conf "github.com/codestates/WBA-BC-Project-02/daemon/config"
 	"github.com/codestates/WBA-BC-Project-02/daemon/subscribe"
 
+	conf "github.com/codestates/WBA-BC-Project-02/daemon/config"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-var cf = conf.GetConfig("./config/config.toml")
 var (
-	URL        = cf.Network.URL
-	DracoAddr  = cf.Addr.DracoAddr
-	TigAddr    = cf.Addr.TigAddr
-	CreditAddr = cf.Addr.CreditAddr
-	DexAddr    = cf.Addr.DexAddr
+	CreditAddr = ""
+	DracoAddr  = "0x3E46f05A6E8eFb386dE21249af792735AEBec19e"
 )
 
 func main() {
-	client, err := ethclient.Dial(URL)
+	var cf = conf.GetConfig("./config/config.toml")
+
+	client, err := ethclient.Dial(cf.Network.URL)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -28,14 +26,14 @@ func main() {
 	dracoCh := make(chan bool, 1)
 
 	subscribe.CreditListener(CreditAddr, client, creditCh)
-	subscribe.ERC20Listener(DracoAddr, client, dracoCh)
+	subscribe.DracoListener(DracoAddr, client, dracoCh)
 
 	for {
 		select {
 		case <-creditCh:
 			go subscribe.CreditListener(CreditAddr, client, creditCh)
 		case <-dracoCh:
-			go subscribe.ERC20Listener(DracoAddr, client, dracoCh)
+			go subscribe.DracoListener(DracoAddr, client, dracoCh)
 		}
 	}
 }

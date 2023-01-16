@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"math/big"
-	"strconv"
 	"strings"
 
 	"github.com/codestates/WBA-BC-Project-02/common/model/entity"
@@ -14,8 +13,6 @@ import (
 	"github.com/codestates/WBA-BC-Project-02/daemon/model"
 	"go.mongodb.org/mongo-driver/bson"
 
-	conf "github.com/codestates/WBA-BC-Project-02/daemon/config"
-
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
@@ -23,24 +20,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-var cf = conf.GetConfig("./config/config.toml")
-
-var (
-	DracoAddr = cf.Addr.DracoAddr
-	TigAddr   = cf.Addr.TigAddr
-)
-
-func ERC20Listener(address string, client *ethclient.Client, ch chan<- bool) {
-	erc20AddressMap := map[string]string{
-		DracoAddr: draco.ContractsABI,
-		TigAddr:   "",
-	}
-
-	erc20AmountMap := map[string]string{
-		DracoAddr: "draco_amount",
-		TigAddr:   "tig_amount",
-	}
-
+func DracoListener(address string, client *ethclient.Client, ch chan<- bool) {
 	contractAddr := common.HexToAddress(address)
 	query := ethereum.FilterQuery{
 		Addresses: []common.Address{contractAddr},
@@ -52,7 +32,7 @@ func ERC20Listener(address string, client *ethclient.Client, ch chan<- bool) {
 		log.Fatal(err)
 	}
 
-	contractABI, err := abi.JSON(strings.NewReader(erc20AddressMap[address]))
+	contractABI, err := abi.JSON(strings.NewReader(draco.ContractsABI))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -98,19 +78,18 @@ func ERC20Listener(address string, client *ethclient.Client, ch chan<- bool) {
 				userFilter := bson.D{{Key: "address", Value: to}}
 				r.ColUser.FindOne(context.TODO(), userFilter).Decode(&user)
 
-				// int64의 최대 범위는 9223372036854775807로 9.223... * 10 ** 18이 max
-				// TODO 해결 방법 모색
 				updateAmount := new(big.Int)
-				iUserAmount, _ := strconv.Atoi(user.DracoAmount)
-				biUserAmount := big.NewInt(int64(iUserAmount))
-				iAmount, _ := strconv.Atoi(amount)
-				biAmount := big.NewInt(int64(iAmount))
-				updateAmount.Add(biUserAmount, biAmount)
+				biUserAmount := new(big.Int)
+				userAmount, _ := biUserAmount.SetString(user.DracoAmount, 10)
+				biAmount := new(big.Int)
+				Amount, _ := biAmount.SetString(amount, 10)
 
-				fmt.Println(biUserAmount, biAmount, updateAmount)
+				updateAmount.Add(userAmount, Amount)
+
+				fmt.Println(updateAmount, userAmount, Amount)
 
 				userUpdate := bson.M{
-					"$set":  bson.M{erc20AmountMap[address]: updateAmount.String()},
+					"$set":  bson.M{"draco_amount": updateAmount.String()},
 					"$push": bson.M{"transactions": transaction},
 				}
 
