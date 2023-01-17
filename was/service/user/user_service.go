@@ -67,7 +67,7 @@ func (u *userService) IncreaseBlackIron(info *login.Information) (*response.Simp
 	}
 
 	info.BlackIron = updatedUser.BlackIron
-	if err := updateAccessCacheInfo(info); err != nil {
+	if err := UpdateAccessCacheInfo(info); err != nil {
 		return nil, err
 	}
 

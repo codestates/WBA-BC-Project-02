@@ -7,7 +7,11 @@ type UserModeler interface {
 
 	FindUser(address string) (*entity.User, error)
 
+	FindUserNonTx(address string) (*entity.User, error)
+
 	FindUserAndPWDUpdate(address, password string) (*entity.User, error)
 
 	FindUserAndIncreaseIron(address string) (*entity.User, error)
+
+	FindUserAndSetIron(address string, blackIron int) (*entity.User, error)
 }
