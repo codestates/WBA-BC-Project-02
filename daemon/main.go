@@ -12,6 +12,8 @@ import (
 var (
 	CreditAddr = "0x279dF2e55fA16334033881525c443Ef4A3f341B9"
 	DracoAddr  = "0xF0Cd034Ce5e613a80b9f7930CD076b2De8A47241"
+	DexAddr    = ""
+	TigAddr    = ""
 )
 
 func main() {
@@ -24,9 +26,13 @@ func main() {
 
 	creditCh := make(chan bool, 1)
 	dracoCh := make(chan bool, 1)
+	dexCh := make(chan bool, 1)
+	tigCh := make(chan bool, 1)
 
 	subscribe.CreditListener(CreditAddr, client, creditCh)
 	subscribe.DracoListener(DracoAddr, client, dracoCh)
+	subscribe.DexListener(DexAddr, client, dexCh)
+	subscribe.TigListener(TigAddr, client, tigCh)
 
 	for {
 		select {
@@ -34,6 +40,10 @@ func main() {
 			go subscribe.CreditListener(CreditAddr, client, creditCh)
 		case <-dracoCh:
 			go subscribe.DracoListener(DracoAddr, client, dracoCh)
+		case <-dexCh:
+			go subscribe.DexListener(DexAddr, client, dexCh)
+		case <-tigCh:
+			go subscribe.TigListener(TigAddr, client, tigCh)
 		}
 	}
 }

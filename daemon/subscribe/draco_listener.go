@@ -12,6 +12,7 @@ import (
 	draco "github.com/codestates/WBA-BC-Project-02/contracts/draco"
 	"github.com/codestates/WBA-BC-Project-02/daemon/model"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
@@ -48,17 +49,18 @@ func DracoListener(address string, client *ethclient.Client, ch chan<- bool) {
 				log.Fatal(err)
 			}
 
-			fmt.Println(event)
-
 			if event.Name == "Mint" {
+				fmt.Println(event.Name)
 				result, err := contractABI.Unpack(event.Name, vLog.Data)
 				if err != nil {
 					log.Fatal(err)
 				}
 
+				// event parameter 값
 				to := fmt.Sprintf("%v", result[0])
 				amount := fmt.Sprintf("%v", result[1])
 
+				// transaction 값 생성
 				transaction := dom.Transaction{
 					TxHash:          vLog.TxHash.Hex(),
 					ContractAddress: vLog.Address.String(),
@@ -74,20 +76,23 @@ func DracoListener(address string, client *ethclient.Client, ch chan<- bool) {
 					log.Fatal(err)
 				}
 
+				// user 조회
 				var user entity.User
 				userFilter := bson.D{{Key: "address", Value: to}}
 				r.ColUser.FindOne(context.TODO(), userFilter).Decode(&user)
 
+				// amount 계산
 				updateAmount := new(big.Int)
 				biUserAmount := new(big.Int)
 				userAmount, _ := biUserAmount.SetString(user.DracoAmount, 10)
 				biAmount := new(big.Int)
-				Amount, _ := biAmount.SetString(amount, 10)
+				mintAmount, _ := biAmount.SetString(amount, 10)
 
-				updateAmount.Add(userAmount, Amount)
+				updateAmount.Add(userAmount, mintAmount)
 
-				fmt.Println(updateAmount, userAmount, Amount)
+				fmt.Printf("user amount: %s + mint amount: %s = total amount: %s\n", userAmount, mintAmount, updateAmount)
 
+				// user update
 				userUpdate := bson.M{
 					"$set":  bson.M{"draco_amount": updateAmount.String()},
 					"$push": bson.M{"transactions": transaction},
@@ -98,6 +103,7 @@ func DracoListener(address string, client *ethclient.Client, ch chan<- bool) {
 					log.Fatal(err)
 				}
 
+				// contract update
 				contractFilter := bson.D{{Key: "contract_address", Value: transaction.ContractAddress}}
 				contractUpdate := bson.M{
 					"$push": bson.M{"transactions": transaction},
@@ -105,7 +111,104 @@ func DracoListener(address string, client *ethclient.Client, ch chan<- bool) {
 
 				contractUpdateResult, err := r.ColContract.UpdateOne(context.TODO(), contractFilter, contractUpdate)
 
-				fmt.Println("user", userUpdateResult.ModifiedCount, "contract", contractUpdateResult.ModifiedCount)
+				fmt.Printf("user update: %v, contract update: %v\n", userUpdateResult.ModifiedCount, contractUpdateResult.ModifiedCount)
+			}
+
+			if event.Name == "CustomTransfer" {
+				fmt.Println(event.Name)
+
+				result, err := contractABI.Unpack(event.Name, vLog.Data)
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				// event prameter
+				from := fmt.Sprintf("%v", result[0])
+				to := fmt.Sprintf("%v", result[1])
+				amount := fmt.Sprintf("%v", result[2])
+
+				// transaction
+				transaction := dom.Transaction{
+					TxHash:          vLog.TxHash.Hex(),
+					ContractAddress: vLog.Address.String(),
+					TxType:          event.Name,
+					From:            from,
+					To:              to,
+					Amount:          amount,
+					CreatedAt:       "",
+				}
+
+				r, err := model.NewModel()
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				// from user 조회
+				var fromUser entity.User
+				fromUserFilter := bson.D{{Key: "address", Value: from}}
+				r.ColUser.FindOne(context.TODO(), fromUserFilter).Decode(&fromUser)
+
+				// to user 조회
+				var toUser entity.User
+				toUserFilter := bson.D{{Key: "address", Value: to}}
+				r.ColUser.FindOne(context.TODO(), toUserFilter).Decode(&toUser)
+
+				zeroObjectId, _ := primitive.ObjectIDFromHex("000000000000000000000000")
+
+				// from일 경우
+				if zeroObjectId != fromUser.ID {
+					// amount 계산
+					updateAmount := new(big.Int)
+					biUserAmount := new(big.Int)
+					userAmount, _ := biUserAmount.SetString(fromUser.CreditAmount, 10)
+					biAmount := new(big.Int)
+					trasnferAmount, _ := biAmount.SetString(amount, 10)
+
+					updateAmount.Sub(userAmount, trasnferAmount)
+
+					fmt.Printf("user amount: %s + trasnfer amount: %s = total amount: %s\n", userAmount, trasnferAmount, updateAmount)
+
+					// user update
+					update := bson.M{
+						"$set":  bson.M{"draco_amount": updateAmount.String()},
+						"$push": bson.M{"transactions": transaction},
+					}
+
+					result, err := r.ColUser.UpdateOne(context.TODO(), fromUserFilter, update)
+					if err != nil {
+						log.Fatal(err)
+					}
+
+					fmt.Printf("from user udpate: %v\n", result.ModifiedCount)
+				}
+
+				// to일 경우
+				if zeroObjectId != toUser.ID {
+					// amount 계산
+					updateAmount := new(big.Int)
+					biUserAmount := new(big.Int)
+					userAmount, _ := biUserAmount.SetString(toUser.CreditAmount, 10)
+					biAmount := new(big.Int)
+					trasnferAmount, _ := biAmount.SetString(amount, 10)
+
+					updateAmount.Add(userAmount, trasnferAmount)
+
+					fmt.Printf("user amount: %s + trasnfer amount: %s = total amount: %s\n", userAmount, trasnferAmount, updateAmount)
+
+					// user update
+					update := bson.M{
+						"$set":  bson.M{"draco_amount": updateAmount.String()},
+						"$push": bson.M{"transactions": transaction},
+					}
+
+					result, err := r.ColUser.UpdateOne(context.TODO(), toUserFilter, update)
+
+					if err != nil {
+						log.Fatal(err)
+					}
+
+					fmt.Printf("to user udpate: %v\n", result.ModifiedCount)
+				}
 			}
 		}
 	}
