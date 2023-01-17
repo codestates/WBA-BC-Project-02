@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 
-contract Draco is ERC20, Ownable {
+contract Tig is ERC20, Ownable {
 
     address Dex;
     address Multisig;
@@ -13,7 +13,7 @@ contract Draco is ERC20, Ownable {
     event Mint(address, uint);
     event CustomTransfer(address, address, uint);
 
-    constructor (address multisigAddress) ERC20("Draco", "DRA") {
+    constructor (address multisigAddress) ERC20("Tig", "Tig") {
         Multisig = multisigAddress;
     }
 
