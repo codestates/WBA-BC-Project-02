@@ -33,6 +33,17 @@ func GetBlackIronIncreaseFilter() bson.D {
 	}
 }
 
+func GetBlackIronSetFilter(blackIron int) bson.D {
+	return bson.D{
+		{enum.QuerySet,
+			bson.D{
+				{enum.BlackIron, blackIron},
+				{enum.UpdateAt, time.Now()},
+			},
+		},
+	}
+}
+
 func GetNameFilter(name string) bson.M {
 	return bson.M{enum.Name: name}
 }

@@ -1,6 +1,8 @@
 package contract
 
 import (
+	"github.com/codestates/WBA-BC-Project-02/was/common/cache/login"
+	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
 	wasError "github.com/codestates/WBA-BC-Project-02/was/common/error"
 	"github.com/codestates/WBA-BC-Project-02/was/protocol"
 	"github.com/codestates/WBA-BC-Project-02/was/protocol/contract/request"
@@ -12,14 +14,19 @@ var instance *contractControl
 
 type contractControl struct {
 	contractService contract.ContractServicer
+	wemixonService  contract.WemixonServicer
 }
 
-func NewContractControl(contractService contract.ContractServicer) *contractControl {
+func NewContractControl(
+	contractService contract.ContractServicer,
+	wemixonService contract.WemixonServicer,
+) *contractControl {
 	if instance != nil {
 		return instance
 	}
 	instance = &contractControl{
 		contractService: contractService,
+		wemixonService:  wemixonService,
 	}
 	return instance
 }
@@ -49,20 +56,39 @@ func (co *contractControl) GetContracts(c *gin.Context) {
 }
 
 func (co *contractControl) MintContract(c *gin.Context) {
+	loginInfo, exists := c.Keys[enum.LoginInformation].(*login.Information)
+	if !exists {
+		protocol.Fail(wasError.InternalServerError).Response(c)
+		return
+	}
+
 	reqM := &request.MintingContract{}
 	if err := c.ShouldBindJSON(reqM); err != nil {
 		protocol.Fail(wasError.BadRequestError).Response(c)
 		return
 	}
 
-}
-
-func (co *contractControl) ExchangeContract(c *gin.Context) {
-	reqE := &request.ExchangeContract{}
-	if err := c.ShouldBindJSON(reqE); err != nil {
-		protocol.Fail(wasError.BadRequestError).Response(c)
+	simpleUser, err := co.wemixonService.MintToken(loginInfo, reqM)
+	if err != nil {
+		protocol.Fail(wasError.NewAppError(err)).Response(c)
 		return
 	}
+
+	protocol.SuccessData(simpleUser).Response(c)
+}
+
+func (co *contractControl) Exchan현geContract(c *gin.Context) {
+	//loginInfo, exists := c.Keys[enum.LoginInformation].(*login.Information)
+	//if !exists {
+	//	protocol.Fail(wasError.InternalServerError).Response(c)
+	//	return
+	//}
+	//
+	//reqE := &request.ExchangeContract{}
+	//if err := c.ShouldBindJSON(reqE); err != nil {
+	//	protocol.Fail(wasError.BadRequestError).Response(c)
+	//	return
+	//}
 
 }
 

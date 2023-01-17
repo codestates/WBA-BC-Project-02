@@ -3,14 +3,14 @@ package dev
 import "github.com/codestates/WBA-BC-Project-02/common/ciper"
 
 type Contract struct {
-	ServerPrivateKey string // privateKey
-	MultiSigAddr     string //
-	DexAddr          string //
-	CreditAddr       string // 데몬용
-	DracoAddr        string // 데몬용
-	TigAddr          string // 데몬용
+	ServerPrivateKey string
+	MultiSigAddr     string
+	DexAddr          string
+	CreditAddr       string
+	DracoAddr        string
+	TigAddr          string
 	ServerAddr       string
-	// 서버 어드레스 만들어야함
+	RawURL           string
 }
 
 func (c *Contract) DecryptFields() error {
