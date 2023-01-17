@@ -29,9 +29,10 @@ func (c *contractModel) FindContractByName(name string) (*entity.Contract, error
 	filter := query.GetNameFilter(name)
 
 	con := &entity.Contract{}
-	if err := query.NewFindAction(
-		con, c.collection,
-	).InjectFilter(filter).FindOne(nil); err != nil {
+
+	if err := query.NewFindAction(con, c.collection).
+		InjectFilter(filter).
+		FindOne(nil); err != nil {
 		return nil, err
 	}
 
@@ -42,9 +43,9 @@ func (c *contractModel) FindNonTxContracts() ([]*entity.Contract, error) {
 	opt := options.Find().SetProjection(bson.M{enum.Transactions: 0})
 
 	var contracts []*entity.Contract
-	if err := query.NewFindAction(
-		contracts, c.collection,
-	).Find(opt); err != nil {
+
+	if err := query.NewFindAction(contracts, c.collection).
+		Find(opt); err != nil {
 		return nil, err
 	}
 
