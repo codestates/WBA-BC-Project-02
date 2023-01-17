@@ -6,7 +6,6 @@ import (
 	"log"
 	"strings"
 
-	"github.com/codestates/WBA-BC-Project-02/contracts/credit"
 	"github.com/codestates/WBA-BC-Project-02/daemon/model"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
@@ -33,7 +32,7 @@ func DexListener(address string, client *ethclient.Client, ch chan<- bool) {
 		log.Fatal(err)
 	}
 
-	contractABI, err := abi.JSON(strings.NewReader(string(credit.CreditABI)))
+	contractABI, err := abi.JSON(strings.NewReader(string("dex.ContractABI")))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -56,9 +55,11 @@ func DexListener(address string, client *ethclient.Client, ch chan<- bool) {
 					log.Fatal(err)
 				}
 
+				// event parameter
 				tokenName := fmt.Sprintf("%v", result[0])
 				tokenAmount := fmt.Sprintf("%v", result[1])
 				creditAmount := fmt.Sprintf("%v", result[2])
+
 				transactionHash := vLog.TxHash.Hex()
 				poolData := DexPoolData{
 					PoolToken:  tokenAmount,
@@ -70,7 +71,9 @@ func DexListener(address string, client *ethclient.Client, ch chan<- bool) {
 					log.Fatal(err)
 				}
 
+				// draco일 경우
 				if tokenName == "Draco" {
+					// dex contract update
 					filter := bson.D{{Key: "contract_address", Value: address}}
 					update := bson.M{
 						"$set":  bson.M{"draco_pool_token": poolData.PoolToken, "draco_pool_credit": poolData.PoolCredit},
@@ -82,9 +85,11 @@ func DexListener(address string, client *ethclient.Client, ch chan<- bool) {
 						log.Fatal(err)
 					}
 
-					fmt.Println(result)
+					fmt.Printf("dex contract update: %v\n", result.ModifiedCount)
 
+					// tig일 경우
 				} else if tokenName == "Tig" {
+					// dex contract update
 					filter := bson.D{{Key: "contract_address", Value: address}}
 					update := bson.M{
 						"$set":  bson.M{"tig_pool_token": poolData.PoolToken, "tig_pool_credit": poolData.PoolCredit},
@@ -96,7 +101,7 @@ func DexListener(address string, client *ethclient.Client, ch chan<- bool) {
 						log.Fatal(err)
 					}
 
-					fmt.Println(result)
+					fmt.Printf("dex contract update: %v\n", result.ModifiedCount)
 				}
 			}
 		}
