@@ -11,5 +11,5 @@ var ContractService contract.ContractServicer
 
 func InjectServicesDependency() {
 	UserService = user.NewUserService(model.UserModel)
-	ContractService = contract.NewContractService(model.ContractModel)
+	ContractService = contract.NewContractService(model.ContractModel, model.DexContractModel)
 }

@@ -15,6 +15,10 @@ func GetAddressFilter(address string) bson.M {
 	return bson.M{enum.Address: address}
 }
 
+func GetContractAddressFilter(contractAddr string) bson.M {
+	return bson.M{enum.ContractAddress: contractAddr}
+}
+
 func GetUpdatePWDFilter(encryptPassword string) bson.M {
 	return bson.M{enum.QuerySet: bson.D{
 		bson.E{Key: enum.Password, Value: encryptPassword},

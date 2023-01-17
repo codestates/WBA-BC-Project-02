@@ -5,4 +5,6 @@ const (
 	HeaderUserAgent     = "User-Agent"
 	HeaderAuthorization = "Authorization"
 	LoginInformation    = "loginInformation"
+
+	RatioCreditDefaultValue = "1"
 )
