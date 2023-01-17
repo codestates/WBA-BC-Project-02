@@ -5,8 +5,8 @@ import (
 	// "encoding/hex"
 	"encoding/json"
 	"fmt"
-	"math/big"
 	"log"
+	"math/big"
 	"strconv"
 
 	"github.com/codestates/WBA-BC-Project-02/contracts/multisig"
@@ -19,7 +19,6 @@ import (
 	// "golang.org/x/crypto/sha3"
 	"github.com/ethereum/go-ethereum/core/types"
 )
-
 
 // func GetDestinationfuncData(num int) []byte {
 // 	// 실행할 함수의 signature 생성, methodID 생성
@@ -40,7 +39,6 @@ import (
 // 	// fmt.Println("0x"+hex.EncodeToString(pdata))
 // 	return pdata
 // }
-
 
 func main() {
 	// server url과 연동
@@ -106,7 +104,6 @@ func main() {
 
 	data := util.BuyTigByCreditTx(userAddress, tokenAmount)
 
-
 	// multisig 컨트랙트의 submitTransaction 함수 실행 결과확인 및 txIdx 확인
 	// data는 util을 통해 만든 byte값
 	txIdx, err := SendSubmitTransaction(client, instance, auth1, dexContractAddr, big.NewInt(0), data, big.NewInt(int64(firstAddressNonce)))
@@ -119,7 +116,6 @@ func main() {
 	//########################################################
 	// 아래서부터는 Daemon(signer)에서 실행하는 로직
 
-
 	// redis를 통해 먼저 gin 서버에서 보낸 요청인지 확인해야함!
 	// 해당 txIdx에 대해서 confirmTransaction 실행
 	ch1 := make(chan bool)
@@ -128,15 +124,15 @@ func main() {
 	go SendConfirmTransaction(ch1, client, instance, auth1, big.NewInt(txIdx))
 	// 다음 2번 계정으로
 	go SendConfirmTransaction(ch2, client, instance, auth2, big.NewInt(txIdx))
-	
+
 	confirmCount := 0
 
 	for {
 		if confirmCount == 2 {
 			break
 		}
-		ch1Value := <- ch1
-		ch2Value := <- ch2
+		ch1Value := <-ch1
+		ch2Value := <-ch2
 		if ch1Value {
 			confirmCount++
 		} else {
@@ -160,21 +156,21 @@ func main() {
 }
 
 func SendSubmitTransaction(
-		client *ethclient.Client,
-		instance *multisig.Multisig,
-		auth *bind.TransactOpts,
-		dexContractAddr common.Address,
-		value *big.Int,
-		data []byte,
-		nonce *big.Int,
-	) (int64, error){
+	client *ethclient.Client,
+	instance *multisig.Multisig,
+	auth *bind.TransactOpts,
+	dexContractAddr common.Address,
+	value *big.Int,
+	data []byte,
+	nonce *big.Int,
+) (int64, error) {
 	fmt.Println("Sendging...")
 	txSubmitTransaction, err := instance.SubmitTransaction(auth, dexContractAddr, value, data, nonce)
 	if err != nil {
 		fmt.Println("SendSubmitTransaction Err")
 		return 0, err
 	}
-	
+
 	var receipt *types.Receipt
 	for {
 		receipt, err = client.TransactionReceipt(context.Background(), txSubmitTransaction.Hash())
@@ -185,13 +181,13 @@ func SendSubmitTransaction(
 	if err != nil {
 		fmt.Println("get submitTrasaction Receipt Err")
 		return 0, err
-	// 현재 보낸 트랜잭션의 상태 확인. 1이면 정상
+		// 현재 보낸 트랜잭션의 상태 확인. 1이면 정상
 	} else if receipt.Status == 0 {
 		// 에러처리
 		fmt.Println("Status Err")
 		return 0, err
 	}
-	
+
 	// txIdx를 찾아서 return
 	txData, err := receipt.MarshalJSON()
 	if err != nil {
@@ -207,12 +203,12 @@ func SendSubmitTransaction(
 }
 
 func SendConfirmTransaction(
-		ch chan bool,
-		client *ethclient.Client,
-		instance *multisig.Multisig,
-		auth *bind.TransactOpts,
-		txIdx *big.Int,
-	) {
+	ch chan bool,
+	client *ethclient.Client,
+	instance *multisig.Multisig,
+	auth *bind.TransactOpts,
+	txIdx *big.Int,
+) {
 	fmt.Println("Confirming...")
 	txConfirmTransaction, err := instance.ConfirmTransaction(auth, txIdx)
 	if err != nil {
@@ -231,7 +227,7 @@ func SendConfirmTransaction(
 		fmt.Println("receipt Err", err)
 		ch <- false
 		return
-	// 현재 보낸 트랜잭션의 상태 확인. 1이면 정상
+		// 현재 보낸 트랜잭션의 상태 확인. 1이면 정상
 	} else if receipt.Status == 0 {
 		// 에러처리
 		fmt.Println("receipt status Err", err)
@@ -242,11 +238,11 @@ func SendConfirmTransaction(
 }
 
 func SendExcuteTransaction(
-		client *ethclient.Client,
-		instance *multisig.Multisig,
-		auth *bind.TransactOpts,
-		txIdx *big.Int,
-	) bool {
+	client *ethclient.Client,
+	instance *multisig.Multisig,
+	auth *bind.TransactOpts,
+	txIdx *big.Int,
+) bool {
 	fmt.Println("Executing...")
 	txExcuteTransaction, err := instance.ExecuteTransaction(auth, txIdx)
 	if err != nil {
@@ -263,7 +259,7 @@ func SendExcuteTransaction(
 	if err != nil {
 		fmt.Println("Execute Receipt Err", err)
 		return false
-	// 현재 보낸 트랜잭션의 상태 확인. 1이면 정상
+		// 현재 보낸 트랜잭션의 상태 확인. 1이면 정상
 	} else if receipt.Status == 0 {
 		// 에러처리
 		fmt.Println("Execute Status Err", err)
