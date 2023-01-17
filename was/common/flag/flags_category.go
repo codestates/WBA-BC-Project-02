@@ -38,6 +38,12 @@ var (
 		Default: "./was/config/dev/redis/config.toml",
 		Usage:   "toml file to use for redis configuration",
 	}
+
+	ContractFlag = &FlagCategory{
+		Name:    "contract",
+		Default: "./common/config/dev/config.toml",
+		Usage:   "toml file to use for contract configuration",
+	}
 )
 
 func (f *FlagCategory) Load() *string {

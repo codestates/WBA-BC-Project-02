@@ -9,7 +9,7 @@ import (
 )
 
 func TestGenerateEncrypteAndDecrypt(t *testing.T) {
-	testText := "0xEC3b843a78D2d9430Acb73279Aed35fC0DEE427B"
+	testText := "0xE56f41b1d58D510E1bbE87411a1150b6b2f543cc"
 	ENVFPath := "../../.env"
 	keyName := "WEMIXON_DEV_KEY"
 

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
 	"github.com/joho/godotenv"
 	"log"
@@ -27,6 +28,7 @@ var (
 		flag.DatabaseFlag,
 		flag.JWTFlag,
 		flag.RedisFlag,
+		flag.ContractFlag,
 	}
 
 	mongoCollectionNames = []string{
@@ -44,7 +46,7 @@ func init() {
 	ciper.LoadCipherKey(config.ServerConfig.Mode)
 	ciper.LoadCipherBlock()
 	config.DecryptConfigs()
-
+	fmt.Println(config.ContractConfig)
 	//Redis
 	if err := cache.LoadRedis(config.RedisConfig.DNS); err != nil {
 		log.Fatal(err)
