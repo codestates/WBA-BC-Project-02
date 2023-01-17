@@ -6,13 +6,12 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Credit is ERC20, Ownable {
     address Dex;
-    address Multisig;
 
     mapping (string => uint256) public DexAmount;
 
     event Mint(address, uint);
     event CustomTransfer(address, address, uint);
-    event Swap(address, uint);
+    event Swap(address, uint, uint, uint);
 
     constructor () ERC20("Credit", "pWEMIX") payable{}
 
@@ -21,15 +20,10 @@ contract Credit is ERC20, Ownable {
         _;
     }
 
-    modifier onlyMultisig() {
-        require(msg.sender == Multisig);
-        _;
-    }
-
-    function creditToWemix(address payable _to, uint amount) public onlyMultisig {
-        _burn(_to, decimal(amount));
-        _to.transfer(decimal(amount));
-        emit Swap(_to, amount);
+    function creditToWemix(address payable to, uint amount) public onlyDex {
+        _burn(to, decimal(amount));
+        to.transfer(decimal(amount));
+        emit Swap(to, amount, balanceOf(to), to.balance);
     }
 
     function decimal(uint256 num) private view returns (uint256) {
@@ -38,10 +32,6 @@ contract Credit is ERC20, Ownable {
 
     function setDex(address dex) public onlyOwner {
         Dex = dex;
-    }
-
-    function decimal(uint256 num) private view returns (uint256) {
-        return num * (10 ** uint256(decimals()));
     }
 
     // 유저가 판매한 credit을 Dex의 해당하는 pool에 넣어주는 함수
