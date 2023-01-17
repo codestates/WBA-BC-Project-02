@@ -1,6 +1,6 @@
 .idea/
 docker/
 logs/
-./go.mod
-./go.sum
+go.mod
+go.sum
 ./.env
