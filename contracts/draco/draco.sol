@@ -8,19 +8,11 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract Draco is ERC20, Ownable {
 
     address Dex;
-    address Multisig;
 
     event Mint(address, uint);
     event CustomTransfer(address, address, uint);
 
-    constructor (address multisigAddress) ERC20("Draco", "DRA") {
-        Multisig = multisigAddress;
-    }
-
-    modifier onlyMultisig() {
-        require(msg.sender == Multisig);
-        _;
-    }
+    constructor () ERC20("Draco", "DRA") {}
 
     modifier onlyDex() {
         require(msg.sender == Dex);
@@ -32,7 +24,7 @@ contract Draco is ERC20, Ownable {
     }
 
     // 유저가 오프체인 화폐를 온체인 토큰으로 변경요청하면 mint해주는 함수
-    function mint(address to, uint amount) onlyMultisig public {
+    function mint(address to, uint amount) onlyDex public {
         _mint(to, amount * (10 ** uint256(decimals())));
         emit Mint(to, amount * (10 ** uint256(decimals())));
     }
