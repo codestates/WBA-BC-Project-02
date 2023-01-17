@@ -30,13 +30,21 @@ func NewGinRoute(mode string) *GinRoute {
 func (r *GinRoute) Handle() http.Handler {
 	gr := r.engin
 
-	version1 := gr.Group("app/v1")
+	version1 := gr.Group("app/v1", middleware.UserAgent())
 	{
 		version1.GET("/info", controller.InfoControl.GetInformation)
 
 		u := version1.Group("/users")
 		{
 			v1.Users(u)
+		}
+		au := version1.Group("/auth", middleware.JWTToken())
+		{
+			auU := au.Group("/users")
+			v1.AuthUsers(auU)
+
+			auC := au.Group("/contracts")
+			v1.AuthContracts(auC)
 		}
 	}
 

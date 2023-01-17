@@ -14,7 +14,7 @@ type Wallet struct {
 	PublicKey  string
 }
 
-func NewMnemonic() (string, error) {
+func newMnemonic() (string, error) {
 	entropy, err := hdwallet.NewEntropy(256)
 	if err != nil {
 		return "", err
@@ -27,7 +27,7 @@ func NewMnemonic() (string, error) {
 	return mnemonicFromEntropy, nil
 }
 
-func NewWallet(mneminic string) (*Wallet, error) {
+func newWallet(mneminic string) (*Wallet, error) {
 	wallet, err := createWallet(mneminic)
 	if err != nil {
 		return nil, err

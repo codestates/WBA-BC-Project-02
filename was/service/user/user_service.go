@@ -1,10 +1,10 @@
 package user
 
 import (
-	"github.com/codestates/WBA-BC-Project-02/was/common"
-	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
+	"github.com/codestates/WBA-BC-Project-02/was/common/cache/login"
+	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
+	error2 "github.com/codestates/WBA-BC-Project-02/was/common/error"
 	"github.com/codestates/WBA-BC-Project-02/was/config"
-	"github.com/codestates/WBA-BC-Project-02/was/model/factory"
 	"github.com/codestates/WBA-BC-Project-02/was/model/user"
 	"github.com/codestates/WBA-BC-Project-02/was/protocol/user/response"
 )
@@ -25,42 +25,51 @@ func NewUserService(modeler user.UserModeler) *userService {
 	return instance
 }
 
-func (u *userService) CreateWallet(PWD, device string) (*response.Mnemonic, error) {
-	mnemonic, err := NewMnemonic()
+func (u *userService) ReissueToken(refreshToken string, ua string) (*response.Token, error) {
+	info, err := ValidateTokenAndUserAgent(
+		refreshToken, ua, enum.JWTRefreshID, config.JWTConfig.RefreshKey,
+	)
 	if err != nil {
 		return nil, err
 	}
 
-	wallet, err := NewWallet(mnemonic)
+	tokens, err := getToken(info.UserID)
 	if err != nil {
 		return nil, err
 	}
 
-	hashPassword := HashPassword(PWD)
+	deleteCachedLoginInfos(tokens)
 
-	newUser := factory.NewCreateUser(hashPassword, wallet.Address, wallet.PrivateKey, wallet.PublicKey)
-
-	if err := u.userModel.InsertUser(newUser); err != nil {
+	info.Device = ua
+	if err := saveCacheLoginInfos(info, tokens); err != nil {
 		return nil, err
 	}
 
-	accessKey := config.JWTConfig.AccessKey
-	refreshKey := config.JWTConfig.RefreshKey
-	token, err := common.CreateToken(newUser.ID.Hex(), accessKey, refreshKey)
-	if err != nil {
-		return nil, err
-	}
-
-	loginInfo := cache.NewLoginInfo(device, newUser)
-	if err := cache.CacheLoginInfo(loginInfo, token); err != nil {
-		return nil, err
-	}
-
-	return &response.Mnemonic{
-		Mnemonic: mnemonic,
-		Token: response.Token{
-			AccessToken:  token.AccessToken.Token,
-			RefreshToken: token.RefreshToken.Token,
-		},
+	return &response.Token{
+		AccessToken:  tokens.AccessToken.Token,
+		RefreshToken: tokens.RefreshToken.Token,
 	}, nil
+}
+
+func (u *userService) GetUser(address string) (*response.User, error) {
+	foundUser, err := u.userModel.FindUser(address)
+	if err != nil {
+		return nil, error2.UserNotFoundError
+	}
+	resU := response.FromUserEntity(foundUser)
+	return resU, err
+}
+
+func (u *userService) IncreaseBlackIron(info *login.Information) (*response.SimpleUser, error) {
+	updatedUser, err := u.userModel.FindUserAndIncreaseIron(info.Address)
+	if err != nil {
+		return nil, err
+	}
+
+	info.BlackIron = updatedUser.BlackIron
+	if err := updateAccessCacheInfo(info); err != nil {
+		return nil, err
+	}
+
+	return response.FromCache(info), nil
 }

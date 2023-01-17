@@ -1,7 +1,6 @@
 package info
 
 import (
-	"fmt"
 	"github.com/codestates/WBA-BC-Project-02/was/config"
 	"github.com/codestates/WBA-BC-Project-02/was/protocol"
 	"github.com/gin-gonic/gin"
@@ -21,6 +20,5 @@ func NewInfoControl() *infoControl {
 }
 
 func (i *infoControl) GetInformation(c *gin.Context) {
-	fmt.Println("User-Agent :: ", c.GetHeader("User-Agent"))
 	protocol.SuccessData(config.ServerConfig).Response(c)
 }

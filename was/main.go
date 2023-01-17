@@ -46,7 +46,7 @@ func init() {
 	config.DecryptConfigs()
 
 	//Redis
-	if err := cache.LoadRedisClient(config.RedisConfig.DNS); err != nil {
+	if err := cache.LoadRedis(config.RedisConfig.DNS); err != nil {
 		log.Fatal(err)
 	}
 

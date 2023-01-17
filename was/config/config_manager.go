@@ -19,7 +19,6 @@ var LogConfig *configLog.Log
 var ServerConfig *configServer.Server
 
 func LoadConfigs(pathMap map[string]*string) {
-
 	dpath := pathMap[flag.DatabaseFlag.Name]
 	DBConfig = NewConfig(*dpath, &configDB.DB{})
 
@@ -34,7 +33,6 @@ func LoadConfigs(pathMap map[string]*string) {
 
 	spath := pathMap[flag.ServerConfigFlag.Name]
 	ServerConfig = NewConfig(*spath, &configServer.Server{})
-
 }
 
 func NewConfig[T any](path string, t *T) *T {
