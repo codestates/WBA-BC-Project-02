@@ -20,7 +20,7 @@ func (u *userService) CreateWallet(PWD, userAgent string) (*response.Mnemonic, e
 		return nil, err
 	}
 
-	hashPassword := bcryptHashPassword(PWD)
+	hashPassword := BcryptHashPassword(PWD)
 
 	encryptPK, err := ciper.AESEncrypt(ciper.GetCipherBlock(), []byte(wallet.PrivateKey))
 	if err != nil {

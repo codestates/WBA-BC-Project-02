@@ -21,4 +21,8 @@ func TestMath(t *testing.T) {
 	fmt.Println(price)
 	priceSTR := fmt.Sprintf("%f", price)
 	fmt.Println(priceSTR)
+
+	var u uint64 = 31294781297498127398127983192
+	uSTR := fmt.Sprintf("%v", u)
+	fmt.Println(uSTR)
 }
