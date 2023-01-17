@@ -9,7 +9,6 @@ import (
 
 	"github.com/codestates/WBA-BC-Project-02/common/model/entity"
 	"github.com/codestates/WBA-BC-Project-02/common/model/entity/dom"
-	"github.com/codestates/WBA-BC-Project-02/contracts/credit"
 	"github.com/codestates/WBA-BC-Project-02/daemon/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -21,7 +20,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
+func TigListener(address string, client *ethclient.Client, ch chan<- bool) {
 	contractAddr := common.HexToAddress(address)
 	query := ethereum.FilterQuery{
 		Addresses: []common.Address{contractAddr},
@@ -33,7 +32,7 @@ func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
 		log.Fatal(err)
 	}
 
-	contractABI, err := abi.JSON(strings.NewReader(credit.CreditABI))
+	contractABI, err := abi.JSON(strings.NewReader("tig.ContractsABI"))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -84,7 +83,7 @@ func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
 				// amount 계산
 				updateAmount := new(big.Int)
 				biUserAmount := new(big.Int)
-				userAmount, _ := biUserAmount.SetString(user.CreditAmount, 10)
+				userAmount, _ := biUserAmount.SetString(user.TigAmount, 10)
 				biAmount := new(big.Int)
 				mintAmount, _ := biAmount.SetString(amount, 10)
 
@@ -94,7 +93,7 @@ func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
 
 				// user update
 				userUpdate := bson.M{
-					"$set":  bson.M{"credit_amount": updateAmount.String()},
+					"$set":  bson.M{"tig_amount": updateAmount.String()},
 					"$push": bson.M{"transactions": transaction},
 				}
 
@@ -170,7 +169,7 @@ func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
 
 					// user update
 					update := bson.M{
-						"$set":  bson.M{"credit_amount": updateAmount.String()},
+						"$set":  bson.M{"tig_amount": updateAmount.String()},
 						"$push": bson.M{"transactions": transaction},
 					}
 
@@ -197,7 +196,7 @@ func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
 
 					// user update
 					update := bson.M{
-						"$set":  bson.M{"credit_amount": updateAmount.String()},
+						"$set":  bson.M{"tig_amount": updateAmount.String()},
 						"$push": bson.M{"transactions": transaction},
 					}
 
