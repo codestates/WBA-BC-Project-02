@@ -98,11 +98,11 @@ func main() {
 	//#############################################################
 
 	// db로부터 가져온 유저의 address
-	userAddress := "0x104AFC4E26F1cded12f5933ca272D3A32Ef9C6f4"
+	userAddress := "0x406A1Ee747CEEA7a8819Bb999c3B24cc88000461"
 	// user로부터 요청받은 mint하고싶은 양 -> 예를 들어 user가 흑철 10개를 바꾸고싶다고 하면 10 : 1 비율로 온체인 트랜잭션에 민트하는 amount는 1이 될 것이다.
-	tokenAmount := 1
+	tokenAmount := 2
 
-	data := util.BuyTigByCreditTx(userAddress, tokenAmount)
+	data := util.CreditToWemixTx(userAddress, tokenAmount)
 
 	// multisig 컨트랙트의 submitTransaction 함수 실행 결과확인 및 txIdx 확인
 	// data는 util을 통해 만든 byte값
