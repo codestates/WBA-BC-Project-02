@@ -33,6 +33,7 @@ var (
 	mongoCollectionNames = []string{
 		enum.UserCollectionName,
 		enum.ContractCollectionName,
+		enum.DexContractName,
 	}
 )
 

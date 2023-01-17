@@ -6,31 +6,31 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type QueryAction[T any] struct {
+type queryAction[T any] struct {
 	Result     T
 	Filter     interface{}
 	Update     interface{}
 	collection *mongo.Collection
 }
 
-func NewFindAction[T any](t T, collection *mongo.Collection) *QueryAction[T] {
-	return &QueryAction[T]{
+func NewFindAction[T any](t T, collection *mongo.Collection) *queryAction[T] {
+	return &queryAction[T]{
 		Result:     t,
 		collection: collection,
 	}
 }
 
-func (q *QueryAction[T]) InjectFilter(filter interface{}) *QueryAction[T] {
+func (q *queryAction[T]) InjectFilter(filter interface{}) *queryAction[T] {
 	q.Filter = filter
 	return q
 }
 
-func (q *QueryAction[T]) InjectUpdate(updateFilter interface{}) *QueryAction[T] {
+func (q *queryAction[T]) InjectUpdate(updateFilter interface{}) *queryAction[T] {
 	q.Update = updateFilter
 	return q
 }
 
-func (q *QueryAction[T]) FindOne(opt *options.FindOneOptions) error {
+func (q *queryAction[T]) FindOne(opt *options.FindOneOptions) error {
 	ctx, cancel := wasCommon.NewContext(wasCommon.ModelContextTimeOut)
 	defer cancel()
 	if err := q.collection.FindOne(ctx, q.Filter, opt).Decode(q.Result); err != nil {
@@ -39,7 +39,7 @@ func (q *QueryAction[T]) FindOne(opt *options.FindOneOptions) error {
 	return nil
 }
 
-func (q *QueryAction[T]) FindOneAndUpdate(opt *options.FindOneAndUpdateOptions) error {
+func (q *queryAction[T]) FindOneAndUpdate(opt *options.FindOneAndUpdateOptions) error {
 	ctx, cancel := wasCommon.NewContext(wasCommon.ModelContextTimeOut)
 	defer cancel()
 
@@ -49,7 +49,7 @@ func (q *QueryAction[T]) FindOneAndUpdate(opt *options.FindOneAndUpdateOptions) 
 	return nil
 }
 
-func (q *QueryAction[T]) Find(opt *options.FindOptions) error {
+func (q *queryAction[T]) Find(opt *options.FindOptions) error {
 	ctx, cancel := wasCommon.NewContext(wasCommon.ModelContextTimeOut)
 	defer cancel()
 
