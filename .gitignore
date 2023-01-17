@@ -1,3 +1,6 @@
 .idea/
 docker/
 logs/
+./go.mod
+./go.sum
+./.env
