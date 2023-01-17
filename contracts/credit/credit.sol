@@ -40,6 +40,10 @@ contract Credit is ERC20, Ownable {
         Dex = dex;
     }
 
+    function decimal(uint256 num) private view returns (uint256) {
+        return num * (10 ** uint256(decimals()));
+    }
+
     // 유저가 판매한 credit을 Dex의 해당하는 pool에 넣어주는 함수
     function addDexAmount(string memory tokenName, uint256 creditAmount) onlyDex external returns (uint256) {
         DexAmount[tokenName] += creditAmount;
