@@ -24,7 +24,7 @@ func LoadRedis(DNS string) error {
 		return nil
 	}
 
-	rCache, err := NewRedisCache(DNS)
+	rCache, err := newRedisCache(DNS)
 	if err != nil {
 		return err
 	}
@@ -68,7 +68,7 @@ type redisCache struct {
 	client *redis.Client
 }
 
-func NewRedisCache(DNS string) (*redisCache, error) {
+func newRedisCache(DNS string) (*redisCache, error) {
 	ctx, cancel := wasCommon.NewContext(wasCommon.ServiceContextTimeOut)
 	defer cancel()
 
