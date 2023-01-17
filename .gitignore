@@ -3,4 +3,4 @@ docker/
 logs/
 go.mod
 go.sum
-./.env
+.env
