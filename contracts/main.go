@@ -10,61 +10,64 @@ import (
 	"strconv"
 
 	"github.com/codestates/WBA-BC-Project-02/contracts/multisig"
+	"github.com/codestates/WBA-BC-Project-02/contracts/util"
 	"github.com/ethereum/go-ethereum/common"
 	// "github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"golang.org/x/crypto/sha3"
+	// "golang.org/x/crypto/sha3"
 	"github.com/ethereum/go-ethereum/core/types"
 )
 
 
-func GetDestinationfuncData(num int) []byte {
-	// 실행할 함수의 signature 생성, methodID 생성
-	transferFnSignature := []byte("callMe(uint256)")
-	hash := sha3.NewLegacyKeccak256()
-	hash.Write(transferFnSignature)
-	methodID := hash.Sum(nil)[:4]
-	// fmt.Println(hexutil.Encode(methodID))
+// func GetDestinationfuncData(num int) []byte {
+// 	// 실행할 함수의 signature 생성, methodID 생성
+// 	transferFnSignature := []byte("callMe(uint256)")
+// 	hash := sha3.NewLegacyKeccak256()
+// 	hash.Write(transferFnSignature)
+// 	methodID := hash.Sum(nil)[:4]
+// 	// fmt.Println(hexutil.Encode(methodID))
 
-	// 아래는 인자로 넣을 data를 추가하는 과정
-	// Destination address에 함수 인자값으로 넣을 uint값
-	bigNum := big.NewInt(int64(num))
-	paddedNum := common.LeftPadBytes(bigNum.Bytes(), 32)
+// 	// 아래는 인자로 넣을 data를 추가하는 과정
+// 	// Destination address에 함수 인자값으로 넣을 uint값
+// 	bigNum := big.NewInt(int64(num))
+// 	paddedNum := common.LeftPadBytes(bigNum.Bytes(), 32)
 
-	var pdata []byte
-	pdata = append(pdata, methodID...)
-	pdata = append(pdata, paddedNum...)
-	// fmt.Println("0x"+hex.EncodeToString(pdata))
-	return pdata
-}
+// 	var pdata []byte
+// 	pdata = append(pdata, methodID...)
+// 	pdata = append(pdata, paddedNum...)
+// 	// fmt.Println("0x"+hex.EncodeToString(pdata))
+// 	return pdata
+// }
 
 
 func main() {
 	// server url과 연동
-	client, err := ethclient.Dial("https://api.test.wemix.com")
+	client, err := ethclient.Dial("http://localhost:7545")
 	if err != nil {
 		fmt.Println("client connect err")
 		log.Fatal(err)
 	}
 
 	// 첫번째 계정의 privateKey
-	firstPk, err := crypto.HexToECDSA("ed60003d1d768f0c2690b9ae3c418a0a1515abd0569de3701ac273bee0257003")
+	firstPk, err := crypto.HexToECDSA("3a65e0ad2f597777e884d3b0cecd05405cc42dfbd5312f0dc1e736d096cf1c41")
 	if err != nil {
 		fmt.Println("first Pk err")
 		log.Fatal(err)
 	}
+	// 첫번째 계정의 address
+	firstAddress := common.HexToAddress("0x104AFC4E26F1cded12f5933ca272D3A32Ef9C6f4")
 	// 두번째 계정의 privateKey
-	secondPk, err := crypto.HexToECDSA("2e33f33e005a4ed8986cbf4770ee022b4d28b59d7d078bc5a82e7be2c97e8f44")
+	secondPk, err := crypto.HexToECDSA("30e9d002076fb2a3a10322738a62260a278073d6c42996b9f374032259cc8801")
 	if err != nil {
 		fmt.Println("second Pk err")
 		log.Fatal(err)
 	}
 	// multisig contract의 주소
-	multisigAddr := common.HexToAddress("0x9aC473C093DEbFA01e23a89d274EE07Ff0482Ee4")
-	// 실행하고자 하는 컨트랙트의 주소
-	destinationContractAddr := common.HexToAddress("0x4DA3669a8a527461c7f85bf33fD6379C123CE3E3")
+	multisigAddr := common.HexToAddress("0x09638056C313af23b218cfD8363f101458C1104F")
+	// dex 컨트랙트의 주소
+	dexContractAddr := common.HexToAddress("0xd3a8771aB8215b9A792090Cf96C7c8BC0CA2B86D")
 
 	// interaction 할 multisig contract instance 생성
 	instance, err := multisig.NewMultisig(multisigAddr, client)
@@ -88,15 +91,38 @@ func main() {
 		fmt.Println(err)
 	}
 
+	firstAddressNonce, err := client.PendingNonceAt(context.Background(), firstAddress)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	// 아래를 실행하기 전에 redis에 nonce를 저장해야 함!
+	//#############################################################
+
+	// db로부터 가져온 유저의 address
+	userAddress := "0x104AFC4E26F1cded12f5933ca272D3A32Ef9C6f4"
+	// user로부터 요청받은, mint하고싶은 양 -> 예를 들어 user가 흑철 10개를 바꾸고싶다고 하면 10 : 1 비율로 온체인 트랜잭션에 민트하는 amount는 1이 될 것이다.
+	tokenAmount := 1
+
+	data := util.BuyTigByCreditTx(userAddress, tokenAmount)
+
+
 	// multisig 컨트랙트의 submitTransaction 함수 실행 결과확인 및 txIdx 확인
-	txIdx, err := SendSubmitTransaction(client, instance, auth1, destinationContractAddr, big.NewInt(0), GetDestinationfuncData(374))
+	// data는 util을 통해 만든 byte값
+	txIdx, err := SendSubmitTransaction(client, instance, auth1, dexContractAddr, big.NewInt(0), data, big.NewInt(int64(firstAddressNonce)))
 	if err != nil {
 		fmt.Println("get txIdx Err")
 		log.Fatal(err)
 	}
 
 	fmt.Println(txIdx)
-	
+
+	// gin 서버에서는 여기까지 실행 후, 위 txIdx를 가지고 실행되었는지 지속해서 요청을 보냄!
+	//########################################################
+	// 아래서부터는 Daemon(signer)에서 실행하는 로직
+
+
+	// redis를 통해 먼저 gin 서버에서 보낸 요청인지 확인해야함!
 	// 해당 txIdx에 대해서 confirmTransaction 실행
 	ch1 := make(chan bool)
 	ch2 := make(chan bool)
@@ -139,11 +165,12 @@ func SendSubmitTransaction(
 		client *ethclient.Client,
 		instance *multisig.Multisig,
 		auth *bind.TransactOpts,
-		destinationContractAddr common.Address,
+		dexContractAddr common.Address,
 		value *big.Int,
 		data []byte,
+		nonce *big.Int,
 	) (int64, error){
-	txSubmitTransaction, err := instance.SubmitTransaction(auth, destinationContractAddr, value, data)
+	txSubmitTransaction, err := instance.SubmitTransaction(auth, dexContractAddr, value, data, nonce)
 	if err != nil {
 		fmt.Println("SendSubmitTransaction Err")
 		return 0, err
