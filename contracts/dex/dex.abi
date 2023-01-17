@@ -241,6 +241,19 @@
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "multisigAddress",
+				"type": "address"
+			}
+		],
+		"name": "setMultisig",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "tigInitialSetting",
 		"outputs": [],

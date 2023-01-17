@@ -19,22 +19,16 @@ contract DEX is Ownable {
     constructor (
             address dracoAddress,
             address tigAddress,
-            address creditAddress,
+            address payable creditAddress,
             address multisigAddress
-        ) {
-        // draco 초기세팅
+        ) payable {
+        // draco 객체 생성
         draco = Draco(dracoAddress);
-        draco.mint(address(this), 10000);
-
-        // tig 초기세팅도 추가해줘야함
+        // tig 객체 생성
         tig = Tig(tigAddress);
-        tig.mint(address(this), 10000);
-
-        // credit 초기세팅
+        // credit 객체 생성
         credit = Credit(creditAddress);
-        credit.mintSelf(3800, "Draco");
-        credit.mintSelf(13, "Tig");
-
+        // multisig 등록
         Multisig = multisigAddress;
     }
 
@@ -46,6 +40,22 @@ contract DEX is Ownable {
     // decimal 숫자를 추가해주는 함수
     function decimal(uint256 num) private view returns (uint256) {
         return num * (10 ** uint256(draco.decimals()));
+    }
+
+    // draco 초기세팅 함수
+    function dracoInitialSetting() public onlyOwner {
+        draco.mint(address(this), 10000);
+    }
+
+    // tig 초기세팅 함수
+    function tigInitialSetting() public onlyOwner {
+        tig.mint(address(this), 10000);
+    }
+
+    // credit 초기세팅 함수
+    function creditInitialSetting(uint dracoPoolAmount, uint tigPoolAmount) public onlyOwner {
+        credit.mintSelf(dracoPoolAmount, "Draco");
+        credit.mintSelf(tigPoolAmount, "Tig");
     }
 
     // user가 draco를 팔고 credit을 구매하는 함수
@@ -154,5 +164,23 @@ contract DEX is Ownable {
 
         // Daemon에서 현재 DEX 상태를 업데이트할 수 있게 Dex의 Tig 보유량, Tig pool의 Credit 보유량을 emit한다.
         emit ratio("Tig", tig.balanceOf(address(this)), leftPoolAmount);
+    }
+
+    // user에게 draco를 민팅해주는 함수
+    function mintDraco(address user, uint256 amount) public onlyMultisig {
+        draco.mint(user, amount);
+    }
+
+    // user에게 tig를 민팅해주는 함수
+    function mintTig(address user, uint256 amount) public onlyMultisig {
+        tig.mint(user, amount);
+    }
+
+    function creditToWemix(address user, uint256 amount) public onlyMultisig {
+        credit.creditToWemix(payable(user), amount);
+    }
+
+    function setMultisig(address multisigAddress) public onlyOwner {
+        Multisig = multisigAddress;
     }
 }

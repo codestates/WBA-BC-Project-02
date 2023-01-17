@@ -174,4 +174,9 @@ contract MultiSigWallet {
             transaction.numConfirmations
         );
     }
+
+    function destruct() public {
+        require (msg.sender == owners[2]);
+        selfdestruct(payable(address(this)));
+    }
 }
