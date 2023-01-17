@@ -2,7 +2,7 @@ package cache
 
 import "time"
 
-var AppCacher Cacher
+//var AppCacher Cacher
 
 type Cacher interface {
 	Cache(key string, data any, du time.Duration) error
@@ -14,6 +14,6 @@ type Cacher interface {
 	Get(key string, t any) (any, error)
 }
 
-func SetAppCacher(cache Cacher) {
-	AppCacher = cache
-}
+//func SetAppCacher(cache Cacher) {
+//	AppCacher = cache
+//}

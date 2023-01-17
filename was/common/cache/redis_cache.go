@@ -9,22 +9,71 @@ import (
 	"time"
 )
 
-var instance *RedisCache
+var Redis *RedisProxy
 
-type RedisCache struct {
-	client *redis.Client
+type RedisProxy struct {
+	cache Cacher
 }
 
 type RedisData interface {
 	MarshalBinary() (data []byte, err error)
 }
 
-func NewRedisCache(DNS string) (*RedisCache, error) {
+func LoadRedis(DNS string) error {
+	if Redis != nil {
+		return nil
+	}
+
+	rCache, err := NewRedisCache(DNS)
+	if err != nil {
+		return err
+	}
+	Redis = &RedisProxy{cache: rCache}
+	return nil
+}
+
+func (r *RedisProxy) Cache(key string, data RedisData, du time.Duration) error {
+	if err := r.cache.Cache(key, data, du); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Update duration 값이 -1 이면 기존의 TTL(Time To Live) 유지, 0 은 지속 유지
+func (r *RedisProxy) Update(key string, data RedisData, du time.Duration) error {
+	if err := r.cache.Update(key, data, du); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *RedisProxy) Delete(keys ...string) error {
+	if err := r.cache.Delete(keys...); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *RedisProxy) Get(key string, t RedisData) (any, error) {
+	data, err := r.cache.Get(key, t)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
+var instance *redisCache
+
+type redisCache struct {
+	client *redis.Client
+}
+
+func NewRedisCache(DNS string) (*redisCache, error) {
 	ctx, cancel := wasCommon.NewContext(wasCommon.ServiceContextTimeOut)
 	defer cancel()
 
 	if instance == nil {
-		instance = &RedisCache{
+		instance = &redisCache{
 			client: redis.NewClient(&redis.Options{Addr: DNS}),
 		}
 	}
@@ -36,43 +85,43 @@ func NewRedisCache(DNS string) (*RedisCache, error) {
 	return instance, nil
 }
 
-func (r *RedisCache) Cache(key string, data any, du time.Duration) error {
+func (rc *redisCache) Cache(key string, data any, du time.Duration) error {
 	ctx, cancel := wasCommon.NewContext(wasCommon.ServiceContextTimeOut)
 	defer cancel()
 
-	if err := r.client.Set(ctx, key, data, du).Err(); err != nil {
+	if err := rc.client.Set(ctx, key, data, du).Err(); err != nil {
 		return err
 	}
 	return nil
 }
 
 // Update duration 값이 -1 이면 기존의 TTL(Time To Live) 유지, 0 은 지속 유지
-func (r *RedisCache) Update(key string, data any, du time.Duration) error {
+func (rc *redisCache) Update(key string, data any, du time.Duration) error {
 	ctx, cancel := wasCommon.NewContext(wasCommon.ServiceContextTimeOut)
 	defer cancel()
 
-	if err := r.client.Set(ctx, key, data, du).Err(); err != nil {
+	if err := rc.client.Set(ctx, key, data, du).Err(); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (r *RedisCache) Delete(keys ...string) error {
+func (rc *redisCache) Delete(keys ...string) error {
 	ctx, cancel := wasCommon.NewContext(wasCommon.ServiceContextTimeOut)
 	defer cancel()
 
-	if count, err := r.client.Del(ctx, keys...).Result(); err != nil || count == 0 {
+	if count, err := rc.client.Del(ctx, keys...).Result(); err != nil || count == 0 {
 		return errors.New(wasError.RedisDelZeroCount + err.Error())
 	}
 	return nil
 
 }
 
-func (r *RedisCache) Get(key string, t any) (any, error) {
+func (rc *redisCache) Get(key string, t any) (any, error) {
 	ctx, cancel := wasCommon.NewContext(wasCommon.ServiceContextTimeOut)
 	defer cancel()
 
-	data, err := r.client.Get(ctx, key).Result()
+	data, err := rc.client.Get(ctx, key).Result()
 	if err != nil {
 		return nil, errors.New(wasError.RedisGetError + err.Error())
 	}

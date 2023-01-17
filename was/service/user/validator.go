@@ -42,7 +42,7 @@ func ValidateTokenAndUserAgent(JWTToken, userAgent, JWTFiled, JWTCipherKey strin
 
 func checkAccessCacheThenDelete(Key string) {
 	if strings.Contains(Key, enum.AccessCache) {
-		if err := cache.AppCacher.Delete(Key); err != nil {
+		if err := cache.Redis.Delete(Key); err != nil {
 			logger.AppLog.Error(err)
 		}
 	}
