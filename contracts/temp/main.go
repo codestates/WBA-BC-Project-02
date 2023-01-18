@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/codestates/WBA-BC-Project-02/temp/util"
+	"github.com/codestates/WBA-BC-Project-02/contracts/temp/util"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -30,7 +30,7 @@ func main() {
 	// 기본적으로 address는 그냥 string type으로 넣으면 됨
 	userAddress := "0x406A1Ee747CEEA7a8819Bb999c3B24cc88000461" // http로 받아온 유저 정보를 통해 address를 가져옴
 	tokenAmount := 10 // mint요청의 경우 "만" 10 : 1의 비율로 변경해서 넣어줌
-	data := util.MintDracoTx(userAddress, tokenAmount)
+	data := util.BuyCreditbyDracoTx(userAddress, tokenAmount)
 
 	//######################################################################################################
 	// 여기서 redis에 firstAddressNonce값을 저장하는 로직을 추가해주세요
