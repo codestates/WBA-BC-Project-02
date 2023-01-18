@@ -16,7 +16,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 )
 
-func RunTx(txIdx *big.Int) {
+func RunTx(firstPkS string, secondPkS string, multisigAddrS string, txIdx *big.Int) {
 	// server url과 연동
 	client, err := ethclient.Dial("https://api.test.wemix.com")
 	if err != nil {
@@ -25,19 +25,19 @@ func RunTx(txIdx *big.Int) {
 	}
 
 	// 첫번째 계정의 privateKey -> 이 녀석은 toml에서(?)
-	firstPk, err := crypto.HexToECDSA("68fe8eda422fbdcd2bc44ced268dfb3c42ec999c2e4f237dfc52af079cee2ddd")
+	firstPk, err := crypto.HexToECDSA(firstPkS)
 	if err != nil {
 		fmt.Println("first Pk err")
 		log.Fatal(err)
 	}
 	// 두번째 계정의 privateKey -> 이 녀석은 DB에서(?)
-	secondPk, err := crypto.HexToECDSA("2e33f33e005a4ed8986cbf4770ee022b4d28b59d7d078bc5a82e7be2c97e8f44")
+	secondPk, err := crypto.HexToECDSA(secondPkS)
 	if err != nil {
 		fmt.Println("second Pk err")
 		log.Fatal(err)
 	}
 	// toml에서 가져온 multisig contract의 주소
-	multisigAddr := common.HexToAddress("0x6f574c6325B3cB3F86E8bfA5f306310D63dD217d")
+	multisigAddr := common.HexToAddress(multisigAddrS)
 
 	// interaction 할 multisig contract instance 생성
 	instance, err := multisig.NewMultisig(multisigAddr, client)
