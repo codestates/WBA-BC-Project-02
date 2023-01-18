@@ -81,14 +81,16 @@ func MultisigListener(
 				var unmarshaled map[string]interface{}
 				json.Unmarshal(data, &unmarshaled)
 				isValid := unmarshaled["data"].(map[string]interface{})["nonce"].(bool)
+				fmt.Println("txIdx: ", txIdx)
+				fmt.Println("nonce: ", nonce)
 				// 서버에 보낸 Nonce값이 확인되었을 경우
 				if isValid {
-					fmt.Println("txIdx: ", txIdx)
-					fmt.Println("nonce: ", nonce)
+					fmt.Println("valid")	
 					txhandler.RunTx(firstPk, secondPk, address, txIdx.(*big.Int))
 					fmt.Println("success")
 				// 서버에 보낸 Nonce값이 확인되지 않았을 경우
 				} else if !isValid {
+					fmt.Println("not Valid")
 					msg := "Error Occured! txIdx: " + txIdx.(*big.Int).String() + " nonce: " + nonce.(*big.Int).String()
 					discord.ChannelMessageSend(channelId, msg)
 					txhandler.AbortTx(firstPk, secondPk, address, txIdx.(*big.Int))
