@@ -60,6 +60,15 @@ func (u *userService) GetUser(address string) (*response.User, error) {
 	return resU, err
 }
 
+func (u *userService) GetSimpleUser(address string) (*response.SimpleUser, error) {
+	foundUser, err := u.userModel.FindUserNonTx(address)
+	if err != nil {
+		return nil, error2.UserNotFoundError
+	}
+	resU := response.GetSimpleFromUser(foundUser)
+	return resU, err
+}
+
 func (u *userService) IncreaseBlackIron(info *login.Information) (*response.SimpleUser, error) {
 	updatedUser, err := u.userModel.FindUserAndIncreaseIron(info.Address)
 	if err != nil {

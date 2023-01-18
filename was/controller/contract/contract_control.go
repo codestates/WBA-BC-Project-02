@@ -10,6 +10,7 @@ import (
 	"github.com/codestates/WBA-BC-Project-02/was/protocol/contract/request"
 	"github.com/codestates/WBA-BC-Project-02/was/service/contract"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 var instance *contractControl
@@ -92,12 +93,11 @@ func (co *contractControl) ExchangeContract(c *gin.Context) {
 		return
 	}
 
-	simpleUser, err := co.wemixonService.ExchangeContract(loginInfo, reqE)
-	if err != nil {
+	if err := co.wemixonService.ExchangeContract(loginInfo, reqE); err != nil {
 		return
 	}
 
-	protocol.SuccessData(simpleUser).Response(c)
+	protocol.SuccessCodeAndData(http.StatusOK, gin.H{"exchange": "ok"}).Response(c)
 }
 
 func (co *contractControl) GetRatioTokenAndCredit(c *gin.Context) {

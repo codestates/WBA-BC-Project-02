@@ -9,5 +9,5 @@ import (
 type WemixonServicer interface {
 	MintToken(loginInfo *login.Information, reqM *request.MintingContract) (*response.SimpleUser, error)
 
-	ExchangeContract(loginInfo *login.Information, reqE *request.ExchangeContract) (*response.SimpleUser, error)
+	ExchangeContract(loginInfo *login.Information, reqE *request.ExchangeContract) error
 }

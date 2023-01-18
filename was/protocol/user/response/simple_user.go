@@ -1,6 +1,7 @@
 package response
 
 import (
+	"github.com/codestates/WBA-BC-Project-02/common/model/entity"
 	"github.com/codestates/WBA-BC-Project-02/common/util/convertor"
 	"github.com/codestates/WBA-BC-Project-02/was/common/cache/login"
 )
@@ -22,5 +23,16 @@ func FromCache(info *login.Information) *SimpleUser {
 		DracoAmount:  convertor.DefaultAmount(info.DracoAmount),
 		TigAmount:    convertor.DefaultAmount(info.TigAmount),
 		CreditAmount: convertor.DefaultAmount(info.CreditAmount),
+	}
+}
+
+func GetSimpleFromUser(usr *entity.User) *SimpleUser {
+	return &SimpleUser{
+		Address:      usr.Address,
+		BlackIron:    usr.BlackIron,
+		WemixAmount:  convertor.DefaultAmount(usr.WemixAmount),
+		DracoAmount:  convertor.DefaultAmount(usr.DracoAmount),
+		TigAmount:    convertor.DefaultAmount(usr.TigAmount),
+		CreditAmount: convertor.DefaultAmount(usr.CreditAmount),
 	}
 }
