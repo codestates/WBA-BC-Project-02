@@ -11,6 +11,9 @@ type Contract struct {
 	TigAddr          string
 	ServerAddr       string
 	RawURL           string
+	ChannelToken     string
+	SecondPrivateKey string
+	BotToken		 string
 }
 
 func (c *Contract) DecryptFields() error {
@@ -49,5 +52,24 @@ func (c *Contract) DecryptFields() error {
 		return err
 	}
 	c.TigAddr = ta
+	
+	ct, err := ciper.AESDecrypt(ciper.GetCipherBlock(), c.ChannelToken)
+	if err != nil {
+		return err
+	}
+	c.ChannelToken = ct
+
+	spk, err := ciper.AESDecrypt(ciper.GetCipherBlock(), c.SecondPrivateKey)
+	if err != nil {
+		return err
+	}
+	c.SecondPrivateKey = spk
+
+	btk, err := ciper.AESDecrypt(ciper.GetCipherBlock(), c.BotToken)
+	if err != nil {
+		return err
+	}
+	c.BotToken = btk
+
 	return nil
 }
