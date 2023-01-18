@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"github.com/codestates/WBA-BC-Project-02/common/ciper"
 	"github.com/codestates/WBA-BC-Project-02/common/enum"
 	"github.com/codestates/WBA-BC-Project-02/was/common/cache/login"
@@ -21,6 +22,8 @@ func (u *userService) CreateWallet(PWD, userAgent string) (*response.Mnemonic, e
 	}
 
 	hashPassword := BcryptHashPassword(PWD)
+
+	fmt.Println(wallet.PrivateKey)
 
 	encryptPK, err := ciper.AESEncrypt(ciper.GetCipherBlock(), []byte(wallet.PrivateKey))
 	if err != nil {

@@ -3,11 +3,12 @@ package listener
 import (
 	"math/big"
 	"github.com/codestates/WBA-BC-Project-02/contracts/multisig"
-	"github.com/codestates/WBA-BC-Project-02/contracts/signerdaemon/runner"
+	"github.com/codestates/WBA-BC-Project-02/contracts/signerdaemon/txhandler"
     "context"
     "log"
 	"strings"
 	"fmt"
+	"net/http"
 
     "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
@@ -64,6 +65,19 @@ func MultisigListener(
 				}
 				txIdx := result[0]
 				nonce := result[3] // 이후 논스로 gin서버에 체크하는 로직 필요
+
+				resp, err := http.Get("http://localhost:8080/app/v1/contracts/nonce")
+				if err != nil {
+					panic(err)
+				}
+			
+				defer resp.Body.Close()
+			
+				// 결과 출력
+				data, err := ioutil.ReadAll(resp.Body)
+				if err != nil {
+					panic(err)
+				}
 				
 				// 서버에 체크해서 맞다면, txIdx를 가지고 confirm, execute하는 로직을 이어가자
 				
@@ -71,7 +85,7 @@ func MultisigListener(
 				// 서버에 체크해서 맞다고 확인받은 이후 컨펌 - execute 로직
 				fmt.Println("txIdx: ", txIdx)
 				fmt.Println("nonce: ", nonce)
-				runner.RunTx(firstPk, secondPk, address, txIdx.(*big.Int))
+				txhandler.RunTx(firstPk, secondPk, address, txIdx.(*big.Int))
 
 				fmt.Println("success")
 
