@@ -4,10 +4,15 @@ import (
 	"log"
     "github.com/ethereum/go-ethereum/ethclient"
 	"github.com/codestates/WBA-BC-Project-02/contracts/signerdaemon/listener"
+	"github.com/codestates/WBA-BC-Project-02/contracts/config"
 )
 
 func main() {
-	multisigAddr := "0x6f574c6325B3cB3F86E8bfA5f306310D63dD217d"
+	conf := config.GetConfig("config/config.toml")
+	
+	firstPk := conf.Info.FirstPk
+	secondPk := conf.Info.SecondPk
+	multisigAddr := conf.Info.MultisigAddr
 
 	client, err := ethclient.Dial("wss://ws.test.wemix.com")
 	if err != nil {
@@ -15,12 +20,12 @@ func main() {
 	}	
 
 	signerCh := make(chan bool, 1)
-	listener.MultisigListener(multisigAddr , client, signerCh)
+	listener.MultisigListener(firstPk, secondPk, multisigAddr , client, signerCh)
 
 	for {
 		select {
 		case <- signerCh:
-			go listener.MultisigListener(multisigAddr , client, signerCh)
+			go listener.MultisigListener(firstPk, secondPk, multisigAddr , client, signerCh)
 		}
 	}
 }

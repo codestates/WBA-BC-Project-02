@@ -16,7 +16,7 @@ import (
     "github.com/ethereum/go-ethereum/ethclient"
 )
 
-func MultisigListener(address string, client *ethclient.Client, ch chan<- bool) {
+func MultisigListener(firstPk string, secondPk string, address string, client *ethclient.Client, ch chan<- bool) {
 	contractAddress := common.HexToAddress(address)
 	query := ethereum.FilterQuery {
 		Addresses : []common.Address{contractAddress},
@@ -58,7 +58,7 @@ func MultisigListener(address string, client *ethclient.Client, ch chan<- bool) 
 				// 서버에 체크해서 맞다고 확인받은 이후 컨펌 - execute 로직
 				fmt.Println("txIdx: ", txIdx)
 				fmt.Println("nonce: ", nonce)
-				runner.RunTx(txIdx.(*big.Int))
+				runner.RunTx(firstPk, secondPk, address, txIdx.(*big.Int))
 
 				fmt.Println("success")
 			}
