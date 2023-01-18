@@ -25,7 +25,7 @@ func SendTransaction(client *ethclient.Client, nonce int64, data []byte) error {
 		fmt.Println("first Pk err")
 		log.Fatal(err)
 	}
-	multisigAddr := common.HexToAddress("0x2603df2DCC9aC15E56346B752e81677CbeE4cF7D") // multisig contract의 주소 -> config에서 가져올 것
+	multisigAddr := common.HexToAddress("0xFf4a73f42E69E70450E3eC97951a7b4639A866EB") // multisig contract의 주소 -> config에서 가져올 것
 	dexContractAddr := common.HexToAddress("0xEC3b843a78D2d9430Acb73279Aed35fC0DEE427B") // dex 컨트랙트의 주소 -> config에서 가져올 것
 
 	instance, err := multisig.NewMultisig(multisigAddr, client)
