@@ -53,6 +53,7 @@ func (co *contractControl) GetContractByName(c *gin.Context) {
 func (co *contractControl) GetContracts(c *gin.Context) {
 	simpleContracts, err := co.contractService.GetContracts()
 	if err != nil {
+		protocol.Fail(wasError.NewAppError(err)).Response(c)
 		return
 	}
 	protocol.SuccessData(simpleContracts).Response(c)
@@ -139,6 +140,6 @@ func (co *contractControl) GetNonce(c *gin.Context) {
 		}
 	}
 
-	protocol.Fail(wasError.DataNotFoundError).Response(c)
+	protocol.SuccessCodeAndData(wasError.DataNotFoundCode, gin.H{"nonce": false}).Response(c)
 	return
 }

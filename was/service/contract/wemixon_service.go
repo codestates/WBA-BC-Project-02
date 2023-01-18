@@ -2,6 +2,7 @@ package contract
 
 import (
 	"context"
+	"errors"
 	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
 	"github.com/codestates/WBA-BC-Project-02/was/common/cache/contract"
 	"github.com/codestates/WBA-BC-Project-02/was/common/contract/util"
@@ -41,8 +42,8 @@ func ActContract(userAddress string, amount int, method Method) (int, error) {
 	}
 
 	successCount, err := sendTx(client, int64(nonce), data)
-	if err != nil {
-		return 0, err
+	if err != nil || successCount == 0 {
+		return 0, errors.New("트랜잭션을 실패했습니다")
 	}
 
 	return successCount, nil
