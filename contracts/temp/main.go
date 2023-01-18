@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/codestates/WBA-BC-Project-02/temp/util"
+	"github.com/codestates/WBA-BC-Project-02/contracts/temp/util"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
