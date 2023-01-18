@@ -2,7 +2,7 @@ package contract
 
 import (
 	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
-	contract2 "github.com/codestates/WBA-BC-Project-02/was/common/cache/contract"
+	cacheContract "github.com/codestates/WBA-BC-Project-02/was/common/cache/contract"
 	"github.com/codestates/WBA-BC-Project-02/was/common/cache/login"
 	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
 	wasError "github.com/codestates/WBA-BC-Project-02/was/common/error"
@@ -124,7 +124,7 @@ func (co *contractControl) GetNonce(c *gin.Context) {
 		return
 	}
 
-	nonce := &contract2.Nonce{}
+	nonce := &cacheContract.Nonce{}
 	_, err := cache.Redis.Get(enum.NonceCacheKey, nonce)
 	if err != nil {
 		protocol.Fail(wasError.DataNotFoundError).Response(c)
