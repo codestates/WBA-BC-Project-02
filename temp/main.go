@@ -23,6 +23,8 @@ func main() {
 		return
 	}
 
+	fmt.Println(firstAddressNonce)
+
 	// 원하는 함수를 선택하여 data를 만들어냄
 	// userAddress 등 인자값은 http프로토콜 요청을 통해 받아온 가변 데이터
 	// 기본적으로 address는 그냥 string type으로 넣으면 됨
