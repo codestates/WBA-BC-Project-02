@@ -6,3 +6,6 @@ dracoAddr = "kBbDQ55DNHEswqUbU5SuC7kecdF8n9XN0LcOllwqDVis8rmyh8GcOumpoIrEn71fhpy
 tigAddr = "Y34ZymfE7rGrioPDEDKgj52sOYSLO7TSsWP3QC5+gSa6pvVpRY7jlUADvTaqnWgJUhfTkwa5xKsPrt6p3lhimw=="
 serverAddr = "0x406A1Ee747CEEA7a8819Bb999c3B24cc88000461"
 rawURL = "https://api.test.wemix.com"
+channelToken = "+KDt5uPgnputxuNkZUIcSaoKw+3DfTUi8mcuOCfiJMtFqXxZXRsiXQx5nY2RFhA7Gm6eL9s7fZNXLbwF7oFW3H9XIi71zxTv+RmP6VbItYLa8j60ABbVBFHh0/hTYDNk"
+secondPrivateKey = "w9XK5uj8obtf+V4+paxDKor3KcnQtUT/skbkEwBFoCxrA8ObMwc3o2lSd7QC6FEDcG5TwmqIgQLDTBxTAaVeAgF76lEsRo/HEny+sb/aB84="
+botToken = "G1QA0IqngyYKkrUGUi2qoeD/7RhYGOO5Vb/SqZtpjBafuZdr8oHTc0CZJb9tsvLJNiZa5szvfMvzO+VvMg+Pq4PmQk3lzeiHKmepDaN/j0omB7JES+DwRf9BHxBbdAGU"

@@ -15,17 +15,21 @@ import (
     "github.com/ethereum/go-ethereum/core/types"
     "github.com/ethereum/go-ethereum/ethclient"
 	"github.com/bwmarrin/discordgo"
+	configContract "github.com/codestates/WBA-BC-Project-02/common/config/dev"
 )
 
 func MultisigListener(
-		firstPk string,
-		secondPk string,
-		address string,
+		configContract *configContract.Contract,
 		client *ethclient.Client,
 		ch chan<- bool,
 		discord *discordgo.Session,
-		channelId string,
 	) {
+	firstPk := configContract.ServerPrivateKey
+	secondPk := configContract.SecondPrivateKey
+	address := configContract.MultiSigAddr
+	channelId := configContract.ChannelToken
+	
+
 	contractAddress := common.HexToAddress(address)
 	query := ethereum.FilterQuery {
 		Addresses : []common.Address{contractAddress},

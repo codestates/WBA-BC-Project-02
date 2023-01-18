@@ -29,8 +29,6 @@ func testDecrypt() {
 	temp := ciper.GetCipherBlock()
 
 	fmt.Println(temp)
-	
-	dev.Contract
 
 	// values := dev.Contract{}
 	// err = values.DecryptFields()
