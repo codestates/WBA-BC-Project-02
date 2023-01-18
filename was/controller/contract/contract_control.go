@@ -128,7 +128,7 @@ func (co *contractControl) GetNonce(c *gin.Context) {
 	nonce := &cacheContract.Nonce{}
 	_, err := cache.Redis.Get(enum.NonceCacheKey, nonce)
 	if err != nil {
-		protocol.Fail(wasError.DataNotFoundError).Response(c)
+		protocol.SuccessCodeAndData(wasError.DataNotFoundCode, gin.H{"nonce": false}).Response(c)
 		return
 	}
 
