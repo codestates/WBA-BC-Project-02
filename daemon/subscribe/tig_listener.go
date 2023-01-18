@@ -3,13 +3,15 @@ package subscribe
 import (
 	"context"
 	"fmt"
-	"log"
 	"math/big"
 	"strings"
+	"time"
 
 	"github.com/codestates/WBA-BC-Project-02/common/model/entity"
 	"github.com/codestates/WBA-BC-Project-02/common/model/entity/dom"
 	"github.com/codestates/WBA-BC-Project-02/daemon/model"
+	"github.com/codestates/WBA-BC-Project-02/daemon/utils"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
@@ -28,14 +30,10 @@ func TigListener(address string, client *ethclient.Client, ch chan<- bool) {
 
 	logs := make(chan types.Log)
 	sub, err := client.SubscribeFilterLogs(context.Background(), query, logs)
-	if err != nil {
-		log.Fatal(err)
-	}
+	utils.ErrorHandler(err)
 
 	contractABI, err := abi.JSON(strings.NewReader("tig.ContractsABI"))
-	if err != nil {
-		log.Fatal(err)
-	}
+	utils.ErrorHandler(err)
 
 	for {
 		select {
@@ -44,16 +42,12 @@ func TigListener(address string, client *ethclient.Client, ch chan<- bool) {
 			return
 		case vLog := <-logs:
 			event, err := contractABI.EventByID(vLog.Topics[0])
-			if err != nil {
-				log.Fatal(err)
-			}
+			utils.ErrorHandler(err)
 
 			if event.Name == "Mint" {
 				fmt.Println(event.Name)
 				result, err := contractABI.Unpack(event.Name, vLog.Data)
-				if err != nil {
-					log.Fatal(err)
-				}
+				utils.ErrorHandler(err)
 
 				// event parameter 값
 				to := fmt.Sprintf("%v", result[0])
@@ -67,13 +61,11 @@ func TigListener(address string, client *ethclient.Client, ch chan<- bool) {
 					From:            vLog.Address.String(),
 					To:              to,
 					Amount:          amount,
-					CreatedAt:       "",
+					CreatedAt:       time.Now().Format("2006-01-02 15:04:05"),
 				}
 
 				r, err := model.NewModel()
-				if err != nil {
-					log.Fatal(err)
-				}
+				utils.ErrorHandler(err)
 
 				// user 조회
 				var user entity.User
@@ -98,9 +90,7 @@ func TigListener(address string, client *ethclient.Client, ch chan<- bool) {
 				}
 
 				userUpdateResult, err := r.ColUser.UpdateOne(context.TODO(), userFilter, userUpdate)
-				if err != nil {
-					log.Fatal(err)
-				}
+				utils.ErrorHandler(err)
 
 				// contract update
 				contractFilter := bson.D{{Key: "contract_address", Value: transaction.ContractAddress}}
@@ -117,9 +107,7 @@ func TigListener(address string, client *ethclient.Client, ch chan<- bool) {
 				fmt.Println(event.Name)
 
 				result, err := contractABI.Unpack(event.Name, vLog.Data)
-				if err != nil {
-					log.Fatal(err)
-				}
+				utils.ErrorHandler(err)
 
 				// event prameter
 				from := fmt.Sprintf("%v", result[0])
@@ -138,9 +126,7 @@ func TigListener(address string, client *ethclient.Client, ch chan<- bool) {
 				}
 
 				r, err := model.NewModel()
-				if err != nil {
-					log.Fatal(err)
-				}
+				utils.ErrorHandler(err)
 
 				// from user 조회
 				var fromUser entity.User
@@ -154,60 +140,59 @@ func TigListener(address string, client *ethclient.Client, ch chan<- bool) {
 
 				zeroObjectId, _ := primitive.ObjectIDFromHex("000000000000000000000000")
 
+				// amount 계산
+				updateAddAmount := new(big.Int)
+				updateSubAmount := new(big.Int)
+
+				biUserAmount := new(big.Int)
+				userAmount, _ := biUserAmount.SetString(fromUser.TigAmount, 10)
+				biAmount := new(big.Int)
+				trasnferAmount, _ := biAmount.SetString(amount, 10)
+
+				updateAddAmount.Add(userAmount, trasnferAmount)
+				updateSubAmount.Sub(userAmount, trasnferAmount)
+
 				// from일 경우
 				if zeroObjectId != fromUser.ID {
-					// amount 계산
-					updateAmount := new(big.Int)
-					biUserAmount := new(big.Int)
-					userAmount, _ := biUserAmount.SetString(fromUser.CreditAmount, 10)
-					biAmount := new(big.Int)
-					trasnferAmount, _ := biAmount.SetString(amount, 10)
-
-					updateAmount.Sub(userAmount, trasnferAmount)
-
-					fmt.Printf("user amount: %s + trasnfer amount: %s = total amount: %s\n", userAmount, trasnferAmount, updateAmount)
+					fmt.Printf("user amount: %s - trasnfer amount: %s = total amount: %s\n", userAmount, trasnferAmount, updateSubAmount)
 
 					// user update
 					update := bson.M{
-						"$set":  bson.M{"tig_amount": updateAmount.String()},
+						"$set":  bson.M{"tig_amount": updateSubAmount.String()},
 						"$push": bson.M{"transactions": transaction},
 					}
 
 					result, err := r.ColUser.UpdateOne(context.TODO(), fromUserFilter, update)
-					if err != nil {
-						log.Fatal(err)
-					}
+					utils.ErrorHandler(err)
 
 					fmt.Printf("from user udpate: %v\n", result.ModifiedCount)
 				}
 
 				// to일 경우
 				if zeroObjectId != toUser.ID {
-					// amount 계산
-					updateAmount := new(big.Int)
-					biUserAmount := new(big.Int)
-					userAmount, _ := biUserAmount.SetString(toUser.CreditAmount, 10)
-					biAmount := new(big.Int)
-					trasnferAmount, _ := biAmount.SetString(amount, 10)
-
-					updateAmount.Add(userAmount, trasnferAmount)
-
-					fmt.Printf("user amount: %s + trasnfer amount: %s = total amount: %s\n", userAmount, trasnferAmount, updateAmount)
+					fmt.Printf("user amount: %s + trasnfer amount: %s = total amount: %s\n", userAmount, trasnferAmount, updateAddAmount)
 
 					// user update
 					update := bson.M{
-						"$set":  bson.M{"tig_amount": updateAmount.String()},
+						"$set":  bson.M{"tig_amount": updateAddAmount.String()},
 						"$push": bson.M{"transactions": transaction},
 					}
 
 					result, err := r.ColUser.UpdateOne(context.TODO(), toUserFilter, update)
-
-					if err != nil {
-						log.Fatal(err)
-					}
+					utils.ErrorHandler(err)
 
 					fmt.Printf("to user udpate: %v\n", result.ModifiedCount)
 				}
+
+				// contract update
+				contractFilter := bson.D{{Key: "contract_address", Value: transaction.ContractAddress}}
+				contractUpdate := bson.M{
+					"$push": bson.M{"transactions": transaction},
+				}
+
+				contractUpdateResult, err := r.ColContract.UpdateOne(context.TODO(), contractFilter, contractUpdate)
+
+				fmt.Printf("contract update: %v\n", contractUpdateResult.ModifiedCount)
 			}
 		}
 	}
