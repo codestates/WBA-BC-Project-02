@@ -28,7 +28,7 @@ func testDecrypt() {
 	target := "tczzOhlnAtweLPNP4rCkifhWQBXbWBEJjwZbyUJpi9M7jF+2nx+j/6Hsy9HERZlebr7Bm6cANlGC4mgQOjZPwl/scVRzbn9CDjMcnSec0Yw="
 	decryptedText, err := ciper.AESDecrypt(block, target)
 	if err != nil {
-		return
+		fmt.Println("ttttt")
 	}
 	fmt.Println(decryptedText)
 }

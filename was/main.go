@@ -27,6 +27,7 @@ var (
 		flag.DatabaseFlag,
 		flag.JWTFlag,
 		flag.RedisFlag,
+		flag.ContractFlag,
 	}
 
 	mongoCollectionNames = []string{
@@ -44,7 +45,6 @@ func init() {
 	ciper.LoadCipherKey(config.ServerConfig.Mode)
 	ciper.LoadCipherBlock()
 	config.DecryptConfigs()
-
 	//Redis
 	if err := cache.LoadRedis(config.RedisConfig.DNS); err != nil {
 		log.Fatal(err)

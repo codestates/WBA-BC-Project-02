@@ -1,6 +1,7 @@
 package config
 
 import (
+	configContract "github.com/codestates/WBA-BC-Project-02/common/config/dev"
 	"github.com/codestates/WBA-BC-Project-02/was/common/flag"
 	configDB "github.com/codestates/WBA-BC-Project-02/was/config/dev/db"
 	configJWT "github.com/codestates/WBA-BC-Project-02/was/config/dev/jwt"
@@ -17,6 +18,7 @@ var RedisConfig *redis.Redis
 var JWTConfig *configJWT.JWT
 var LogConfig *configLog.Log
 var ServerConfig *configServer.Server
+var ContractConfig *configContract.Contract
 
 func LoadConfigs(pathMap map[string]*string) {
 	dpath := pathMap[flag.DatabaseFlag.Name]
@@ -33,6 +35,10 @@ func LoadConfigs(pathMap map[string]*string) {
 
 	spath := pathMap[flag.ServerConfigFlag.Name]
 	ServerConfig = NewConfig(*spath, &configServer.Server{})
+
+	cpath := pathMap[flag.ContractFlag.Name]
+	ContractConfig = NewConfig(*cpath, &configContract.Contract{})
+
 }
 
 func NewConfig[T any](path string, t *T) *T {
@@ -56,6 +62,9 @@ func DecryptConfigs() {
 		log.Fatal(err)
 	}
 	if err := RedisConfig.DecryptFields(); err != nil {
+		log.Fatal(err)
+	}
+	if err := ContractConfig.DecryptFields(); err != nil {
 		log.Fatal(err)
 	}
 }
