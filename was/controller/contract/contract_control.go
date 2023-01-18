@@ -94,6 +94,7 @@ func (co *contractControl) ExchangeContract(c *gin.Context) {
 	}
 
 	if err := co.wemixonService.ExchangeContract(loginInfo, reqE); err != nil {
+		protocol.Fail(wasError.NewAppError(err)).Response(c)
 		return
 	}
 
