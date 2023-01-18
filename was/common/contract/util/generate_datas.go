@@ -2,7 +2,7 @@ package util
 
 import (
 	"math/big"
-	
+
 	"github.com/ethereum/go-ethereum/common"
 	"golang.org/x/crypto/sha3"
 )
@@ -53,7 +53,6 @@ func MintTigTx(user string, amount int) []byte {
 	return pdata
 }
 
-
 // user가 draco를 팔고 credit을 구매하는 함수
 func BuyCreditbyDracoTx(user string, amount int) []byte {
 	// 실행할 함수의 signature 생성, methodID 생성
@@ -100,7 +99,6 @@ func BuyDracoByCreditTx(user string, amount int) []byte {
 	return pdata
 }
 
-
 // credit토큰을 wemix로 변경해주는 함수
 func CreditToWemixTx(user string, amount int) []byte {
 	// 실행할 함수의 signature 생성, methodID 생성
@@ -124,7 +122,6 @@ func CreditToWemixTx(user string, amount int) []byte {
 	return pdata
 }
 
-
 // user가 credit을 팔고 tig를 구매하는 함수
 func BuyTigByCreditTx(user string, amount int) []byte {
 	// 실행할 함수의 signature 생성, methodID 생성
@@ -147,7 +144,6 @@ func BuyTigByCreditTx(user string, amount int) []byte {
 	// fmt.Println("0x"+hex.EncodeToString(pdata))
 	return pdata
 }
-
 
 // user가 Tig를 팔고 credit을 구매하는 함수
 func BuyCreditByTigTx(user string, amount int) []byte {

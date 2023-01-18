@@ -3,20 +3,22 @@ package dev
 import "github.com/codestates/WBA-BC-Project-02/common/ciper"
 
 type Contract struct {
-	FirstPK      string
-	MultiSigAddr string
-	DexAddr      string
-	CreditAddr   string
-	DracoAddr    string
-	TigAddr      string
+	ServerPrivateKey string
+	MultiSigAddr     string
+	DexAddr          string
+	CreditAddr       string
+	DracoAddr        string
+	TigAddr          string
+	ServerAddr       string
+	RawURL           string
 }
 
 func (c *Contract) DecryptFields() error {
-	fk, err := ciper.AESDecrypt(ciper.GetCipherBlock(), c.FirstPK)
+	fk, err := ciper.AESDecrypt(ciper.GetCipherBlock(), c.ServerPrivateKey)
 	if err != nil {
 		return err
 	}
-	c.FirstPK = fk
+	c.ServerPrivateKey = fk
 
 	ms, err := ciper.AESDecrypt(ciper.GetCipherBlock(), c.MultiSigAddr)
 	if err != nil {

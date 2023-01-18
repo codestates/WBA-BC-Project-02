@@ -15,7 +15,7 @@ func (u *userService) RecoverWallet(recovery *request.Recovery, userAgent string
 		return nil, err
 	}
 
-	encryptedPWD := bcryptHashPassword(recovery.Password)
+	encryptedPWD := BcryptHashPassword(recovery.Password)
 
 	user, err := u.userModel.FindUserAndPWDUpdate(wallet.Address, encryptedPWD)
 	if err != nil {

@@ -1,32 +1,33 @@
 package util
 
 import (
-	"time"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/codestates/WBA-BC-Project-02/was/config"
 	"log"
 	"math/big"
 	"strconv"
-	"errors"
+	"time"
 
 	"github.com/codestates/WBA-BC-Project-02/contracts/multisig"
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ethereum/go-ethereum/core/types"
 )
 
-
 func SendTransaction(client *ethclient.Client, nonce int64, data []byte) error {
-	firstPk, err := crypto.HexToECDSA("68fe8eda422fbdcd2bc44ced268dfb3c42ec999c2e4f237dfc52af079cee2ddd") // 계정의 privateKey -> config에서 가져올 것
+	firstPk, err := crypto.HexToECDSA(config.ContractConfig.ServerPrivateKey) // 서버의 privateKey -> config에서 가져올 것
 	if err != nil {
 		fmt.Println("first Pk err")
 		log.Fatal(err)
 	}
-	multisigAddr := common.HexToAddress("0x6f574c6325B3cB3F86E8bfA5f306310D63dD217d") // multisig contract의 주소 -> config에서 가져올 것
-	dexContractAddr := common.HexToAddress("0x8835f3bcEB451Ea73f0Ef3891f47bc66c7D24306") // dex 컨트랙트의 주소 -> config에서 가져올 것
+
+	multisigAddr := common.HexToAddress(config.ContractConfig.MultiSigAddr) // multisig contract의 주소 -> config에서 가져올 것
+	dexContractAddr := common.HexToAddress(config.ContractConfig.DexAddr)   // dex 컨트랙트의 주소 -> config에서 가져올 것
 
 	instance, err := multisig.NewMultisig(multisigAddr, client)
 	if err != nil {

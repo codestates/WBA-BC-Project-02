@@ -40,9 +40,26 @@ func (u *userModel) FindUser(address string) (*entity.User, error) {
 	filter := query.GetAddressFilter(address)
 
 	user := &entity.User{}
-	if err := query.NewFindAction(
-		user, u.collection,
-	).InjectFilter(filter).FindOne(nil); err != nil {
+
+	if err := query.NewFindAction(user, u.collection).
+		InjectFilter(filter).
+		FindOne(nil); err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (u *userModel) FindUserNonTx(address string) (*entity.User, error) {
+	filter := query.GetAddressFilter(address)
+
+	prj := options.FindOne().SetProjection(bson.M{enum.Transactions: 0})
+
+	user := &entity.User{}
+
+	if err := query.NewFindAction(user, u.collection).
+		InjectFilter(filter).
+		FindOne(prj); err != nil {
 		return nil, err
 	}
 
@@ -57,9 +74,11 @@ func (u *userModel) FindUserAndPWDUpdate(address, password string) (*entity.User
 	prj := options.FindOneAndUpdate().SetProjection(bson.M{enum.Transactions: 0})
 
 	user := &entity.User{}
-	if err := query.NewFindAction(
-		user, u.collection,
-	).InjectFilter(f).InjectUpdate(upf).FindOneAndUpdate(prj); err != nil {
+
+	if err := query.NewFindAction(user, u.collection).
+		InjectFilter(f).
+		InjectUpdate(upf).
+		FindOneAndUpdate(prj); err != nil {
 		return nil, err
 	}
 
@@ -74,9 +93,30 @@ func (u *userModel) FindUserAndIncreaseIron(address string) (*entity.User, error
 	prj := options.FindOneAndUpdate().SetReturnDocument(options.After)
 
 	user := &entity.User{}
-	if err := query.NewFindAction(
-		user, u.collection,
-	).InjectFilter(f).InjectUpdate(upf).FindOneAndUpdate(prj); err != nil {
+
+	if err := query.NewFindAction(user, u.collection).
+		InjectFilter(f).
+		InjectUpdate(upf).
+		FindOneAndUpdate(prj); err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (u *userModel) FindUserAndSetIron(address string, blackIron int) (*entity.User, error) {
+	f := query.GetAddressFilter(address)
+
+	upf := query.GetBlackIronSetFilter(blackIron)
+
+	prj := options.FindOneAndUpdate().SetReturnDocument(options.After)
+
+	user := &entity.User{}
+
+	if err := query.NewFindAction(user, u.collection).
+		InjectFilter(f).
+		InjectUpdate(upf).
+		FindOneAndUpdate(prj); err != nil {
 		return nil, err
 	}
 

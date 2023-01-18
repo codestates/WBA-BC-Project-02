@@ -17,7 +17,7 @@ func saveCacheLoginInfos(loginInfo *login.Information, token *token.Tokens) erro
 	return nil
 }
 
-func updateAccessCacheInfo(loginInfo *login.Information) error {
+func UpdateAccessCacheInfo(loginInfo *login.Information) error {
 	key := enum.AccessCache + loginInfo.UserID
 	if err := cache.Redis.Update(key, loginInfo, -1); err != nil {
 		return err
