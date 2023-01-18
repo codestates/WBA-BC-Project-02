@@ -3,6 +3,7 @@ package contract
 import (
 	"errors"
 	"github.com/codestates/WBA-BC-Project-02/was/common/cache/login"
+	"github.com/codestates/WBA-BC-Project-02/was/common/contract/util"
 	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
 	"github.com/codestates/WBA-BC-Project-02/was/protocol/contract/request"
 	"github.com/codestates/WBA-BC-Project-02/was/protocol/user/response"
@@ -26,11 +27,13 @@ func (w *wemixonService) MintToken(loginInfo *login.Information, reqM *request.M
 
 	switch reqM.MintingName {
 	case enum.DracoContractName:
-		if _, err := mintDraco(loginInfo.Address, reqM.BlackIronBurnAmount); err != nil {
+		tokenAmount := reqM.BlackIronBurnAmount / 10
+		if _, err := ActContract(loginInfo.Address, tokenAmount, util.MintDracoTx); err != nil {
 			return nil, err
 		}
 	case enum.TigContractName:
-		if _, err := mintTig(loginInfo.Address, reqM.BlackIronBurnAmount); err != nil {
+		tokenAmount := reqM.BlackIronBurnAmount / 10
+		if _, err := ActContract(loginInfo.Address, tokenAmount, util.MintTigTx); err != nil {
 			return nil, err
 		}
 	}

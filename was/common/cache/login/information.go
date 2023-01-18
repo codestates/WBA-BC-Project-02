@@ -32,6 +32,15 @@ func NewLoginInfo(device string, user *entity.User) *Information {
 	}
 }
 
+func NewRefreshLoginInfo(loginInfo *Information) *Information {
+	return &Information{
+		UserID:  loginInfo.UserID,
+		Device:  loginInfo.Device,
+		Address: loginInfo.Address,
+		TokenID: loginInfo.TokenID,
+	}
+}
+
 func (l *Information) MarshalBinary() (data []byte, err error) {
 	return json.Marshal(l)
 }

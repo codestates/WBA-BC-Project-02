@@ -2,8 +2,8 @@ package enum
 
 const (
 	// cache
-	AccessCache  = "ACCESSTOEKN"
-	RefreshCache = "REFRESHTOEKN"
+	AccessCacheKey  = "ACCESSTOEKN"
+	RefreshCacheKey = "REFRESHTOEKN"
 
-	NonceCache = "NONCE"
+	NonceCacheKey = "NONCE"
 )

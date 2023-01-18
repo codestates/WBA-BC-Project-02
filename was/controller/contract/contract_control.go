@@ -1,6 +1,8 @@
 package contract
 
 import (
+	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
+	contract2 "github.com/codestates/WBA-BC-Project-02/was/common/cache/contract"
 	"github.com/codestates/WBA-BC-Project-02/was/common/cache/login"
 	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
 	wasError "github.com/codestates/WBA-BC-Project-02/was/common/error"
@@ -77,19 +79,25 @@ func (co *contractControl) MintContract(c *gin.Context) {
 	protocol.SuccessData(simpleUser).Response(c)
 }
 
-func (co *contractControl) Exchan현geContract(c *gin.Context) {
-	//loginInfo, exists := c.Keys[enum.LoginInformation].(*login.Information)
-	//if !exists {
-	//	protocol.Fail(wasError.InternalServerError).Response(c)
-	//	return
-	//}
-	//
-	//reqE := &request.ExchangeContract{}
-	//if err := c.ShouldBindJSON(reqE); err != nil {
-	//	protocol.Fail(wasError.BadRequestError).Response(c)
-	//	return
-	//}
+func (co *contractControl) ExchangeContract(c *gin.Context) {
+	loginInfo, exists := c.Keys[enum.LoginInformation].(*login.Information)
+	if !exists {
+		protocol.Fail(wasError.InternalServerError).Response(c)
+		return
+	}
 
+	reqE := &request.ExchangeContract{}
+	if err := c.ShouldBindJSON(reqE); err != nil {
+		protocol.Fail(wasError.BadRequestError).Response(c)
+		return
+	}
+
+	simpleUser, err := co.wemixonService.ExchangeContract(loginInfo, reqE)
+	if err != nil {
+		return
+	}
+
+	protocol.SuccessData(simpleUser).Response(c)
 }
 
 func (co *contractControl) GetRatioTokenAndCredit(c *gin.Context) {
@@ -106,4 +114,15 @@ func (co *contractControl) GetRatioTokenAndCredit(c *gin.Context) {
 	}
 
 	protocol.SuccessData(responseRatio).Response(c)
+}
+
+func (co *contractControl) GetNonce(c *gin.Context) {
+	nonce := &contract2.Nonce{}
+	resN, err := cache.Redis.Get(enum.NonceCacheKey, nonce)
+	if err != nil {
+		protocol.Fail(wasError.DataNotFoundError).Response(c)
+		return
+	}
+
+	protocol.SuccessData(resN).Response(c)
 }

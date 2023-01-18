@@ -3,6 +3,7 @@ package user
 import (
 	"github.com/codestates/WBA-BC-Project-02/common/model/entity"
 	wasCommon "github.com/codestates/WBA-BC-Project-02/was/common"
+	"github.com/codestates/WBA-BC-Project-02/was/common/cache/login"
 	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
 	"github.com/codestates/WBA-BC-Project-02/was/model/query"
 	"go.mongodb.org/mongo-driver/bson"
@@ -108,6 +109,25 @@ func (u *userModel) FindUserAndSetIron(address string, blackIron int) (*entity.U
 	f := query.GetAddressFilter(address)
 
 	upf := query.GetBlackIronSetFilter(blackIron)
+
+	prj := options.FindOneAndUpdate().SetReturnDocument(options.After)
+
+	user := &entity.User{}
+
+	if err := query.NewFindAction(user, u.collection).
+		InjectFilter(f).
+		InjectUpdate(upf).
+		FindOneAndUpdate(prj); err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (u *userModel) FindUserAndSet(loginInfo *login.Information) (*entity.User, error) {
+	f := query.GetAddressFilter(loginInfo.Address)
+
+	upf := query.GetUpdateFilterByLoginInfo(loginInfo)
 
 	prj := options.FindOneAndUpdate().SetReturnDocument(options.After)
 

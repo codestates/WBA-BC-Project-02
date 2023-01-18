@@ -14,5 +14,5 @@ var ContractControl contract.ContractController
 func InjectControllerDependency() {
 	InfoControl = info.NewInfoControl()
 	UserControl = user.NewUserControl(service.UserService)
-	ContractControl = contract.NewContractControl(service.ContractService)
+	ContractControl = contract.NewContractControl(service.ContractService, service.WemixService)
 }

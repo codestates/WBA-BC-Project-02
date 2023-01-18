@@ -26,55 +26,15 @@ func NewWemixonService(mod user.UserModeler) *wemixonService {
 	return wemixonInstance
 }
 
-func (w *wemixonService) BuyCreditByDraco() {
+type Method func(string, int) []byte
 
-}
-
-func (w *wemixonService) BuyDracoByCredit() {
-
-}
-
-func (w *wemixonService) BuyCreditByTig() {
-
-}
-
-func (w *wemixonService) BuyTigByCredit() {
-
-}
-
-func (w *wemixonService) CreditToWemix() {
-
-}
-
-func mintDraco(userAddress string, burnAmount int) (int, error) {
+func ActContract(userAddress string, amount int, method Method) (int, error) {
 	client, nonce, err := getClientAndNonce()
 	if err != nil {
 		return 0, err
 	}
 
-	tokenAmount := burnAmount / 10
-	data := util.MintDracoTx(userAddress, tokenAmount)
-
-	if err := saveNonceInRedis(nonce); err != nil {
-		return 0, err
-	}
-
-	successCount, err := sendTx(client, int64(nonce), data)
-	if err != nil {
-		return 0, err
-	}
-
-	return successCount, nil
-}
-
-func mintTig(userAddress string, burnAmount int) (int, error) {
-	client, nonce, err := getClientAndNonce()
-	if err != nil {
-		return 0, err
-	}
-
-	tokenAmount := burnAmount / 10
-	data := util.MintTigTx(userAddress, tokenAmount)
+	data := method(userAddress, amount)
 
 	if err := saveNonceInRedis(nonce); err != nil {
 		return 0, err
@@ -114,9 +74,9 @@ func getNonce(client *ethclient.Client) (uint64, error) {
 	return serverAddrNonce, nil
 }
 
-func saveNonceInRedis(nonce uint64) error {
-	nonceValue := &contract.Nonce{NonceValue: nonce}
-	if err := cache.Redis.Cache(enum.NonceCache, nonceValue, 0); err != nil {
+func saveNonceInRedis(nonceValue uint64) error {
+	nonce := &contract.Nonce{NonceValue: nonceValue}
+	if err := cache.Redis.Cache(enum.NonceCacheKey, nonce, 0); err != nil {
 		return err
 	}
 	return nil
