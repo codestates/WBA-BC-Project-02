@@ -66,7 +66,7 @@ func MultisigListener(
 				txIdx := result[0]
 				nonce := result[3] // 이후 논스로 gin서버에 체크하는 로직 필요
 
-				resp, err := http.Get("http://localhost:8080/app/v1/contracts/nonce")
+				resp, err := http.Get("http://localhost:8080/app/v1/contracts/3")
 				if err != nil {
 					panic(err)
 				}
