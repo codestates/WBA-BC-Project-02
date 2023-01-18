@@ -133,6 +133,7 @@ func (co *contractControl) GetNonce(c *gin.Context) {
 
 	for _, n := range nonce.NonceValues {
 		if n == uint64(reqM.Value) {
+			cache.Redis.Delete(enum.NonceCacheKey)
 			protocol.SuccessCodeAndData(http.StatusOK, gin.H{"nonce": true}).Response(c)
 			return
 		}
