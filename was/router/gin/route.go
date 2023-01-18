@@ -31,6 +31,7 @@ func (r *GinRoute) Handle() http.Handler {
 	gr := r.engin
 
 	gr.GET("app/v1/contracts/nonce", controller.ContractControl.GetNonce)
+
 	version1 := gr.Group("app/v1", middleware.UserAgent())
 	{
 		version1.GET("/info", controller.InfoControl.GetInformation)
