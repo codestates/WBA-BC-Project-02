@@ -118,12 +118,26 @@ func (co *contractControl) GetRatioTokenAndCredit(c *gin.Context) {
 }
 
 func (co *contractControl) GetNonce(c *gin.Context) {
+	reqM := &request.Nonce{}
+	if err := c.ShouldBindQuery(reqM); err != nil {
+		protocol.Fail(wasError.BadRequestError).Response(c)
+		return
+	}
+
 	nonce := &contract2.Nonce{}
-	resN, err := cache.Redis.Get(enum.NonceCacheKey, nonce)
+	_, err := cache.Redis.Get(enum.NonceCacheKey, nonce)
 	if err != nil {
 		protocol.Fail(wasError.DataNotFoundError).Response(c)
 		return
 	}
 
-	protocol.SuccessData(resN).Response(c)
+	for _, n := range nonce.NonceValues {
+		if n == uint64(reqM.Value) {
+			protocol.SuccessCodeAndData(http.StatusOK, gin.H{"nonce": true}).Response(c)
+			return
+		}
+	}
+
+	protocol.Fail(wasError.DataNotFoundError).Response(c)
+	return
 }

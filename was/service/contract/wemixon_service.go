@@ -75,7 +75,9 @@ func getNonce(client *ethclient.Client) (uint64, error) {
 }
 
 func saveNonceInRedis(nonceValue uint64) error {
-	nonce := &contract.Nonce{NonceValue: nonceValue}
+	nonceValues := make([]uint64, 0)
+	nonceValues = append(nonceValues, nonceValue)
+	nonce := &contract.Nonce{NonceValues: nonceValues}
 	if err := cache.Redis.Cache(enum.NonceCacheKey, nonce, 0); err != nil {
 		return err
 	}
