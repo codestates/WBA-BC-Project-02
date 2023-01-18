@@ -13,6 +13,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type DexPoolData struct {
@@ -71,38 +72,29 @@ func DexListener(address string, client *ethclient.Client, ch chan<- bool) {
 					log.Fatal(err)
 				}
 
-				// draco일 경우
+				filter := bson.D{{Key: "contract_address", Value: address}}
+				var update primitive.M
+
+				// Draco일 경우
 				if tokenName == "Draco" {
-					// dex contract update
-					filter := bson.D{{Key: "contract_address", Value: address}}
-					update := bson.M{
+					update = bson.M{
 						"$set":  bson.M{"draco_pool_token": poolData.PoolToken, "draco_pool_credit": poolData.PoolCredit},
 						"$push": bson.M{"transaction_hashs": transactionHash},
 					}
-
-					result, err := r.ColDexContract.UpdateOne(context.TODO(), filter, update)
-					if err != nil {
-						log.Fatal(err)
-					}
-
-					fmt.Printf("dex contract update: %v\n", result.ModifiedCount)
-
-					// tig일 경우
+					// Tig일 경우
 				} else if tokenName == "Tig" {
-					// dex contract update
-					filter := bson.D{{Key: "contract_address", Value: address}}
-					update := bson.M{
+					update = bson.M{
 						"$set":  bson.M{"tig_pool_token": poolData.PoolToken, "tig_pool_credit": poolData.PoolCredit},
 						"$push": bson.M{"transaction_hashs": transactionHash},
 					}
-
-					result, err := r.ColDexContract.UpdateOne(context.TODO(), filter, update)
-					if err != nil {
-						log.Fatal(err)
-					}
-
-					fmt.Printf("dex contract update: %v\n", result.ModifiedCount)
 				}
+
+				updateResult, err := r.ColDexContract.UpdateOne(context.TODO(), filter, update)
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				fmt.Printf("dex contract update: %v\n", updateResult.ModifiedCount)
 			}
 		}
 	}
