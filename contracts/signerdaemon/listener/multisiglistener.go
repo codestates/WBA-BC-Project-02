@@ -1,7 +1,9 @@
-package signer
+package listener
 
 import (
+	"math/big"
 	"github.com/codestates/WBA-BC-Project-02/contracts/multisig"
+	"github.com/codestates/WBA-BC-Project-02/contracts/signerdaemon/runner"
     "context"
     "log"
 	"strings"
@@ -42,15 +44,24 @@ func MultisigListener(address string, client *ethclient.Client, ch chan<- bool) 
 			if err != nil {
 				log.Fatal(err)
 			}
-			result, err := contractABI.Unpack(event.Name, vLog.Data)
-			if err != nil {
-				log.Fatal(err)
+			if event.Name == "SubmitTransaction" {
+				result, err := contractABI.Unpack(event.Name, vLog.Data)
+				if err != nil {
+					log.Fatal(err)
+				}
+				txIdx := result[0]
+				nonce := result[3] // 이후 논스로 gin서버에 체크하는 로직 필요
+				
+				// 서버에 체크해서 맞다면, txIdx를 가지고 confirm, execute하는 로직을 이어가자
+				
+
+				// 서버에 체크해서 맞다고 확인받은 이후 컨펌 - execute 로직
+				fmt.Println("txIdx: ", txIdx)
+				fmt.Println("nonce: ", nonce)
+				runner.RunTx(txIdx.(*big.Int))
+
+				fmt.Println("success")
 			}
-			txIdx := result[0]
-			nonce := result[3] // 이후 논스로 gin서버에 체크하는 로직 필요
-			
-			// 서버에 체크해서 맞다면, txIdx를 가지고 confirm, execute하는 로직을 이어가자
-			
 		}
 	}
 }

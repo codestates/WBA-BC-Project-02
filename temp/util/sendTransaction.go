@@ -25,8 +25,8 @@ func SendTransaction(client *ethclient.Client, nonce int64, data []byte) error {
 		fmt.Println("first Pk err")
 		log.Fatal(err)
 	}
-	multisigAddr := common.HexToAddress("0xFf4a73f42E69E70450E3eC97951a7b4639A866EB") // multisig contract의 주소 -> config에서 가져올 것
-	dexContractAddr := common.HexToAddress("0xEC3b843a78D2d9430Acb73279Aed35fC0DEE427B") // dex 컨트랙트의 주소 -> config에서 가져올 것
+	multisigAddr := common.HexToAddress("0x6f574c6325B3cB3F86E8bfA5f306310D63dD217d") // multisig contract의 주소 -> config에서 가져올 것
+	dexContractAddr := common.HexToAddress("0x8835f3bcEB451Ea73f0Ef3891f47bc66c7D24306") // dex 컨트랙트의 주소 -> config에서 가져올 것
 
 	instance, err := multisig.NewMultisig(multisigAddr, client)
 	if err != nil {
@@ -49,6 +49,9 @@ func SendTransaction(client *ethclient.Client, nonce int64, data []byte) error {
 		fmt.Println("get txIdx Err")
 		log.Fatal(err)
 	}
+
+	fmt.Println("txIdx: ", txIdx)
+	fmt.Println("nonce: ", nonce)
 
 	count := 0
 	for {
@@ -80,7 +83,7 @@ func sendSubmitTransaction(
 	data []byte,
 	nonce *big.Int,
 ) (int64, error) {
-	fmt.Println("Sendging...")
+	fmt.Println("Sending...")
 	txSubmitTransaction, err := instance.SubmitTransaction(auth, dexContractAddr, value, data, nonce)
 	if err != nil {
 		fmt.Println("SendSubmitTransaction Err")
@@ -112,8 +115,7 @@ func sendSubmitTransaction(
 	}
 	var datas map[string]interface{}
 	json.Unmarshal(txData, &datas)
-	txIdxHex := datas["logs"].([]interface{})[0].(map[string]interface{})["topics"].([]interface{})[2]
-	txIdxHex = txIdxHex.(string)[2:]
-	i, _ := strconv.ParseInt(txIdxHex.(string), 16, 64)
+	txIdxHex := datas["logs"].([]interface{})[0].(map[string]interface{})["data"].(string)[2:66]
+	i, _ := strconv.ParseInt(txIdxHex, 16, 64)
 	return i, nil
 }
