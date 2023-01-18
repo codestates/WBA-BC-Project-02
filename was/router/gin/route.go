@@ -29,10 +29,11 @@ func NewGinRoute(mode string) *GinRoute {
 
 func (r *GinRoute) Handle() http.Handler {
 	gr := r.engin
+	
+	gr.GET("/contracts/nonce", controller.ContractControl.GetNonce)
 
 	version1 := gr.Group("app/v1", middleware.UserAgent())
 	{
-		version1.GET("/contracts/nonce", controller.ContractControl.GetNonce)
 		version1.GET("/info", controller.InfoControl.GetInformation)
 
 		u := version1.Group("/users")

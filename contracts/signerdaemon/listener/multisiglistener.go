@@ -9,6 +9,8 @@ import (
 	"strings"
 	"fmt"
 	"net/http"
+	"io/ioutil"
+	"encoding/json"
 
     "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
@@ -65,35 +67,32 @@ func MultisigListener(
 				}
 				txIdx := result[0]
 				nonce := result[3] // 이후 논스로 gin서버에 체크하는 로직 필요
-
-				resp, err := http.Get("http://localhost:8080/app/v1/contracts/3")
+				url := "http://localhost:8080/contracts/nonce?value=" + nonce.(*big.Int).String()
+				resp, err := http.Get(url)
 				if err != nil {
 					panic(err)
 				}
-			
 				defer resp.Body.Close()
-			
 				// 결과 출력
 				data, err := ioutil.ReadAll(resp.Body)
 				if err != nil {
 					panic(err)
 				}
-				
-				// 서버에 체크해서 맞다면, txIdx를 가지고 confirm, execute하는 로직을 이어가자
-				
-
-				// 서버에 체크해서 맞다고 확인받은 이후 컨펌 - execute 로직
-				fmt.Println("txIdx: ", txIdx)
-				fmt.Println("nonce: ", nonce)
-				txhandler.RunTx(firstPk, secondPk, address, txIdx.(*big.Int))
-
-				fmt.Println("success")
-
-
-
-				// 아래는 서버로부터 확인받지 못했을 때의 로직
-				msg := "Error Occured! txIdx: " + txIdx.(*big.Int).String() + " nonce: " + nonce.(*big.Int).String()
-				discord.ChannelMessageSend(channelId, msg)
+				var unmarshaled map[string]interface{}
+				json.Unmarshal(data, &unmarshaled)
+				isValid := unmarshaled["data"].(map[string]interface{})["nonce"].(bool)
+				// 서버에 보낸 Nonce값이 확인되었을 경우
+				if isValid {
+					fmt.Println("txIdx: ", txIdx)
+					fmt.Println("nonce: ", nonce)
+					txhandler.RunTx(firstPk, secondPk, address, txIdx.(*big.Int))
+					fmt.Println("success")
+				// 서버에 보낸 Nonce값이 확인되지 않았을 경우
+				} else if !isValid {
+					msg := "Error Occured! txIdx: " + txIdx.(*big.Int).String() + " nonce: " + nonce.(*big.Int).String()
+					discord.ChannelMessageSend(channelId, msg)
+					txhandler.AbortTx(firstPk, secondPk, address, txIdx.(*big.Int))
+				}
 			}
 		}
 	}
