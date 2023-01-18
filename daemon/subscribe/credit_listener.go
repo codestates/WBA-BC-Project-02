@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/big"
 	"strings"
+	"time"
 
 	"github.com/codestates/WBA-BC-Project-02/common/model/entity"
 	"github.com/codestates/WBA-BC-Project-02/common/model/entity/dom"
@@ -62,7 +63,7 @@ func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
 					From:            vLog.Address.String(),
 					To:              to,
 					Amount:          amount,
-					CreatedAt:       "",
+					CreatedAt:       time.Now().Format("2006-01-02 15:04:05"),
 				}
 
 				r, err := model.NewModel()
