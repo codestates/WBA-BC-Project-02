@@ -49,7 +49,7 @@ func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
 				log.Fatal(err)
 			}
 
-			if event.Name == "Mint" {
+			if event.Name == "Swap" {
 				fmt.Println(event.Name)
 				result, err := contractABI.Unpack(event.Name, vLog.Data)
 				if err != nil {
@@ -59,6 +59,8 @@ func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
 				// event parameter 값
 				to := fmt.Sprintf("%v", result[0])
 				amount := fmt.Sprintf("%v", result[1])
+				creditAmount := fmt.Sprintf("%v", result[2])
+				wemixAmount := fmt.Sprintf("%v", result[3])
 
 				// transaction 값 생성
 				transaction := dom.Transaction{
@@ -76,32 +78,14 @@ func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
 					log.Fatal(err)
 				}
 
-				// user 조회
-				var user entity.User
-				userFilter := bson.D{{Key: "address", Value: to}}
-				r.ColUser.FindOne(context.TODO(), userFilter).Decode(&user)
-
-				// amount 계산
-				updateAmount := new(big.Int)
-				biUserAmount := new(big.Int)
-				userAmount, _ := biUserAmount.SetString(user.CreditAmount, 10)
-				biAmount := new(big.Int)
-				mintAmount, _ := biAmount.SetString(amount, 10)
-
-				updateAmount.Add(userAmount, mintAmount)
-
-				fmt.Printf("user amount: %s + mint amount: %s = total amount: %s\n", userAmount, mintAmount, updateAmount)
-
 				// user update
-				userUpdate := bson.M{
-					"$set":  bson.M{"credit_amount": updateAmount.String()},
+				filter := bson.D{{Key: "address", Value: to}}
+				update := bson.M{
+					"$set":  bson.M{"credit_amount": creditAmount, "wemix_amount": wemixAmount},
 					"$push": bson.M{"transactions": transaction},
 				}
 
-				userUpdateResult, err := r.ColUser.UpdateOne(context.TODO(), userFilter, userUpdate)
-				if err != nil {
-					log.Fatal(err)
-				}
+				userResult, err := r.ColUser.UpdateOne(context.TODO(), filter, update)
 
 				// contract update
 				contractFilter := bson.D{{Key: "contract_address", Value: transaction.ContractAddress}}
@@ -111,7 +95,8 @@ func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
 
 				contractUpdateResult, err := r.ColContract.UpdateOne(context.TODO(), contractFilter, contractUpdate)
 
-				fmt.Printf("user update: %v, contract update: %v\n", userUpdateResult.ModifiedCount, contractUpdateResult.ModifiedCount)
+				fmt.Printf("user update: %v\n, contract update: %v\n", userResult.ModifiedCount, contractUpdateResult.ModifiedCount)
+
 			}
 
 			if event.Name == "CustomTransfer" {
@@ -155,22 +140,25 @@ func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
 
 				zeroObjectId, _ := primitive.ObjectIDFromHex("000000000000000000000000")
 
+				// amount 계산
+				updateAddAmount := new(big.Int)
+				updateSubAmount := new(big.Int)
+
+				biUserAmount := new(big.Int)
+				userAmount, _ := biUserAmount.SetString(fromUser.CreditAmount, 10)
+				biAmount := new(big.Int)
+				trasnferAmount, _ := biAmount.SetString(amount, 10)
+
+				updateAddAmount.Add(userAmount, trasnferAmount)
+				updateSubAmount.Sub(userAmount, trasnferAmount)
+
 				// from일 경우
 				if zeroObjectId != fromUser.ID {
-					// amount 계산
-					updateAmount := new(big.Int)
-					biUserAmount := new(big.Int)
-					userAmount, _ := biUserAmount.SetString(fromUser.CreditAmount, 10)
-					biAmount := new(big.Int)
-					trasnferAmount, _ := biAmount.SetString(amount, 10)
-
-					updateAmount.Sub(userAmount, trasnferAmount)
-
-					fmt.Printf("user amount: %s + trasnfer amount: %s = total amount: %s\n", userAmount, trasnferAmount, updateAmount)
+					fmt.Printf("user amount: %s - trasnfer amount: %s = total amount: %s\n", userAmount, trasnferAmount, updateSubAmount)
 
 					// user update
 					update := bson.M{
-						"$set":  bson.M{"credit_amount": updateAmount.String()},
+						"$set":  bson.M{"credit_amount": updateSubAmount.String()},
 						"$push": bson.M{"transactions": transaction},
 					}
 
@@ -180,24 +168,16 @@ func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
 					}
 
 					fmt.Printf("from user udpate: %v\n", result.ModifiedCount)
+					ch <- true
 				}
 
 				// to일 경우
 				if zeroObjectId != toUser.ID {
-					// amount 계산
-					updateAmount := new(big.Int)
-					biUserAmount := new(big.Int)
-					userAmount, _ := biUserAmount.SetString(toUser.CreditAmount, 10)
-					biAmount := new(big.Int)
-					trasnferAmount, _ := biAmount.SetString(amount, 10)
-
-					updateAmount.Add(userAmount, trasnferAmount)
-
-					fmt.Printf("user amount: %s + trasnfer amount: %s = total amount: %s\n", userAmount, trasnferAmount, updateAmount)
+					fmt.Printf("user amount: %s + trasnfer amount: %s = total amount: %s\n", userAmount, trasnferAmount, updateAddAmount)
 
 					// user update
 					update := bson.M{
-						"$set":  bson.M{"credit_amount": updateAmount.String()},
+						"$set":  bson.M{"credit_amount": updateAddAmount.String()},
 						"$push": bson.M{"transactions": transaction},
 					}
 
@@ -209,6 +189,16 @@ func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
 
 					fmt.Printf("to user udpate: %v\n", result.ModifiedCount)
 				}
+
+				// contract update
+				contractFilter := bson.D{{Key: "contract_address", Value: transaction.ContractAddress}}
+				contractUpdate := bson.M{
+					"$push": bson.M{"transactions": transaction},
+				}
+
+				contractUpdateResult, err := r.ColContract.UpdateOne(context.TODO(), contractFilter, contractUpdate)
+
+				fmt.Printf("contract update: %v\n", contractUpdateResult.ModifiedCount)
 			}
 		}
 	}
