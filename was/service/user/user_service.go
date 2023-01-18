@@ -40,8 +40,13 @@ func (u *userService) ReissueToken(refreshToken string, ua string) (*response.To
 
 	deleteCachedLoginInfos(tokens)
 
-	info.Device = ua
-	if err := saveCacheLoginInfos(info, tokens); err != nil {
+	userNonTx, err := u.userModel.FindUserNonTx(info.Address)
+	if err != nil {
+		return nil, err
+	}
+
+	loginInfo := login.NewLoginInfo(ua, userNonTx)
+	if err := saveCacheLoginInfos(loginInfo, tokens); err != nil {
 		return nil, err
 	}
 
