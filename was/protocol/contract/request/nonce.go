@@ -1,5 +1,5 @@
 package request
 
 type Nonce struct {
-	Value int `json:"value" binding:"required"`
+	Value int `json:"value" form:"value" binding:"required"`
 }
