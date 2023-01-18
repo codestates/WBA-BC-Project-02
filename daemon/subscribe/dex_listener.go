@@ -3,10 +3,10 @@ package subscribe
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/codestates/WBA-BC-Project-02/daemon/model"
+	"github.com/codestates/WBA-BC-Project-02/daemon/utils"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
@@ -29,14 +29,10 @@ func DexListener(address string, client *ethclient.Client, ch chan<- bool) {
 
 	logs := make(chan types.Log)
 	sub, err := client.SubscribeFilterLogs(context.Background(), query, logs)
-	if err != nil {
-		log.Fatal(err)
-	}
+	utils.ErrorHandler(err)
 
 	contractABI, err := abi.JSON(strings.NewReader(string("dex.ContractABI")))
-	if err != nil {
-		log.Fatal(err)
-	}
+	utils.ErrorHandler(err)
 
 	for {
 		select {
@@ -45,16 +41,12 @@ func DexListener(address string, client *ethclient.Client, ch chan<- bool) {
 			return
 		case vLog := <-logs:
 			event, err := contractABI.EventByID(vLog.Topics[0])
-			if err != nil {
-				log.Fatal(err)
-			}
+			utils.ErrorHandler(err)
 
 			if event.Name == "Ratio" {
 				fmt.Println(event.Name)
 				result, err := contractABI.Unpack(event.Name, vLog.Data)
-				if err != nil {
-					log.Fatal(err)
-				}
+				utils.ErrorHandler(err)
 
 				// event parameter
 				tokenName := fmt.Sprintf("%v", result[0])
@@ -68,9 +60,7 @@ func DexListener(address string, client *ethclient.Client, ch chan<- bool) {
 				}
 
 				r, err := model.NewModel()
-				if err != nil {
-					log.Fatal(err)
-				}
+				utils.ErrorHandler(err)
 
 				filter := bson.D{{Key: "contract_address", Value: address}}
 				var update primitive.M
@@ -90,9 +80,7 @@ func DexListener(address string, client *ethclient.Client, ch chan<- bool) {
 				}
 
 				updateResult, err := r.ColDexContract.UpdateOne(context.TODO(), filter, update)
-				if err != nil {
-					log.Fatal(err)
-				}
+				utils.ErrorHandler(err)
 
 				fmt.Printf("dex contract update: %v\n", updateResult.ModifiedCount)
 			}

@@ -3,7 +3,6 @@ package subscribe
 import (
 	"context"
 	"fmt"
-	"log"
 	"math/big"
 	"strings"
 
@@ -11,6 +10,7 @@ import (
 	"github.com/codestates/WBA-BC-Project-02/common/model/entity/dom"
 	"github.com/codestates/WBA-BC-Project-02/contracts/credit"
 	"github.com/codestates/WBA-BC-Project-02/daemon/model"
+	"github.com/codestates/WBA-BC-Project-02/daemon/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
@@ -29,14 +29,10 @@ func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
 
 	logs := make(chan types.Log)
 	sub, err := client.SubscribeFilterLogs(context.Background(), query, logs)
-	if err != nil {
-		log.Fatal(err)
-	}
+	utils.ErrorHandler(err)
 
 	contractABI, err := abi.JSON(strings.NewReader(credit.CreditABI))
-	if err != nil {
-		log.Fatal(err)
-	}
+	utils.ErrorHandler(err)
 
 	for {
 		select {
@@ -45,16 +41,12 @@ func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
 			return
 		case vLog := <-logs:
 			event, err := contractABI.EventByID(vLog.Topics[0])
-			if err != nil {
-				log.Fatal(err)
-			}
+			utils.ErrorHandler(err)
 
 			if event.Name == "Swap" {
 				fmt.Println(event.Name)
 				result, err := contractABI.Unpack(event.Name, vLog.Data)
-				if err != nil {
-					log.Fatal(err)
-				}
+				utils.ErrorHandler(err)
 
 				// event parameter 값
 				to := fmt.Sprintf("%v", result[0])
@@ -74,9 +66,7 @@ func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
 				}
 
 				r, err := model.NewModel()
-				if err != nil {
-					log.Fatal(err)
-				}
+				utils.ErrorHandler(err)
 
 				// user update
 				filter := bson.D{{Key: "address", Value: to}}
@@ -103,9 +93,7 @@ func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
 				fmt.Println(event.Name)
 
 				result, err := contractABI.Unpack(event.Name, vLog.Data)
-				if err != nil {
-					log.Fatal(err)
-				}
+				utils.ErrorHandler(err)
 
 				// event prameter
 				from := fmt.Sprintf("%v", result[0])
@@ -124,9 +112,7 @@ func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
 				}
 
 				r, err := model.NewModel()
-				if err != nil {
-					log.Fatal(err)
-				}
+				utils.ErrorHandler(err)
 
 				// from user 조회
 				var fromUser entity.User
@@ -163,12 +149,9 @@ func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
 					}
 
 					result, err := r.ColUser.UpdateOne(context.TODO(), fromUserFilter, update)
-					if err != nil {
-						log.Fatal(err)
-					}
+					utils.ErrorHandler(err)
 
 					fmt.Printf("from user udpate: %v\n", result.ModifiedCount)
-					ch <- true
 				}
 
 				// to일 경우
@@ -182,10 +165,7 @@ func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
 					}
 
 					result, err := r.ColUser.UpdateOne(context.TODO(), toUserFilter, update)
-
-					if err != nil {
-						log.Fatal(err)
-					}
+					utils.ErrorHandler(err)
 
 					fmt.Printf("to user udpate: %v\n", result.ModifiedCount)
 				}
