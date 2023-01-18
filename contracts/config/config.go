@@ -10,6 +10,8 @@ type Config struct {
 		FirstPk string
 		SecondPk string
 		MultisigAddr string
+		BotToken string
+		ChannelID string
 	}
 }
 

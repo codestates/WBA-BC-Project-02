@@ -14,9 +14,18 @@ import (
     "github.com/ethereum/go-ethereum/common"
     "github.com/ethereum/go-ethereum/core/types"
     "github.com/ethereum/go-ethereum/ethclient"
+	"github.com/bwmarrin/discordgo"
 )
 
-func MultisigListener(firstPk string, secondPk string, address string, client *ethclient.Client, ch chan<- bool) {
+func MultisigListener(
+		firstPk string,
+		secondPk string,
+		address string,
+		client *ethclient.Client,
+		ch chan<- bool,
+		discord *discordgo.Session,
+		channelId string,
+	) {
 	contractAddress := common.HexToAddress(address)
 	query := ethereum.FilterQuery {
 		Addresses : []common.Address{contractAddress},
@@ -61,6 +70,12 @@ func MultisigListener(firstPk string, secondPk string, address string, client *e
 				runner.RunTx(firstPk, secondPk, address, txIdx.(*big.Int))
 
 				fmt.Println("success")
+
+
+
+				// 아래는 서버로부터 확인받지 못했을 때의 로직
+				msg := "Error Occured! txIdx: " + txIdx.(*big.Int).String() + " nonce: " + nonce.(*big.Int).String()
+				discord.ChannelMessageSend(channelId, msg)
 			}
 		}
 	}
