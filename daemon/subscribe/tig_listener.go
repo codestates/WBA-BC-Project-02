@@ -154,22 +154,25 @@ func TigListener(address string, client *ethclient.Client, ch chan<- bool) {
 
 				zeroObjectId, _ := primitive.ObjectIDFromHex("000000000000000000000000")
 
+				// amount 계산
+				updateAddAmount := new(big.Int)
+				updateSubAmount := new(big.Int)
+
+				biUserAmount := new(big.Int)
+				userAmount, _ := biUserAmount.SetString(fromUser.TigAmount, 10)
+				biAmount := new(big.Int)
+				trasnferAmount, _ := biAmount.SetString(amount, 10)
+
+				updateAddAmount.Add(userAmount, trasnferAmount)
+				updateSubAmount.Sub(userAmount, trasnferAmount)
+
 				// from일 경우
 				if zeroObjectId != fromUser.ID {
-					// amount 계산
-					updateAmount := new(big.Int)
-					biUserAmount := new(big.Int)
-					userAmount, _ := biUserAmount.SetString(fromUser.CreditAmount, 10)
-					biAmount := new(big.Int)
-					trasnferAmount, _ := biAmount.SetString(amount, 10)
-
-					updateAmount.Sub(userAmount, trasnferAmount)
-
-					fmt.Printf("user amount: %s + trasnfer amount: %s = total amount: %s\n", userAmount, trasnferAmount, updateAmount)
+					fmt.Printf("user amount: %s - trasnfer amount: %s = total amount: %s\n", userAmount, trasnferAmount, updateSubAmount)
 
 					// user update
 					update := bson.M{
-						"$set":  bson.M{"tig_amount": updateAmount.String()},
+						"$set":  bson.M{"tig_amount": updateSubAmount.String()},
 						"$push": bson.M{"transactions": transaction},
 					}
 
@@ -183,20 +186,11 @@ func TigListener(address string, client *ethclient.Client, ch chan<- bool) {
 
 				// to일 경우
 				if zeroObjectId != toUser.ID {
-					// amount 계산
-					updateAmount := new(big.Int)
-					biUserAmount := new(big.Int)
-					userAmount, _ := biUserAmount.SetString(toUser.CreditAmount, 10)
-					biAmount := new(big.Int)
-					trasnferAmount, _ := biAmount.SetString(amount, 10)
-
-					updateAmount.Add(userAmount, trasnferAmount)
-
-					fmt.Printf("user amount: %s + trasnfer amount: %s = total amount: %s\n", userAmount, trasnferAmount, updateAmount)
+					fmt.Printf("user amount: %s + trasnfer amount: %s = total amount: %s\n", userAmount, trasnferAmount, updateAddAmount)
 
 					// user update
 					update := bson.M{
-						"$set":  bson.M{"tig_amount": updateAmount.String()},
+						"$set":  bson.M{"tig_amount": updateAddAmount.String()},
 						"$push": bson.M{"transactions": transaction},
 					}
 
@@ -208,6 +202,16 @@ func TigListener(address string, client *ethclient.Client, ch chan<- bool) {
 
 					fmt.Printf("to user udpate: %v\n", result.ModifiedCount)
 				}
+
+				// contract update
+				contractFilter := bson.D{{Key: "contract_address", Value: transaction.ContractAddress}}
+				contractUpdate := bson.M{
+					"$push": bson.M{"transactions": transaction},
+				}
+
+				contractUpdateResult, err := r.ColContract.UpdateOne(context.TODO(), contractFilter, contractUpdate)
+
+				fmt.Printf("contract update: %v\n", contractUpdateResult.ModifiedCount)
 			}
 		}
 	}
