@@ -2,6 +2,7 @@ package contract
 
 import (
 	"context"
+	"errors"
 	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
 	"github.com/codestates/WBA-BC-Project-02/was/common/cache/contract"
 	"github.com/codestates/WBA-BC-Project-02/was/common/contract/util"
@@ -26,63 +27,23 @@ func NewWemixonService(mod user.UserModeler) *wemixonService {
 	return wemixonInstance
 }
 
-func (w *wemixonService) BuyCreditByDraco() {
+type Method func(string, int) []byte
 
-}
-
-func (w *wemixonService) BuyDracoByCredit() {
-
-}
-
-func (w *wemixonService) BuyCreditByTig() {
-
-}
-
-func (w *wemixonService) BuyTigByCredit() {
-
-}
-
-func (w *wemixonService) CreditToWemix() {
-
-}
-
-func mintDraco(userAddress string, burnAmount int) (int, error) {
+func ActContract(userAddress string, amount int, method Method) (int, error) {
 	client, nonce, err := getClientAndNonce()
 	if err != nil {
 		return 0, err
 	}
 
-	tokenAmount := burnAmount / 10
-	data := util.MintDracoTx(userAddress, tokenAmount)
+	data := method(userAddress, amount)
 
 	if err := saveNonceInRedis(nonce); err != nil {
 		return 0, err
 	}
 
 	successCount, err := sendTx(client, int64(nonce), data)
-	if err != nil {
-		return 0, err
-	}
-
-	return successCount, nil
-}
-
-func mintTig(userAddress string, burnAmount int) (int, error) {
-	client, nonce, err := getClientAndNonce()
-	if err != nil {
-		return 0, err
-	}
-
-	tokenAmount := burnAmount / 10
-	data := util.MintTigTx(userAddress, tokenAmount)
-
-	if err := saveNonceInRedis(nonce); err != nil {
-		return 0, err
-	}
-
-	successCount, err := sendTx(client, int64(nonce), data)
-	if err != nil {
-		return 0, err
+	if err != nil || successCount == 0 {
+		return 0, errors.New("트랜잭션을 실패했습니다")
 	}
 
 	return successCount, nil
@@ -114,9 +75,11 @@ func getNonce(client *ethclient.Client) (uint64, error) {
 	return serverAddrNonce, nil
 }
 
-func saveNonceInRedis(nonce uint64) error {
-	nonceValue := &contract.Nonce{NonceValue: nonce}
-	if err := cache.Redis.Cache(enum.NonceCache, nonceValue, 0); err != nil {
+func saveNonceInRedis(nonceValue uint64) error {
+	nonceValues := make([]uint64, 0)
+	nonceValues = append(nonceValues, nonceValue)
+	nonce := &contract.Nonce{NonceValues: nonceValues}
+	if err := cache.Redis.Cache(enum.NonceCacheKey, nonce, 0); err != nil {
 		return err
 	}
 	return nil

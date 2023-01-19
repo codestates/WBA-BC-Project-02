@@ -29,6 +29,8 @@ func NewGinRoute(mode string) *GinRoute {
 
 func (r *GinRoute) Handle() http.Handler {
 	gr := r.engin
+	
+	gr.GET("/contracts/nonce", controller.ContractControl.GetNonce)
 
 	version1 := gr.Group("app/v1", middleware.UserAgent())
 	{

@@ -96,7 +96,13 @@ func (u *userControl) GetUserSimpleInformation(c *gin.Context) {
 		return
 	}
 	userInfo := response.FromCache(loginInfo)
-	protocol.SuccessData(userInfo).Response(c)
+	resU, err := u.userService.GetSimpleUser(userInfo.Address)
+	if err != nil {
+		protocol.Fail(wasError.NewAppError(err)).Response(c)
+		return
+	}
+
+	protocol.SuccessData(resU).Response(c)
 }
 
 func (u *userControl) GetUserInformation(c *gin.Context) {

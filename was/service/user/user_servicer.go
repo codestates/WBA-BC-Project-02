@@ -15,5 +15,7 @@ type UserServicer interface {
 
 	GetUser(address string) (*response.User, error)
 
+	GetSimpleUser(address string) (*response.SimpleUser, error)
+
 	IncreaseBlackIron(user *login.Information) (*response.SimpleUser, error)
 }

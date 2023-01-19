@@ -14,7 +14,13 @@ const (
 	Transactions      = "transactions"
 	ContractAddress   = "contract_address"
 	TransactionHashes = "transaction_hashes"
+	WemixAmount       = "wemix_amount"
+	DracoAmount       = "draco_amount"
+	TigAmount         = "tig_amount"
+	CreditAmount      = "credit_amount"
 
-	TigContractName   = "tig"
-	DracoContractName = "draco"
+	TigContractName    = "tig"
+	DracoContractName  = "draco"
+	CreditContractName = "credit"
+	WemixName          = "wemix"
 )

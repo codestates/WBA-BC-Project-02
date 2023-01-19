@@ -7,15 +7,7 @@ import (
 )
 
 type WemixonServicer interface {
-	BuyCreditByDraco()
-
-	BuyDracoByCredit()
-
-	BuyCreditByTig()
-
-	BuyTigByCredit()
-
-	CreditToWemix()
-
 	MintToken(loginInfo *login.Information, reqM *request.MintingContract) (*response.SimpleUser, error)
+
+	ExchangeContract(loginInfo *login.Information, reqE *request.ExchangeContract) error
 }

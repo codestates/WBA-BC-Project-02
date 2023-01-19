@@ -8,8 +8,10 @@ import (
 
 var UserService user.UserServicer
 var ContractService contract.ContractServicer
+var WemixService contract.WemixonServicer
 
 func InjectServicesDependency() {
 	UserService = user.NewUserService(model.UserModel)
 	ContractService = contract.NewContractService(model.ContractModel, model.DexContractModel)
+	WemixService = contract.NewWemixonService(model.UserModel)
 }

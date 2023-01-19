@@ -1,4 +1,4 @@
-package runner
+package txhandler
 
 import (
 	"context"
@@ -17,29 +17,23 @@ import (
 )
 
 func RunTx(firstPkS string, secondPkS string, multisigAddrS string, txIdx *big.Int) {
-	// server url과 연동
 	client, err := ethclient.Dial("https://api.test.wemix.com")
 	if err != nil {
 		fmt.Println("client connect err")
 		log.Fatal(err)
 	}
 
-	// 첫번째 계정의 privateKey -> 이 녀석은 toml에서(?)
 	firstPk, err := crypto.HexToECDSA(firstPkS)
 	if err != nil {
 		fmt.Println("first Pk err")
 		log.Fatal(err)
 	}
-	// 두번째 계정의 privateKey -> 이 녀석은 DB에서(?)
 	secondPk, err := crypto.HexToECDSA(secondPkS)
 	if err != nil {
 		fmt.Println("second Pk err")
 		log.Fatal(err)
 	}
-	// toml에서 가져온 multisig contract의 주소
 	multisigAddr := common.HexToAddress(multisigAddrS)
-
-	// interaction 할 multisig contract instance 생성
 	instance, err := multisig.NewMultisig(multisigAddr, client)
 	if err != nil {
 		fmt.Println("get instance Err")
@@ -60,8 +54,6 @@ func RunTx(firstPkS string, secondPkS string, multisigAddrS string, txIdx *big.I
 		fmt.Println("bind auth2 Err")
 		fmt.Println(err)
 	}
-
-	// 아래서부터는 Daemon(signer)에서 실행하는 로직
 
 	// redis를 통해 먼저 gin 서버에서 보낸 요청인지 확인해야함!
 	// 해당 txIdx에 대해서 confirmTransaction 실행

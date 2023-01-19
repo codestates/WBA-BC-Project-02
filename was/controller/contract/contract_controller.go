@@ -12,4 +12,6 @@ type ContractController interface {
 	ExchangeContract(c *gin.Context)
 
 	GetRatioTokenAndCredit(c *gin.Context)
+
+	GetNonce(c *gin.Context)
 }

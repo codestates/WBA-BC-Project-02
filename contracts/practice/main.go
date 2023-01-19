@@ -10,7 +10,7 @@ package practice
 // 	"strconv"
 
 // 	"github.com/codestates/WBA-BC-Project-02/contracts/multisig"
-// 	"github.com/codestates/WBA-BC-Project-02/contracts/util"
+// 	// "github.com/codestates/WBA-BC-Project-02/contracts/util"
 // 	"github.com/ethereum/go-ethereum/common"
 // 	// "github.com/ethereum/go-ethereum/common/hexutil"
 // 	"github.com/ethereum/go-ethereum/accounts/abi/bind"

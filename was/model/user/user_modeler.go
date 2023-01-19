@@ -1,6 +1,9 @@
 package user
 
-import "github.com/codestates/WBA-BC-Project-02/common/model/entity"
+import (
+	"github.com/codestates/WBA-BC-Project-02/common/model/entity"
+	"github.com/codestates/WBA-BC-Project-02/was/common/cache/login"
+)
 
 type UserModeler interface {
 	InsertUser(user *entity.User) error
@@ -14,4 +17,6 @@ type UserModeler interface {
 	FindUserAndIncreaseIron(address string) (*entity.User, error)
 
 	FindUserAndSetIron(address string, blackIron int) (*entity.User, error)
+
+	FindUserAndSet(loginInfo *login.Information) (*entity.User, error)
 }

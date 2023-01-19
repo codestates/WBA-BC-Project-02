@@ -1,6 +1,8 @@
 package contract
 
 import (
+	"github.com/codestates/WBA-BC-Project-02/was/common/cache"
+	cacheContract "github.com/codestates/WBA-BC-Project-02/was/common/cache/contract"
 	"github.com/codestates/WBA-BC-Project-02/was/common/cache/login"
 	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
 	wasError "github.com/codestates/WBA-BC-Project-02/was/common/error"
@@ -8,6 +10,7 @@ import (
 	"github.com/codestates/WBA-BC-Project-02/was/protocol/contract/request"
 	"github.com/codestates/WBA-BC-Project-02/was/service/contract"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 var instance *contractControl
@@ -50,6 +53,7 @@ func (co *contractControl) GetContractByName(c *gin.Context) {
 func (co *contractControl) GetContracts(c *gin.Context) {
 	simpleContracts, err := co.contractService.GetContracts()
 	if err != nil {
+		protocol.Fail(wasError.NewAppError(err)).Response(c)
 		return
 	}
 	protocol.SuccessData(simpleContracts).Response(c)
@@ -77,19 +81,25 @@ func (co *contractControl) MintContract(c *gin.Context) {
 	protocol.SuccessData(simpleUser).Response(c)
 }
 
-func (co *contractControl) Exchan현geContract(c *gin.Context) {
-	//loginInfo, exists := c.Keys[enum.LoginInformation].(*login.Information)
-	//if !exists {
-	//	protocol.Fail(wasError.InternalServerError).Response(c)
-	//	return
-	//}
-	//
-	//reqE := &request.ExchangeContract{}
-	//if err := c.ShouldBindJSON(reqE); err != nil {
-	//	protocol.Fail(wasError.BadRequestError).Response(c)
-	//	return
-	//}
+func (co *contractControl) ExchangeContract(c *gin.Context) {
+	loginInfo, exists := c.Keys[enum.LoginInformation].(*login.Information)
+	if !exists {
+		protocol.Fail(wasError.InternalServerError).Response(c)
+		return
+	}
 
+	reqE := &request.ExchangeContract{}
+	if err := c.ShouldBindJSON(reqE); err != nil {
+		protocol.Fail(wasError.BadRequestError).Response(c)
+		return
+	}
+
+	if err := co.wemixonService.ExchangeContract(loginInfo, reqE); err != nil {
+		protocol.Fail(wasError.NewAppError(err)).Response(c)
+		return
+	}
+
+	protocol.SuccessCodeAndData(http.StatusOK, gin.H{"exchange": "ok"}).Response(c)
 }
 
 func (co *contractControl) GetRatioTokenAndCredit(c *gin.Context) {
@@ -106,4 +116,30 @@ func (co *contractControl) GetRatioTokenAndCredit(c *gin.Context) {
 	}
 
 	protocol.SuccessData(responseRatio).Response(c)
+}
+
+func (co *contractControl) GetNonce(c *gin.Context) {
+	reqM := &request.Nonce{}
+	if err := c.ShouldBindQuery(reqM); err != nil {
+		protocol.Fail(wasError.BadRequestError).Response(c)
+		return
+	}
+
+	nonce := &cacheContract.Nonce{}
+	_, err := cache.Redis.Get(enum.NonceCacheKey, nonce)
+	if err != nil {
+		protocol.SuccessCodeAndData(wasError.DataNotFoundCode, gin.H{"nonce": false}).Response(c)
+		return
+	}
+
+	for _, n := range nonce.NonceValues {
+		if n == uint64(reqM.Value) {
+			cache.Redis.Delete(enum.NonceCacheKey)
+			protocol.SuccessCodeAndData(http.StatusOK, gin.H{"nonce": true}).Response(c)
+			return
+		}
+	}
+
+	protocol.SuccessCodeAndData(wasError.DataNotFoundCode, gin.H{"nonce": false}).Response(c)
+	return
 }

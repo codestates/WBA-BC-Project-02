@@ -14,7 +14,7 @@ services:
     volumes:
       - ./docker/redis/data:/data
   mongodb:
-    image: mongo:latest
+    image: ionc635/wemixon-mongo:1.0
     restart: "no"
     container_name: wemixon-mongo
     labels:

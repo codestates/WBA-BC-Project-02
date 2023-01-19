@@ -18,7 +18,7 @@ func saveCacheLoginInfos(loginInfo *login.Information, token *token.Tokens) erro
 }
 
 func UpdateAccessCacheInfo(loginInfo *login.Information) error {
-	key := enum.AccessCache + loginInfo.UserID
+	key := enum.AccessCacheKey + loginInfo.UserID
 	if err := cache.Redis.Update(key, loginInfo, -1); err != nil {
 		return err
 	}
@@ -55,7 +55,8 @@ func cacheLoginInfos(loginInfo *login.Information, token *token.Tokens) error {
 	}
 
 	loginInfo.TokenID = token.RefreshToken.TokenID
-	if err := cache.Redis.Cache(token.RefreshToken.CacheID, loginInfo, rt.Sub(now)); err != nil {
+	refreshLoginInfo := login.NewRefreshLoginInfo(loginInfo)
+	if err := cache.Redis.Cache(token.RefreshToken.CacheID, refreshLoginInfo, rt.Sub(now)); err != nil {
 		return err
 	}
 

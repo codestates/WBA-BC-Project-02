@@ -40,8 +40,13 @@ func (u *userService) ReissueToken(refreshToken string, ua string) (*response.To
 
 	deleteCachedLoginInfos(tokens)
 
-	info.Device = ua
-	if err := saveCacheLoginInfos(info, tokens); err != nil {
+	userNonTx, err := u.userModel.FindUserNonTx(info.Address)
+	if err != nil {
+		return nil, err
+	}
+
+	loginInfo := login.NewLoginInfo(ua, userNonTx)
+	if err := saveCacheLoginInfos(loginInfo, tokens); err != nil {
 		return nil, err
 	}
 
@@ -57,6 +62,15 @@ func (u *userService) GetUser(address string) (*response.User, error) {
 		return nil, error2.UserNotFoundError
 	}
 	resU := response.FromUserEntity(foundUser)
+	return resU, err
+}
+
+func (u *userService) GetSimpleUser(address string) (*response.SimpleUser, error) {
+	foundUser, err := u.userModel.FindUserNonTx(address)
+	if err != nil {
+		return nil, error2.UserNotFoundError
+	}
+	resU := response.GetSimpleFromUser(foundUser)
 	return resU, err
 }
 
