@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	configContract "github.com/codestates/WBA-BC-Project-02/common/config/dev"
 	conf "github.com/codestates/WBA-BC-Project-02/daemon/config"
 	"github.com/codestates/WBA-BC-Project-02/daemon/subscribe"
@@ -13,8 +11,8 @@ import (
 )
 
 func main() {
-	cf := conf.GetConfig("./config/config.toml")
-	cPath := "../common/config/dev/config.toml"
+	cf := conf.GetConfig("./daemon/config/config.toml")
+	cPath := "./common/config/dev/config.toml"
 	contractConfig := wasConfig.NewConfig(cPath, &configContract.Contract{})
 
 	client, err := ethclient.Dial(cf.Network.URL)
