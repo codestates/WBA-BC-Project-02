@@ -39,18 +39,22 @@ func CreateIndexesInModels() {
 
 func InsertInitContracts() {
 	if _, err := DexContractModel.FindDexContractNonTxHashes(config.ContractConfig.DexAddr); err != nil {
-		factory.NewInitDexContracts(config.ContractConfig.DexAddr)
+		dexCon := factory.NewInitDexContracts(config.ContractConfig.DexAddr)
+		DexContractModel.InsertOne(dexCon)
 	}
 
 	if _, err := ContractModel.FindContractByName(enum.DracoContract); err != nil {
-		factory.NewInitDracoContracts(config.ContractConfig.DracoAddr)
+		dracoCon := factory.NewInitDracoContracts(config.ContractConfig.DracoAddr)
+		ContractModel.InsertOne(dracoCon)
 	}
 
 	if _, err := ContractModel.FindContractByName(enum.CreditContract); err != nil {
-		factory.NewInitCreditContracts(config.ContractConfig.CreditAddr)
+		creditCon := factory.NewInitCreditContracts(config.ContractConfig.CreditAddr)
+		ContractModel.InsertOne(creditCon)
 	}
 
 	if _, err := ContractModel.FindContractByName(enum.TigContract); err != nil {
-		factory.NewInitTigContracts(config.ContractConfig.TigAddr)
+		tigCon := factory.NewInitTigContracts(config.ContractConfig.TigAddr)
+		ContractModel.InsertOne(tigCon)
 	}
 }

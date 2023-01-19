@@ -6,4 +6,6 @@ type ContractModeler interface {
 	FindContractByName(name string) (*entity.Contract, error)
 
 	FindNonTxContracts() ([]*entity.Contract, error)
+
+	InsertOne(contract *entity.Contract) error
 }

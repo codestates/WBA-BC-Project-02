@@ -2,6 +2,7 @@ package contract
 
 import (
 	"github.com/codestates/WBA-BC-Project-02/common/model/entity"
+	wasCommon "github.com/codestates/WBA-BC-Project-02/was/common"
 	"github.com/codestates/WBA-BC-Project-02/was/common/enum"
 	"github.com/codestates/WBA-BC-Project-02/was/model/query"
 	"go.mongodb.org/mongo-driver/bson"
@@ -50,4 +51,14 @@ func (c *contractModel) FindNonTxContracts() ([]*entity.Contract, error) {
 	}
 
 	return contracts, nil
+}
+
+func (c *contractModel) InsertOne(contract *entity.Contract) error {
+	ctx, cancel := wasCommon.NewContext(wasCommon.ModelContextTimeOut)
+	defer cancel()
+
+	if _, err := c.collection.InsertOne(ctx, contract); err != nil {
+		return err
+	}
+	return nil
 }
