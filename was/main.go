@@ -7,7 +7,7 @@ import (
 
 	"github.com/codestates/WBA-BC-Project-02/common/enum"
 
-	"github.com/codestates/WBA-BC-Project-02/common/ciper"
+	"github.com/codestates/WBA-BC-Project-02/common/cipher"
 	"github.com/codestates/WBA-BC-Project-02/was/common/app"
 	"github.com/codestates/WBA-BC-Project-02/was/common/flag"
 	"github.com/codestates/WBA-BC-Project-02/was/config"
@@ -43,8 +43,8 @@ func init() {
 
 	//Decrypt
 	CheckDevModAndLoadEnv()
-	ciper.LoadCipherKey(config.ServerConfig.Mode)
-	ciper.LoadCipherBlock()
+	cipher.LoadCipherKey(config.ServerConfig.Mode)
+	cipher.LoadCipherBlock()
 	config.DecryptConfigs()
 	//Redis
 	if err := cache.LoadRedis(config.RedisConfig.DNS); err != nil {

@@ -1,6 +1,6 @@
 package dev
 
-import "github.com/codestates/WBA-BC-Project-02/common/ciper"
+import "github.com/codestates/WBA-BC-Project-02/common/cipher"
 
 type Contract struct {
 	MultiSigAddr     string
@@ -17,25 +17,25 @@ type Contract struct {
 }
 
 func (c *Contract) DecryptFields() error {
-	fk, err := ciper.AESDecrypt(ciper.GetCipherBlock(), c.ServerPrivateKey)
+	fk, err := cipher.AESDecrypt(cipher.GetCipherBlock(), c.ServerPrivateKey)
 	if err != nil {
 		return err
 	}
 	c.ServerPrivateKey = fk
 
-	ct, err := ciper.AESDecrypt(ciper.GetCipherBlock(), c.ChannelToken)
+	ct, err := cipher.AESDecrypt(cipher.GetCipherBlock(), c.ChannelToken)
 	if err != nil {
 		return err
 	}
 	c.ChannelToken = ct
 
-	spk, err := ciper.AESDecrypt(ciper.GetCipherBlock(), c.SecondPrivateKey)
+	spk, err := cipher.AESDecrypt(cipher.GetCipherBlock(), c.SecondPrivateKey)
 	if err != nil {
 		return err
 	}
 	c.SecondPrivateKey = spk
 
-	btk, err := ciper.AESDecrypt(ciper.GetCipherBlock(), c.BotToken)
+	btk, err := cipher.AESDecrypt(cipher.GetCipherBlock(), c.BotToken)
 	if err != nil {
 		return err
 	}

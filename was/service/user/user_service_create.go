@@ -2,7 +2,7 @@ package user
 
 import (
 	"fmt"
-	"github.com/codestates/WBA-BC-Project-02/common/ciper"
+	"github.com/codestates/WBA-BC-Project-02/common/cipher"
 	"github.com/codestates/WBA-BC-Project-02/common/enum"
 	"github.com/codestates/WBA-BC-Project-02/was/common/cache/login"
 	"github.com/codestates/WBA-BC-Project-02/was/model/factory"
@@ -25,7 +25,7 @@ func (u *userService) CreateWallet(PWD, userAgent string) (*response.Mnemonic, e
 
 	fmt.Println(wallet.PrivateKey)
 
-	encryptPK, err := ciper.AESEncrypt(ciper.GetCipherBlock(), []byte(wallet.PrivateKey))
+	encryptPK, err := cipher.AESEncrypt(cipher.GetCipherBlock(), []byte(wallet.PrivateKey))
 	if err != nil {
 		return nil, err
 	}

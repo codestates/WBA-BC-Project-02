@@ -1,6 +1,6 @@
 package redis
 
-import "github.com/codestates/WBA-BC-Project-02/common/ciper"
+import "github.com/codestates/WBA-BC-Project-02/common/cipher"
 
 type Redis struct {
 	DNS string
@@ -8,7 +8,7 @@ type Redis struct {
 }
 
 func (r *Redis) DecryptFields() error {
-	DNS, err := ciper.AESDecrypt(ciper.GetCipherBlock(), r.DNS)
+	DNS, err := cipher.AESDecrypt(cipher.GetCipherBlock(), r.DNS)
 	if err != nil {
 		return err
 	}

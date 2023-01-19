@@ -7,7 +7,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/codestates/WBA-BC-Project-02/common/ciper"
+	"github.com/codestates/WBA-BC-Project-02/common/cipher"
 	"github.com/joho/godotenv"
 )
 
@@ -26,7 +26,7 @@ func testDecrypt() {
 		log.Fatal(err.Error())
 	}
 
-	temp := ciper.GetCipherBlock()
+	temp := cipher.GetCipherBlock()
 
 	fmt.Println(temp)
 
@@ -37,7 +37,7 @@ func testDecrypt() {
 	// }
 
 	target := "tczzOhlnAtweLPNP4rCkifhWQBXbWBEJjwZbyUJpi9M7jF+2nx+j/6Hsy9HERZlebr7Bm6cANlGC4mgQOjZPwl/scVRzbn9CDjMcnSec0Yw="
-	decryptedText, err := ciper.AESDecrypt(block, target)
+	decryptedText, err := cipher.AESDecrypt(block, target)
 	if err != nil {
 		fmt.Println("ttttt")
 	}

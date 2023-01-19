@@ -1,7 +1,7 @@
 package db
 
 import (
-	"github.com/codestates/WBA-BC-Project-02/common/ciper"
+	"github.com/codestates/WBA-BC-Project-02/common/cipher"
 )
 
 type DB struct {
@@ -13,14 +13,14 @@ type DB struct {
 }
 
 func (d *DB) DecryptFields() error {
-	block := ciper.GetCipherBlock()
-	URI, err := ciper.AESDecrypt(block, d.URI)
+	block := cipher.GetCipherBlock()
+	URI, err := cipher.AESDecrypt(block, d.URI)
 	if err != nil {
 		return err
 	}
 	d.URI = URI
 
-	name, err := ciper.AESDecrypt(block, d.DBName)
+	name, err := cipher.AESDecrypt(block, d.DBName)
 	if err != nil {
 		return err
 	}

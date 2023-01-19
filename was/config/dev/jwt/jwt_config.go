@@ -1,6 +1,6 @@
 package jwt
 
-import "github.com/codestates/WBA-BC-Project-02/common/ciper"
+import "github.com/codestates/WBA-BC-Project-02/common/cipher"
 
 type JWT struct {
 	AccessKey  string
@@ -8,13 +8,13 @@ type JWT struct {
 }
 
 func (j *JWT) DecryptFields() error {
-	ac, err := ciper.AESDecrypt(ciper.GetCipherBlock(), j.AccessKey)
+	ac, err := cipher.AESDecrypt(cipher.GetCipherBlock(), j.AccessKey)
 	if err != nil {
 		return err
 	}
 	j.AccessKey = ac
 
-	re, err := ciper.AESDecrypt(ciper.GetCipherBlock(), j.RefreshKey)
+	re, err := cipher.AESDecrypt(cipher.GetCipherBlock(), j.RefreshKey)
 	if err != nil {
 		return err
 	}
