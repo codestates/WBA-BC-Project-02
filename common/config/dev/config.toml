@@ -1,23 +1,16 @@
-multiSigAddr = "qLm++1/25hRVXYL8aFWxWWjSkBV2YB/iFzpYmHz222pArd7+XgzqT7MTmDw9G9EiL5a2ELOvnOK4n80v3wR85Q=="
-dexAddr = "Q64LglGBj9ANOvPjma4wYhfuRRXjyRiSKfjZs62NLNrh/gns1qyyHd4zewSGvMdie6RC4De8IhIBdB6Kv26TFg=="
-creditAddr = "xiNc/lV2GyX5954BZPvEC6aj11ZNMK7Z6zIFNNE1R4Zxikm1Kduq5nc9/l1ryvi5MB7CrNiiISGv9yHnwW/FgQ=="
-dracoAddr = "WLlxaXo9XbAqZgi6qWIYY9YNvGBjtvietSN1H7Ys9THibSDj3tOOxvH096X77T34Oq2rKb77MRSoDCKV0MqSgA=="
-tigAddr = "7xH5+LYkSWZKV0gnwPT88+FqiQOcU+htNkiondDMEzpesPLmwZwAjnm0Bylez1n/7hObc4C3kNA9Hxz0OzLw5g=="
-serverPrivateKey = "69ALjXEQwVVm9iY1GT2r1Sus3mUkivIQJ5Ke3jWuak2Z4kmn96T1mKlgyl82u/PrPi+yZmY4M1WW83lvD0dL9hTXLEOSQNe7JQudost9ehk="
-<<<<<<< HEAD
-multiSigAddr = "jTgfccZ8uZRtVbtQX28clN+olVbKUVkJLDeYlyZVJQ+J08+iy01T221T0qq8kpo1NvSgNOm4XcL5TASgua/d5Q=="
-dexAddr = "gvLgJ0iljJjsHMDn0Y/wXHb3+qSvPsqYOjyU/X76HBR2RLQfKG1PMvQ84/zFzx3K5Ga2YUrW2rOFhQ9OKKjmlw=="
-creditAddr = "Fq2KPgaOjs1RFb5QGvIBnpI4aWwAKv4vYmF/Q2HAZ/lMVDQQAtGdzMmOfh78LQuRLEdCxqu3NT8doh7dRwR9zg=="
-dracoAddr = "kBbDQ55DNHEswqUbU5SuC7kecdF8n9XN0LcOllwqDVis8rmyh8GcOumpoIrEn71fhpy5lOQpuNxVwuGM9v2fCQ=="
-tigAddr = "Y34ZymfE7rGrioPDEDKgj52sOYSLO7TSsWP3QC5+gSa6pvVpRY7jlUADvTaqnWgJUhfTkwa5xKsPrt6p3lhimw=="
-=======
->>>>>>> dev
+multiSigAddr = "0x6f574c6325B3cB3F86E8bfA5f306310D63dD217d"
+dexAddr = "0x8835f3bcEB451Ea73f0Ef3891f47bc66c7D24306"
+tigAddr = "0xAD027A891f961F40cFc48a5f5E17F84Aeab63152"
+dracoAddr = "0x61463DdC7dB3538008C3764e5A447baaD15FC4a8"
+creditAddr = "0xa693A9254dD481Ba917eEE1466CC8d10EFD8eb91"
+
 serverAddr = "0x406A1Ee747CEEA7a8819Bb999c3B24cc88000461"
-rawURL = "https://api.test.wemix.com"
+
+serverPrivateKey = "69ALjXEQwVVm9iY1GT2r1Sus3mUkivIQJ5Ke3jWuak2Z4kmn96T1mKlgyl82u/PrPi+yZmY4M1WW83lvD0dL9hTXLEOSQNe7JQudost9ehk="
 secondPrivateKey = "w9XK5uj8obtf+V4+paxDKor3KcnQtUT/skbkEwBFoCxrA8ObMwc3o2lSd7QC6FEDcG5TwmqIgQLDTBxTAaVeAgF76lEsRo/HEny+sb/aB84="
-<<<<<<< HEAD
-botToken = "YIufP/JzwuV9+DnpebLCKFMiHdcjW7Pfe7a3rNfbBqd9kEHZD49mXp2ZBdMdKWZVUTr61Lq8aPyfs8li/nuqULR7zoQA4Bb4U4GIf0hUsF3Q4xEYpSn2vSNgxUs4OMoo"
-=======
+
+rawURL = "https://api.test.wemix.com"
+
 botToken = "y9nI+d6QUNWKIUDtTYMy7crLWREYPpP45/IN2fzEFdu2dAF4ehmCd+ZzdBBzy3YAKjGKiN/tDkVLwcksMcnH4xaFCDoqFPHsWrIA+TEkvII6HJi1jH9B21u/SfxNdZR6"
 channelToken = "sQBklzGzM5A2VsU/mELtgbkEfu2ISdI3cBZ0IXQJut8vLHsusv7Iwghm+Ob104Ss"
->>>>>>> dev
+

@@ -42,7 +42,7 @@ func init() {
 	config.LoadConfigs(flag.Flags)
 
 	//Decrypt
-	checkDevModAndLoadEnv()
+	CheckDevModAndLoadEnv()
 	ciper.LoadCipherKey(config.ServerConfig.Mode)
 	ciper.LoadCipherBlock()
 	config.DecryptConfigs()
@@ -76,7 +76,7 @@ func main() {
 	App.Run()
 }
 
-func checkDevModAndLoadEnv() {
+func CheckDevModAndLoadEnv() {
 	if config.ServerConfig.Mode != enum.DevMode {
 		return
 	}
