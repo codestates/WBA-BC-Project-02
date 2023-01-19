@@ -23,6 +23,7 @@ import (
 )
 
 func DracoListener(address string, client *ethclient.Client, ch chan<- bool) {
+	fmt.Println("Draco open")
 	contractAddr := common.HexToAddress(address)
 	query := ethereum.FilterQuery{
 		Addresses: []common.Address{contractAddr},
@@ -89,6 +90,8 @@ func DracoListener(address string, client *ethclient.Client, ch chan<- bool) {
 					"$push": bson.M{"transactions": transaction},
 				}
 
+				fmt.Println("mint Tx: ", transaction)
+
 				userUpdateResult, err := r.ColUser.UpdateOne(context.TODO(), userFilter, userUpdate)
 				utils.ErrorHandler(err)
 
@@ -108,6 +111,8 @@ func DracoListener(address string, client *ethclient.Client, ch chan<- bool) {
 
 				result, err := contractABI.Unpack(event.Name, vLog.Data)
 				utils.ErrorHandler(err)
+
+				fmt.Println("amount", result[2])
 
 				// event prameter
 				from := fmt.Sprintf("%v", result[0])
@@ -140,36 +145,39 @@ func DracoListener(address string, client *ethclient.Client, ch chan<- bool) {
 
 				zeroObjectId, _ := primitive.ObjectIDFromHex("000000000000000000000000")
 
-				// amount 계산
-				updateAddAmount := new(big.Int)
-				updateSubAmount := new(big.Int)
-
-				biUserAmount := new(big.Int)
-				userAmount, _ := biUserAmount.SetString(fromUser.DracoAmount, 10)
-				biAmount := new(big.Int)
-				trasnferAmount, _ := biAmount.SetString(amount, 10)
-
-				updateAddAmount.Add(userAmount, trasnferAmount)
-				updateSubAmount.Sub(userAmount, trasnferAmount)
-
-				// from일 경우
 				if zeroObjectId != fromUser.ID {
+					updateSubAmount := new(big.Int)
+					biUserAmount := new(big.Int)
+					userAmount, _ := biUserAmount.SetString(fromUser.DracoAmount, 10)
+					biAmount := new(big.Int)
+					trasnferAmount, _ := biAmount.SetString(amount, 10)
+					
+					updateSubAmount.Sub(userAmount, trasnferAmount)
+					
 					fmt.Printf("user amount: %s - trasnfer amount: %s = total amount: %s\n", userAmount, trasnferAmount, updateSubAmount)
-
+					
 					// user update
 					update := bson.M{
 						"$set":  bson.M{"draco_amount": updateSubAmount.String()},
 						"$push": bson.M{"transactions": transaction},
 					}
-
+					
 					result, err := r.ColUser.UpdateOne(context.TODO(), fromUserFilter, update)
 					utils.ErrorHandler(err)
-
+					
 					fmt.Printf("from user udpate: %v\n", result.ModifiedCount)
 				}
-
+				
 				// to일 경우
 				if zeroObjectId != toUser.ID {
+					updateAddAmount := new(big.Int)
+					biUserAmount := new(big.Int)
+					userAmount, _ := biUserAmount.SetString(toUser.DracoAmount, 10)
+					biAmount := new(big.Int)
+					trasnferAmount, _ := biAmount.SetString(amount, 10)
+	
+					updateAddAmount.Add(userAmount, trasnferAmount)
+
 					fmt.Printf("user amount: %s + trasnfer amount: %s = total amount: %s\n", userAmount, trasnferAmount, updateAddAmount)
 
 					// user update
@@ -184,6 +192,7 @@ func DracoListener(address string, client *ethclient.Client, ch chan<- bool) {
 					fmt.Printf("to user udpate: %v\n", result.ModifiedCount)
 				}
 
+				fmt.Println("tx: ", transaction)
 				// contract update
 				contractFilter := bson.D{{Key: "contract_address", Value: transaction.ContractAddress}}
 				contractUpdate := bson.M{
@@ -191,6 +200,9 @@ func DracoListener(address string, client *ethclient.Client, ch chan<- bool) {
 				}
 
 				contractUpdateResult, err := r.ColContract.UpdateOne(context.TODO(), contractFilter, contractUpdate)
+				if err != nil {
+					fmt.Println(err)
+				}
 
 				fmt.Printf("contract update: %v\n", contractUpdateResult.ModifiedCount)
 			}

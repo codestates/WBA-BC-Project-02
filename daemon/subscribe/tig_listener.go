@@ -11,6 +11,7 @@ import (
 	"github.com/codestates/WBA-BC-Project-02/common/model/entity/dom"
 	"github.com/codestates/WBA-BC-Project-02/daemon/model"
 	"github.com/codestates/WBA-BC-Project-02/daemon/utils"
+	draco "github.com/codestates/WBA-BC-Project-02/contracts/draco"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -23,6 +24,7 @@ import (
 )
 
 func TigListener(address string, client *ethclient.Client, ch chan<- bool) {
+	fmt.Println("Tig open")
 	contractAddr := common.HexToAddress(address)
 	query := ethereum.FilterQuery{
 		Addresses: []common.Address{contractAddr},
@@ -32,7 +34,7 @@ func TigListener(address string, client *ethclient.Client, ch chan<- bool) {
 	sub, err := client.SubscribeFilterLogs(context.Background(), query, logs)
 	utils.ErrorHandler(err)
 
-	contractABI, err := abi.JSON(strings.NewReader("tig.ContractsABI"))
+	contractABI, err := abi.JSON(strings.NewReader(draco.DracoABI))
 	utils.ErrorHandler(err)
 
 	for {
@@ -140,36 +142,39 @@ func TigListener(address string, client *ethclient.Client, ch chan<- bool) {
 
 				zeroObjectId, _ := primitive.ObjectIDFromHex("000000000000000000000000")
 
-				// amount 계산
-				updateAddAmount := new(big.Int)
-				updateSubAmount := new(big.Int)
-
-				biUserAmount := new(big.Int)
-				userAmount, _ := biUserAmount.SetString(fromUser.TigAmount, 10)
-				biAmount := new(big.Int)
-				trasnferAmount, _ := biAmount.SetString(amount, 10)
-
-				updateAddAmount.Add(userAmount, trasnferAmount)
-				updateSubAmount.Sub(userAmount, trasnferAmount)
-
-				// from일 경우
 				if zeroObjectId != fromUser.ID {
+					updateSubAmount := new(big.Int)
+					biUserAmount := new(big.Int)
+					userAmount, _ := biUserAmount.SetString(fromUser.TigAmount, 10)
+					biAmount := new(big.Int)
+					trasnferAmount, _ := biAmount.SetString(amount, 10)
+					
+					updateSubAmount.Sub(userAmount, trasnferAmount)
+					
 					fmt.Printf("user amount: %s - trasnfer amount: %s = total amount: %s\n", userAmount, trasnferAmount, updateSubAmount)
-
+					
 					// user update
 					update := bson.M{
 						"$set":  bson.M{"tig_amount": updateSubAmount.String()},
 						"$push": bson.M{"transactions": transaction},
 					}
-
+					
 					result, err := r.ColUser.UpdateOne(context.TODO(), fromUserFilter, update)
 					utils.ErrorHandler(err)
-
+					
 					fmt.Printf("from user udpate: %v\n", result.ModifiedCount)
 				}
-
+				
 				// to일 경우
 				if zeroObjectId != toUser.ID {
+					updateAddAmount := new(big.Int)
+					biUserAmount := new(big.Int)
+					userAmount, _ := biUserAmount.SetString(toUser.TigAmount, 10)
+					biAmount := new(big.Int)
+					trasnferAmount, _ := biAmount.SetString(amount, 10)
+	
+					updateAddAmount.Add(userAmount, trasnferAmount)
+
 					fmt.Printf("user amount: %s + trasnfer amount: %s = total amount: %s\n", userAmount, trasnferAmount, updateAddAmount)
 
 					// user update

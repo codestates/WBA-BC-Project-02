@@ -23,6 +23,7 @@ import (
 )
 
 func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
+	fmt.Println("Credit open")
 	contractAddr := common.HexToAddress(address)
 	query := ethereum.FilterQuery{
 		Addresses: []common.Address{contractAddr},
@@ -109,7 +110,7 @@ func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
 					From:            from,
 					To:              to,
 					Amount:          amount,
-					CreatedAt:       "",
+					CreatedAt:       time.Now().Format("2006-01-02 15:04:05"),
 				}
 
 				r, err := model.NewModel()
@@ -127,36 +128,41 @@ func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
 
 				zeroObjectId, _ := primitive.ObjectIDFromHex("000000000000000000000000")
 
-				// amount 계산
-				updateAddAmount := new(big.Int)
-				updateSubAmount := new(big.Int)
-
-				biUserAmount := new(big.Int)
-				userAmount, _ := biUserAmount.SetString(fromUser.CreditAmount, 10)
-				biAmount := new(big.Int)
-				trasnferAmount, _ := biAmount.SetString(amount, 10)
-
-				updateAddAmount.Add(userAmount, trasnferAmount)
-				updateSubAmount.Sub(userAmount, trasnferAmount)
-
+				
 				// from일 경우
 				if zeroObjectId != fromUser.ID {
-					fmt.Printf("user amount: %s - trasnfer amount: %s = total amount: %s\n", userAmount, trasnferAmount, updateSubAmount)
-
+					updateSubAmount := new(big.Int)
+					biUserAmount := new(big.Int)
+					userAmount, _ := biUserAmount.SetString(fromUser.CreditAmount, 10)
+					biAmount := new(big.Int)
+					trasnferAmount, _ := biAmount.SetString(amount, 10)
+					
+					updated := updateSubAmount.Sub(userAmount, trasnferAmount)
+					
+					fmt.Printf("user amount: %s - trasnfer amount: %s = total amount: %s\n", userAmount, trasnferAmount, updated)
+					
 					// user update
 					update := bson.M{
 						"$set":  bson.M{"credit_amount": updateSubAmount.String()},
 						"$push": bson.M{"transactions": transaction},
 					}
-
+					
 					result, err := r.ColUser.UpdateOne(context.TODO(), fromUserFilter, update)
 					utils.ErrorHandler(err)
-
+					
 					fmt.Printf("from user udpate: %v\n", result.ModifiedCount)
 				}
-
+				
 				// to일 경우
 				if zeroObjectId != toUser.ID {
+					updateAddAmount := new(big.Int)
+					biUserAmount := new(big.Int)
+					userAmount, _ := biUserAmount.SetString(toUser.CreditAmount, 10)
+					biAmount := new(big.Int)
+					trasnferAmount, _ := biAmount.SetString(amount, 10)
+	
+					updateAddAmount.Add(userAmount, trasnferAmount)
+
 					fmt.Printf("user amount: %s + trasnfer amount: %s = total amount: %s\n", userAmount, trasnferAmount, updateAddAmount)
 
 					// user update

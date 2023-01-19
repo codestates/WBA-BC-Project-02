@@ -12,6 +12,6 @@ type DexContract struct {
 	DracoPoolToken    string             `bson:"draco_pool_token,omitempty"`
 	DracoPoolCredit   string             `bson:"draco_pool_credit"`
 	TigPoolToken      string             `bson:"tig_pool_token"`
-	TigPoolCredit     string             `bson:"tig_pool_token"`
+	TigPoolCredit     string             `bson:"tig_pool_credit"`
 	BaseTime          *dom.BaseTime      `bson:"base_time,omitempty"`
 }

@@ -2,8 +2,6 @@ package model
 
 import (
 	"context"
-
-	conf "github.com/codestates/WBA-BC-Project-02/daemon/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -16,12 +14,10 @@ type Model struct {
 }
 
 func NewModel() (*Model, error) {
-	cf := conf.GetConfig("./config/config.toml")
-
 	r := &Model{}
 
 	var err error
-	if r.Client, err = mongo.Connect(context.Background(), options.Client().ApplyURI(cf.DB.Host)); err != nil {
+	if r.Client, err = mongo.Connect(context.Background(), options.Client().ApplyURI("mongodb://localhost:27017")); err != nil {
 		return nil, err
 	} else if err := r.Client.Ping(context.Background(), nil); err != nil {
 		return nil, err

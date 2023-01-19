@@ -2,7 +2,6 @@ package main
 
 import (
 	configContract "github.com/codestates/WBA-BC-Project-02/common/config/dev"
-	conf "github.com/codestates/WBA-BC-Project-02/daemon/config"
 	"github.com/codestates/WBA-BC-Project-02/daemon/subscribe"
 	"github.com/codestates/WBA-BC-Project-02/daemon/utils"
 	wasConfig "github.com/codestates/WBA-BC-Project-02/was/config"
@@ -11,11 +10,10 @@ import (
 )
 
 func main() {
-	cf := conf.GetConfig("./daemon/config/config.toml")
 	cPath := "./common/config/dev/config.toml"
 	contractConfig := wasConfig.NewConfig(cPath, &configContract.Contract{})
 
-	client, err := ethclient.Dial(cf.Network.URL)
+	client, err := ethclient.Dial("wss://ws.test.wemix.com")
 	utils.ErrorHandler(err)
 
 	creditCh := make(chan bool, 1)
@@ -23,10 +21,10 @@ func main() {
 	dexCh := make(chan bool, 1)
 	tigCh := make(chan bool, 1)
 
-	subscribe.CreditListener(contractConfig.CreditAddr, client, creditCh)
-	subscribe.DracoListener(contractConfig.DracoAddr, client, dracoCh)
-	subscribe.DexListener(contractConfig.DexAddr, client, dexCh)
-	subscribe.TigListener(contractConfig.TigAddr, client, tigCh)
+	go subscribe.CreditListener(contractConfig.CreditAddr, client, creditCh)
+	go subscribe.DracoListener(contractConfig.DracoAddr, client, dracoCh)
+	go subscribe.DexListener(contractConfig.DexAddr, client, dexCh)
+	go subscribe.TigListener(contractConfig.TigAddr, client, tigCh)
 
 	for {
 		select {

@@ -11,4 +11,5 @@ const (
 
 	BlankSTR = ""
 	SpaceSTR = " "
+	ZeroSTR = "0"
 )

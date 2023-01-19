@@ -20,7 +20,7 @@ func (w *wemixonService) MintToken(loginInfo *login.Information, reqM *request.M
 		return nil, err
 	}
 
-	if loginInfo.BlackIron < reqM.BlackIronBurnAmount {
+	if userNonTx.BlackIron < reqM.BlackIronBurnAmount {
 		// TODO ERROR
 		return nil, errors.New("충분한 흑철이 없습니다")
 	}
@@ -28,19 +28,19 @@ func (w *wemixonService) MintToken(loginInfo *login.Information, reqM *request.M
 	switch reqM.MintingName {
 	case enum.DracoContractName:
 		tokenAmount := reqM.BlackIronBurnAmount / 10
-		if _, err := ActContract(loginInfo.Address, tokenAmount, util.MintDracoTx); err != nil {
+		if _, err := ActContract(userNonTx.Address, tokenAmount, util.MintDracoTx); err != nil {
 			return nil, err
 		}
 	case enum.TigContractName:
 		tokenAmount := reqM.BlackIronBurnAmount / 10
-		if _, err := ActContract(loginInfo.Address, tokenAmount, util.MintTigTx); err != nil {
+		if _, err := ActContract(userNonTx.Address, tokenAmount, util.MintTigTx); err != nil {
 			return nil, err
 		}
 	}
 
 	// 흑철 감소
-	updateIron := loginInfo.BlackIron - reqM.BlackIronBurnAmount
-	updatedUser, err := w.userModel.FindUserAndSetIron(loginInfo.Address, updateIron)
+	updateIron := userNonTx.BlackIron - reqM.BlackIronBurnAmount
+	updatedUser, err := w.userModel.FindUserAndSetIron(userNonTx.Address, updateIron)
 	if err != nil {
 		return nil, err
 	}

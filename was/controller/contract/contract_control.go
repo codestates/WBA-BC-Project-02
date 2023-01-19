@@ -72,13 +72,13 @@ func (co *contractControl) MintContract(c *gin.Context) {
 		return
 	}
 
-	simpleUser, err := co.wemixonService.MintToken(loginInfo, reqM)
+	_, err := co.wemixonService.MintToken(loginInfo, reqM)
 	if err != nil {
 		protocol.Fail(wasError.NewAppError(err)).Response(c)
 		return
 	}
 
-	protocol.SuccessData(simpleUser).Response(c)
+	protocol.SuccessCodeAndData(http.StatusOK, gin.H{"exchange": "ok"}).Response(c)
 }
 
 func (co *contractControl) ExchangeContract(c *gin.Context) {

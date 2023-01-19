@@ -1,6 +1,7 @@
 package subscribe
 
 import (
+	"github.com/codestates/WBA-BC-Project-02/CONTRACTS/dex"
 	"context"
 	"fmt"
 	"strings"
@@ -22,6 +23,7 @@ type DexPoolData struct {
 }
 
 func DexListener(address string, client *ethclient.Client, ch chan<- bool) {
+	fmt.Println("Dex open")
 	contractAddr := common.HexToAddress(address)
 	query := ethereum.FilterQuery{
 		Addresses: []common.Address{contractAddr},
@@ -31,7 +33,7 @@ func DexListener(address string, client *ethclient.Client, ch chan<- bool) {
 	sub, err := client.SubscribeFilterLogs(context.Background(), query, logs)
 	utils.ErrorHandler(err)
 
-	contractABI, err := abi.JSON(strings.NewReader(string("dex.ContractABI")))
+	contractABI, err := abi.JSON(strings.NewReader(dex.DexABI))
 	utils.ErrorHandler(err)
 
 	for {
@@ -40,10 +42,14 @@ func DexListener(address string, client *ethclient.Client, ch chan<- bool) {
 			ch <- true
 			return
 		case vLog := <-logs:
+			fmt.Println("Dex got log")
+			
+			fmt.Println(vLog.Topics[0])
 			event, err := contractABI.EventByID(vLog.Topics[0])
+			fmt.Println("event: ", event)
+			fmt.Println("event Name: ", event.Name)
 			utils.ErrorHandler(err)
-
-			if event.Name == "Ratio" {
+			if event.Name == "ratio" {
 				fmt.Println(event.Name)
 				result, err := contractABI.Unpack(event.Name, vLog.Data)
 				utils.ErrorHandler(err)
