@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	configContract "github.com/codestates/WBA-BC-Project-02/common/config/dev"
 	conf "github.com/codestates/WBA-BC-Project-02/daemon/config"
 	"github.com/codestates/WBA-BC-Project-02/daemon/subscribe"
@@ -12,8 +14,8 @@ import (
 
 func main() {
 	cf := conf.GetConfig("./config/config.toml")
-	cPath := "../common/config/config.toml"
-	ContractConfig = wasConfig.NewConfig(cPath, &configContract.Contract{})
+	cPath := "../common/config/dev/config.toml"
+	contractConfig := wasConfig.NewConfig(cPath, &configContract.Contract{})
 
 	client, err := ethclient.Dial(cf.Network.URL)
 	utils.ErrorHandler(err)
@@ -23,21 +25,21 @@ func main() {
 	dexCh := make(chan bool, 1)
 	tigCh := make(chan bool, 1)
 
-	subscribe.CreditListener(cf.Addr.CreditAddr, client, creditCh)
-	subscribe.DracoListener(cf.Addr.DracoAddr, client, dracoCh)
-	subscribe.DexListener(cf.Addr.DexAddr, client, dexCh)
-	subscribe.TigListener(cf.Addr.TigAddr, client, tigCh)
+	subscribe.CreditListener(contractConfig.CreditAddr, client, creditCh)
+	subscribe.DracoListener(contractConfig.DracoAddr, client, dracoCh)
+	subscribe.DexListener(contractConfig.DexAddr, client, dexCh)
+	subscribe.TigListener(contractConfig.TigAddr, client, tigCh)
 
 	for {
 		select {
 		case <-creditCh:
-			go subscribe.CreditListener(cf.Addr.CreditAddr, client, creditCh)
+			go subscribe.CreditListener(contractConfig.CreditAddr, client, creditCh)
 		case <-dracoCh:
-			go subscribe.DracoListener(cf.Addr.DracoAddr, client, dracoCh)
+			go subscribe.DracoListener(contractConfig.DracoAddr, client, dracoCh)
 		case <-dexCh:
-			go subscribe.DexListener(cf.Addr.DexAddr, client, dexCh)
+			go subscribe.DexListener(contractConfig.DexAddr, client, dexCh)
 		case <-tigCh:
-			go subscribe.TigListener(cf.Addr.TigAddr, client, tigCh)
+			go subscribe.TigListener(contractConfig.TigAddr, client, tigCh)
 		}
 	}
 }
