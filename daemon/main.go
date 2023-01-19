@@ -1,15 +1,19 @@
 package main
 
 import (
+	configContract "github.com/codestates/WBA-BC-Project-02/common/config/dev"
 	conf "github.com/codestates/WBA-BC-Project-02/daemon/config"
 	"github.com/codestates/WBA-BC-Project-02/daemon/subscribe"
 	"github.com/codestates/WBA-BC-Project-02/daemon/utils"
+	wasConfig "github.com/codestates/WBA-BC-Project-02/was/config"
 
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
 func main() {
 	cf := conf.GetConfig("./config/config.toml")
+	cPath := "../common/config/config.toml"
+	ContractConfig = wasConfig.NewConfig(cPath, &configContract.Contract{})
 
 	client, err := ethclient.Dial(cf.Network.URL)
 	utils.ErrorHandler(err)
