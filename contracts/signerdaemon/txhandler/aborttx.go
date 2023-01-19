@@ -97,10 +97,9 @@ func SendRevokeTransaction(
 	auth *bind.TransactOpts,
 	txIdx *big.Int,
 ) {
-	fmt.Println("Confirming...")
 	txConfirmTransaction, err := instance.RevokeConfirmation(auth, txIdx)
 	if err != nil {
-		fmt.Println("confirmTransaction Err", err)
+		fmt.Println("revoked")
 		ch <- false
 		return
 	}
