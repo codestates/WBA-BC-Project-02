@@ -23,7 +23,6 @@ import (
 )
 
 func CreditListener(address string, client *ethclient.Client, ch chan<- bool) {
-	fmt.Println("Credit open")
 	contractAddr := common.HexToAddress(address)
 	query := ethereum.FilterQuery{
 		Addresses: []common.Address{contractAddr},

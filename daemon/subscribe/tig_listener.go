@@ -24,7 +24,6 @@ import (
 )
 
 func TigListener(address string, client *ethclient.Client, ch chan<- bool) {
-	fmt.Println("Tig open")
 	contractAddr := common.HexToAddress(address)
 	query := ethereum.FilterQuery{
 		Addresses: []common.Address{contractAddr},

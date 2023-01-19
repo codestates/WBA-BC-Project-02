@@ -23,7 +23,6 @@ import (
 )
 
 func DracoListener(address string, client *ethclient.Client, ch chan<- bool) {
-	fmt.Println("Draco open")
 	contractAddr := common.HexToAddress(address)
 	query := ethereum.FilterQuery{
 		Addresses: []common.Address{contractAddr},
@@ -89,8 +88,6 @@ func DracoListener(address string, client *ethclient.Client, ch chan<- bool) {
 					"$set":  bson.M{"draco_amount": updateAmount.String()},
 					"$push": bson.M{"transactions": transaction},
 				}
-
-				fmt.Println("mint Tx: ", transaction)
 
 				userUpdateResult, err := r.ColUser.UpdateOne(context.TODO(), userFilter, userUpdate)
 				utils.ErrorHandler(err)
@@ -191,8 +188,6 @@ func DracoListener(address string, client *ethclient.Client, ch chan<- bool) {
 
 					fmt.Printf("to user udpate: %v\n", result.ModifiedCount)
 				}
-
-				fmt.Println("tx: ", transaction)
 				// contract update
 				contractFilter := bson.D{{Key: "contract_address", Value: transaction.ContractAddress}}
 				contractUpdate := bson.M{

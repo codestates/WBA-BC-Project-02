@@ -31,10 +31,6 @@ func MultisigListener(
 	secondPk := configContract.SecondPrivateKey
 	address := configContract.MultiSigAddr
 	channelId := configContract.ChannelToken
-
-	fmt.Println("firstPk: ", firstPk)
-	fmt.Println("secondPk: ", secondPk)
-	fmt.Println("address: ", address)
 	
 
 	contractAddress := common.HexToAddress(address)
