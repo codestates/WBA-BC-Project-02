@@ -25,7 +25,7 @@ func NewDexContractModel(col *mongo.Collection) *dexContractModel {
 	return dexInstance
 }
 
-func (c *dexContractModel) FindDexContract(dexAddr string) (*entity.DexContract, error) {
+func (c *dexContractModel) FindDexContractNonTxHashes(dexAddr string) (*entity.DexContract, error) {
 	filter := query.GetContractAddressFilter(dexAddr)
 
 	opt := options.FindOne().SetProjection(bson.M{enum.TransactionHashes: 0})

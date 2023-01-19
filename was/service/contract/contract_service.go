@@ -50,7 +50,7 @@ func (c *contractService) GetContracts() ([]*response.SimpleContract, error) {
 }
 
 func (c *contractService) GetRatioTokenAndCredit(contractName string) (*response.RatioContract, error) {
-	dexContract, err := c.dexContractModel.FindDexContract(config.ContractConfig.DexAddr)
+	dexContract, err := c.dexContractModel.FindDexContractNonTxHashes(config.ContractConfig.DexAddr)
 	if err != nil {
 		return nil, err
 	}
