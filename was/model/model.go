@@ -11,7 +11,6 @@ import (
 var MongoCollections map[string]*mongo.Collection
 var instance *model
 
-// model Collection 은 Store , Customer , Receipt , Review , user
 type model struct {
 	client *mongo.Client
 }
