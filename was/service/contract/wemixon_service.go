@@ -27,9 +27,9 @@ func NewWemixonService(mod user.UserModeler) *wemixonService {
 	return wemixonInstance
 }
 
-type Method func(string, int) []byte
+type ContractTransFer func(string, int) []byte
 
-func ActContract(userAddress string, amount int, method Method) (int, error) {
+func ActContract(userAddress string, amount int, method ContractTransFer) (int, error) {
 	client, nonce, err := getClientAndNonce()
 	if err != nil {
 		return 0, err

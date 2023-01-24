@@ -2,9 +2,9 @@ package ehtereum
 
 import (
 	"crypto/ecdsa"
-	"fmt"
 	"github.com/codestates/WBA-BC-Project-02/common/enum"
 	wasCommon "github.com/codestates/WBA-BC-Project-02/was/common"
+	"github.com/codestates/WBA-BC-Project-02/was/logger"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -20,7 +20,7 @@ func LoadEthereumClient() {
 
 	client, err := ethclient.Dial("https://api.test.wemix.com")
 	if err != nil {
-		fmt.Println("client error")
+		logger.AppLog.Error("client error")
 	}
 
 	EtheClient = client
@@ -80,7 +80,7 @@ func (e *TransferAction) LoadGasPrice() *TransferAction {
 
 	gasPrice, err := EtheClient.SuggestGasPrice(ctx)
 	if err != nil {
-		fmt.Println(err)
+		logger.AppLog.Error(err)
 	}
 
 	e.gasPrice = gasPrice
@@ -103,7 +103,7 @@ func (e *TransferAction) SendTokenTransaction() (string, error) {
 
 	nonce, err := EtheClient.PendingNonceAt(ctx, e.fromAddress)
 	if err != nil {
-		fmt.Println(err)
+		return enum.BlankSTR, err
 	}
 
 	e.transaction = types.NewTx(&types.LegacyTx{

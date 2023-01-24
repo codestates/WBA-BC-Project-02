@@ -19,6 +19,8 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
+// 시연을 위한 fmt 출력
+
 func SendTransaction(client *ethclient.Client, nonce int64, data []byte) error {
 	firstPk, err := crypto.HexToECDSA(config.ContractConfig.ServerPrivateKey) // 서버의 privateKey -> config에서 가져올 것
 	if err != nil {
