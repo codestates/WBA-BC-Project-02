@@ -26,7 +26,7 @@ go run "/Users/<프로젝트 루트 폴더까지의 경로>/was/main.go"
 
 - signer Daemon 실행
 ```shell
-go run "/Users/<프로젝트 루트 폴더까지의 경로>/signerdaemon/main.go"
+go run "/Users/<프로젝트 루트 폴더까지의 경로>/contracts/signerdaemon/main.go"
 ```
 
 - DB Daemon 실행
